@@ -110,19 +110,30 @@ La consola de la CID 201-A reúne en un único cuerpo los indicadores, interrupt
 | **Teclas de ejemplo** | ENA / ENB / ENC (programas precargados) |
 
 **CPR** – El Contador de Programa recibe el valor de los interruptores como una dirección de memoria.
+
 **DEP** – Depositar el valor de los interruptores en la dirección de memoria del CP, y lo incrementa.
+
 **COM** – Comenzar ejecución a partir de dirección en el CP.
+
 **ALT** – Pasar a estado de Alto
+
 **EXA** – Examinar. Carga en RM el contenido de la dirección en CP.
+
 **PUL** – Pulso. Puede ser un pulso único de reloj, avanzando el contador Johnson, o ejecutar un ciclo completo, dependiendo del estado del interruptor de control.
+
 **REC** – Recepción. Tecla programada.
+
 **ALM** – Almacena. Tecla programada.
+
 **BOR** – Borra. Tecla programada.
+
 **DIGITOS**. Entrada numérica. Teclas programadas.
+
 **ENA, ENB, ENC** – Inician la ejecución a partir de la dirección indirecta contenida en 7770, 7774 y 7777 
+
 **CONT/CICLO/PASO** – Ejecución continua (normal), por ciclo (el botón PUL ejecuta un ciclo, 16 pulsos de reloj) o por paso (dos PUL ejecuta un solo pulso de reloj, un PUL para instrucciones dirección directas a memoria, dos PUL para las indirectas).
-**LEC/L-T/TEL**: operación con la grabadora, LECtura, NORmal (la máquina opera normal), ESCritura.
-Interruptores de control de la grabadora.
+
+**LEC/L-T/TEL**: operación con la grabadora, LECtura, NORmal (la máquina opera normal), ESCritura. Además de los interruptores de control de la grabadora.
 
 El uso de interruptores y teclas solo se puede hacer durante un estado de Alto. 
 
