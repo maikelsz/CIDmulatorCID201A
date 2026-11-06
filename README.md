@@ -577,8 +577,6 @@ Cuando el teletipo está **abierto**, las teclas escriben en él (modo ITA2).
 
 ## Referencias
 
-- **Documentación histórica**: *CID 201-A*, Centro de Investigación Digital, La Habana, 1971–1972. (incluida en `docs/`)
-
 - O. Ramos, “La computadora CID 201-A”, Comunicaciones. Revista Técnica, Núm. 13, Cuba, 1972
 - A. Ball-Llovera, “Arquitectura de la CID 201”, Bioingeniería y Física Médica Cubana. Vol. 11, Núm.  1, enero-abril, pp. 13-18, 2010
 - H. Lista Roiz, “El uso de grabadoras portátiles tipo casete como equipo de entrada y salida en las computadoras CID-201A", Comunicaciones. Revista Técnica, Núm. 13, 1972
