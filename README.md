@@ -5,6 +5,7 @@ Simulador funcional, en un único archivo HTML/CSS/JS, de la minicomputadora cub
 
 > Un homenaje ejecutable a una de las primeras computadoras diseñadas y fabricadas en América Latina.
 
+La minicomputadora CID 201-A a la derecha, con el lector de cinta y el teletipo-perforador.
 <p align="center"><img width="700" src="https://github.com/maikelsz/CIDmulatorCID201A/blob/main/imgs/CID%20201-A%20emulator.jpg" alt="description" /></p>
 
 **Atención, este es un trabajo en progreso.**
