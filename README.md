@@ -4,6 +4,8 @@ Simulador funcional, en un único archivo HTML/CSS/JS, de la minicomputadora cub
 
 > Un homenaje ejecutable a una de las primeras computadoras diseñadas y fabricadas en América Latina.
 
+**Atención, este es un trabajo en progreso.**
+
 ---
 
 ## Índice
