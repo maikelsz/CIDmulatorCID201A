@@ -579,33 +579,33 @@ Cuando el teletipo está **abierto**, las teclas escriben en él (modo ITA2).
 
 - **Documentación histórica**: *CID 201-A*, Centro de Investigación Digital, La Habana, 1971–1972. (incluida en `docs/`)
 
--O. Ramos, “La computadora CID 201-A”, Comunicaciones. Revista Técnica, Núm. 13, Cuba, 1972
--A. Ball-Llovera, “Arquitectura de la CID 201”, Bioingeniería y Física Médica Cubana. Vol. 11, Núm.  1, enero-abril, pp. 13-18, 2010
--H. Lista Roiz, “El uso de grabadoras portátiles tipo casete como equipo de entrada y salida en las computadoras CID-201A", Comunicaciones. Revista Técnica, Núm. 13, 1972
--A. Ball-Llovera, “Sincronismo en las computadoras serie”, Control Cibernética y Automatización, Vol. 8 Núm.3, 1974
--R. Rosendi Gonzáles, “Promptuario CID 201-A”, MINAZ, Cuba, 1971
--O. Ramos, N. Blanco, “Diseño de Computadoras Digitales”, Editorial Científico Técnica, 1988, La Habana
--The Software Writing Group Programming Department, “Introduction to programming PDP-8 family computers”, Small Computer Handbook Series, Programming Department, Digital Equipment Corporation, 1969
--“PDP-8/S Maintenance Manual”, Digital Equipment Corporation, 1967
--J. M. Barruecos, “Fidel, la Universidad, la Ciencia y la Tecnología: origen y desarrollo de la Computación en Cuba”. Revista Cuba Socialista, 4ta. Época, No. 2, mayo-agosto 2016, p. 21-25
--“Entrevista realizada al ingeniero Orlando Ramos, diseñador de la primera minicomputadora cubana con motivo del décimo aniversario de este importante logro”, CID: Electrónica y proceso de datos en Cuba, Núm. 1, 1981, INSAC, Cuba
--Intervención del Dr. Antonio Ball-Llovera Díaz en el Acto efectuado en el Anfiteatro de la CUJAE en ocasión del 40 Aniversario de la Primera Computadora Digital Cubana. Abril de 2010
--L. Orlando Suárez, “Utilización de computadoras digitales CID en el transporte ferroviario cañero”. 39 conferencia ATAC, Tomo II, octubre 1970, MINAZ
--J. Andrés Chacón, “Proyecto C”, Arte y Literatura, 1978, La Habana
--O. Carnota. “Aplicación de las computadoras en un pais en vias de desarrollo. Cuba”, Economía y Desarrollo No 9, 1972
--“¡Diez millones de operaciones por segundo!”, Granma, 27 de septiembre, 1970
--“En cuanto a computadoras”. Bohemia, 11 de febrero, 1972
--L. O. Suárez, “Trabajo en el central "Camilo Cienfuegos": itinerarios del ferrocarril cañero y análisis del proceso industrial", Primera Reunión de Especialistas de Computación de Cuba, 22-24 de marzo, 1972
--J. Pedre, "Sistema de Control de Zafra del Puesto de Mando del Yarey, Oriente, diseñado para la computadora cubana CID-201", Primera Reunión de Especialistas de Computación de Cuba, 22-24 de marzo, 1972. Publicado como -“Experiencias en la realización de trabajos prácticos en una pequeña computadora. Sistema control diario de Zafra Yarey-Oriente”, Control Cibernética y Automatización, Vol. 7 Núm 1, 1973, Cuba
--P. Albuerne, “La Computadora en el Análisis de los Costes Azucareros”, ATAC Núm. 5/6, 1973, MINAZ, Cuba
--“La informática aplicada al transporte”. Bohemia, 2 de marzo, 1973
--V. Trejo et al, “Lenguaje para la simulación digital de sistemas dinámicos continuos”, Control Cibernética y Automatización, Vol. 7 Núm. 1, 1973
--L. García Fernández, “Simulación de la operación de un puerto en la CID-201-A”, Control Cibernética y Automatización, Vol. 8 Núm. 1, 1974
--J. J. Hernández Ruiz, “Tablas de decisión y su implementación en el equipo CID-201A”, Control Cibernética y Automatización, Vol. 8 Núm. 3, 1975
--“¿Puede una computadora dirigir un equipo de béisbol?”. Granma, 25 de agosto, 1972
--“La máquina electrónica en función del deporte”. Granma, 12 de septiembre, 1974
--“A siete años de la primera computadora digital cubana”. Bohemia, 3 de junio, 1977
--Información extraída de un documento elaborado por el Ing. Ricardo Piñero, uno de los creadores de la primera computadora, marzo 2019.
+- O. Ramos, “La computadora CID 201-A”, Comunicaciones. Revista Técnica, Núm. 13, Cuba, 1972
+- A. Ball-Llovera, “Arquitectura de la CID 201”, Bioingeniería y Física Médica Cubana. Vol. 11, Núm.  1, enero-abril, pp. 13-18, 2010
+- H. Lista Roiz, “El uso de grabadoras portátiles tipo casete como equipo de entrada y salida en las computadoras CID-201A", Comunicaciones. Revista Técnica, Núm. 13, 1972
+- A. Ball-Llovera, “Sincronismo en las computadoras serie”, Control Cibernética y Automatización, Vol. 8 Núm.3, 1974
+- R. Rosendi Gonzáles, “Promptuario CID 201-A”, MINAZ, Cuba, 1971
+- O. Ramos, N. Blanco, “Diseño de Computadoras Digitales”, Editorial Científico Técnica, 1988, La Habana
+- The Software Writing Group Programming Department, “Introduction to programming PDP-8 family computers”, Small Computer Handbook Series, Programming Department, Digital Equipment Corporation, 1969
+- “PDP-8/S Maintenance Manual”, Digital Equipment Corporation, 1967
+- J. M. Barruecos, “Fidel, la Universidad, la Ciencia y la Tecnología: origen y desarrollo de la Computación en Cuba”. Revista Cuba Socialista, 4ta. Época, No. 2, mayo-agosto 2016, p. 21-25
+- “Entrevista realizada al ingeniero Orlando Ramos, diseñador de la primera minicomputadora cubana con motivo del décimo aniversario de este importante logro”, CID: Electrónica y proceso de datos en Cuba, Núm. 1, 1981, INSAC, Cuba
+- Intervención del Dr. Antonio Ball-Llovera Díaz en el Acto efectuado en el Anfiteatro de la CUJAE en ocasión del 40 Aniversario de la Primera Computadora Digital Cubana. Abril de 2010
+- L. Orlando Suárez, “Utilización de computadoras digitales CID en el transporte ferroviario cañero”. 39 conferencia ATAC, Tomo II, octubre 1970, MINAZ
+- J. Andrés Chacón, “Proyecto C”, Arte y Literatura, 1978, La Habana
+- O. Carnota. “Aplicación de las computadoras en un pais en vias de desarrollo. Cuba”, Economía y Desarrollo No 9, 1972
+- “¡Diez millones de operaciones por segundo!”, Granma, 27 de septiembre, 1970
+- “En cuanto a computadoras”. Bohemia, 11 de febrero, 1972
+- L. O. Suárez, “Trabajo en el central "Camilo Cienfuegos": itinerarios del ferrocarril cañero y análisis del proceso industrial", Primera Reunión de Especialistas de Computación de Cuba, 22-24 de marzo, 1972
+- J. Pedre, "Sistema de Control de Zafra del Puesto de Mando del Yarey, Oriente, diseñado para la computadora cubana CID-201", Primera Reunión de Especialistas de Computación de Cuba, 22-24 de marzo, 1972. Publicado como - “Experiencias en la realización de trabajos prácticos en una pequeña computadora. Sistema control diario de Zafra Yarey-Oriente”, Control Cibernética y Automatización, Vol. 7 Núm 1, 1973, Cuba
+- P. Albuerne, “La Computadora en el Análisis de los Costes Azucareros”, ATAC Núm. 5/6, 1973, MINAZ, Cuba
+- “La informática aplicada al transporte”. Bohemia, 2 de marzo, 1973
+- V. Trejo et al, “Lenguaje para la simulación digital de sistemas dinámicos continuos”, Control Cibernética y Automatización, Vol. 7 Núm. 1, 1973
+- L. García Fernández, “Simulación de la operación de un puerto en la CID-201-A”, Control Cibernética y Automatización, Vol. 8 Núm. 1, 1974
+- J. J. Hernández Ruiz, “Tablas de decisión y su implementación en el equipo CID-201A”, Control Cibernética y Automatización, Vol. 8 Núm. 3, 1975
+- “¿Puede una computadora dirigir un equipo de béisbol?”. Granma, 25 de agosto, 1972
+- “La máquina electrónica en función del deporte”. Granma, 12 de septiembre, 1974
+- “A siete años de la primera computadora digital cubana”. Bohemia, 3 de junio, 1977
+- Información extraída de un documento elaborado por el Ing. Ricardo Piñero, uno de los creadores de la primera computadora, marzo 2019.
 
 
 ### Agradecimientos
