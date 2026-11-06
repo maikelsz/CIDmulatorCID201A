@@ -378,6 +378,9 @@ El deslizador de velocidad escala todo por `1/7500`, `1/750` o `1` (velocidad re
 
 ## Periféricos
 
+<p align="center"><img width="700" src="https://github.com/maikelsz/CIDmulatorCID201A/blob/main/imgs/CID%20201-A%20emulator.jpg" alt="description" /></p>
+
+
 ### Teletipo RFT T-51
 
 Panel integrado con tres funciones:
