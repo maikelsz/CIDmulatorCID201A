@@ -6,7 +6,7 @@ Simulador funcional, en un único archivo HTML/CSS/JS, de la minicomputadora cub
 > Un homenaje ejecutable a una de las primeras computadoras diseñadas y fabricadas en América Latina.
 
 La minicomputadora CID 201-A a la derecha, con el lector de cinta y el teletipo-perforador.
-<p align="center"><img width="1280" src="https://github.com/maikelsz/CIDmulatorCID201A/blob/main/imgs/CIDmulator-A_CID201_emulator.jpg" alt="description" /></p>
+<p align="center"><img width="1280" src="https://github.com/maikelsz/CIDmulatorCID201A/blob/main/imgs/CIDmulator-A_CID201_emulator.jpg" /></p>
 
 **Atención, este es un trabajo en progreso.**
 
@@ -36,15 +36,6 @@ La minicomputadora CID 201-A a la derecha, con el lector de cinta y el teletipo-
 ## Inicio rápido
 
 No requiere instalación ni dependencias. Basta con abrir el archivo `CID201A.html` en un navegador moderno (Chrome, Firefox, Edge, Safari):
-
-```bash
-git clone https://github.com/tu-usuario/cid201a-sim.git
-cd cid201a-sim
-# abrir CID201A.html con el navegador
-# o, si tienes Python:
-python -m http.server 8000
-# y visitar http://localhost:8000/CID201A.html
-```
 
 **Primeros pasos recomendados:**
 
