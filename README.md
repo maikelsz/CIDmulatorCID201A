@@ -450,7 +450,7 @@ Tres programas precargados, accesibles con las teclas de la consola:
 
 ### ENA — Simon (juego de secuencias)
 
-Juego de memoria musical. La máquina enciende secuencias de letras (`A`–`G`) con sus tonos correspondientes; el jugador las repite con el teclado decimal (0–7). La secuencia crece con cada acierto. Si falla: el display muestra la longitud alcanzada y la máquina se detiene (`ALT`).
+Juego de memoria musical. La máquina enciende secuencias de letras (`A`–`G`); el jugador las repite con el teclado decimal (0–7). La secuencia crece con cada acierto. Si falla: el display muestra la longitud alcanzada y la máquina se detiene (`ALT`).
 
 **Botón:** `ENA` (carga en `0o200`).
 
