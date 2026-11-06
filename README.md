@@ -128,7 +128,7 @@ La consola de la CID 201-A reúne en un único cuerpo los indicadores, interrupt
 
 El uso de interruptores y teclas solo se puede hacer durante un estado de Alto. 
 
-Para depositar una serie de valores en memoria, primero se especificaba por los interruptores la dirección de memoria y mediante la tecla CPR se pasaba este valor al Contador de Programa (CP). Luego se introducían los valores a almacenar y se oprimía sucesivamente la tecla DEP, que depositaba el valor de los interruptores en RM y de ahí a la memoria, e incrementaba el CP en uno (lo apuntaba a la próxima dirección de memoria). 
+Para depositar una serie de valores en memoria, primero se especifica por los interruptores la dirección de memoria y mediante la tecla CPR se pasa este valor al Contador de Programa (CP). Luego se introducen los valores a almacenar y se oprime sucesivamente la tecla DEP, que deposita el valor de los interruptores en RM y de ahí a la memoria, e incrementa el CP en uno (lo apunta a la próxima dirección de memoria). 
 
 Para examinar el contenido de la direccion de memoria apuntada por el CP se utiliza la tecla EXA.
 
@@ -138,7 +138,7 @@ La tecla ALT pone a la computadora en el estado de Alto. La ejecución del progr
 
 Un interruptor de tres posiciones gobierna el modo de operación del reloj general, y así del programa. 
 
-La posición CONTINUO permite la operación sin parada alguna. La posición CICLO determinaba que cada depresión de la tecla PUL generara 16 pulsos de reloj correspondientes a la ejecución completa de un ciclo de trabajo. En la computadora real, la posición PASO, al presionar la tecla PUL se produce un pulso de reloj, avanzando un 1/18 de ciclo al contador Johnson, y permitiendo ver el desplazamiento de los bits en los registros y seguir la operación paso a paso. En la emulada, en este caso, se ejecuta una instrucción completa, con todos sus ciclos.
+La posición CONTINUO permite la operación sin parada alguna. La posición CICLO hace que cada depresión de la tecla PUL genere 16 pulsos de reloj correspondientes a la ejecución completa de un ciclo de trabajo. En la computadora real, en la posición PASO, al presionar la tecla PUL se produce un pulso de reloj, avanzando un 1/18 de ciclo al contador Johnson, y permitiendo ver el desplazamiento de los bits en los registros y seguir la operación paso a paso. En la computaodra emulada, en este caso, se ejecuta una instrucción completa, con todos sus ciclos.
 
 ### Barra de estado
 
