@@ -1,3 +1,4 @@
+# CIDmulator-A
 # CID 201-A · Simulador Web
 
 Simulador funcional, en un único archivo HTML/CSS/JS, de la minicomputadora cubana **CID 201-A** (Centro de Investigación Digital, ICID, Cuba, 1971). Reproduce su conjunto de instrucciones LEN-1, su consola física, la memoria de ferrita y sus periféricos: teletipo RFT T-51 (teclado + impresora + perforador de cinta), lector de cinta RFT T-53 y monitor de consola **"Última Página"**.
