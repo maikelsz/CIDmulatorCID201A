@@ -1,0 +1,227 @@
+0000, 0010, K_CR [0010], código ITA2 de CR (compartido: CMD_R y PRINT_CRLF)
+0001, 7600, P_GETC [7600], puntero a GETCHAR (pág. 31)
+0002, 0000, TMP [0000], temporal de 12 bits (2 words: low, high)
+0003, 0000, 0000 [0000]
+0004, 0000, PTR [0000], puntero de 12 bits para indirección (2 words)
+0005, 0000, 0000 [0000]
+7400, 7200, LAC, AC = 0 (punto de entrada, AC desconocido)
+7401, 1340, SUM K_FIGS [7540], AC = 0033 (código FIGS)
+7402, 6130, TAP LIP, envía FIGS al perforador, AC = 0
+7403, 6140, SIP, espera a que el perforador esté libre
+7404, 5203, VEA st_w [7403]
+7405, 7200, LAC
+7406, 1340, SUM K_FIGS [7540]
+7407, 6130, TAP LIP
+7410, 6140, SIP
+7411, 5210, VEA df_w [7410]
+7412, 1344, SUM K_QMARK [7544], AC = 0031 (código ITA2 de '?')
+7413, 6130, TAP LIP, imprime '?', AC = 0
+7414, 6140, SIP
+7415, 5214, VEA dp_w [7414]
+7416, 4401, VAS I P_GETC [0001], AC = código del carácter leído
+7417, 3002, DEL TMP [0002], TMP = código, AC = 0
+7420, 1002, SUM TMP [0002], AC = TMP
+7421, 7050, CAC IAC, AC = -TMP
+7422, 1341, SUM K_R [7541], AC = K_R - TMP
+7423, 7450, SAD, skip si TMP != K_R
+7424, 5242, VEA CMD_R [7442], si TMP == K_R, ir a CMD_R
+7425, 7200, LAC, (rama TMP != K_R) AC = 0
+7426, 1002, SUM TMP [0002]
+7427, 7050, CAC IAC
+7430, 1342, SUM K_A [7542]
+7431, 7450, SAD
+7432, 5310, VEA CMD_A [7510]
+7433, 7200, LAC
+7434, 1002, SUM TMP [0002]
+7435, 7050, CAC IAC
+7436, 1343, SUM K_C [7543]
+7437, 7450, SAD
+7440, 5325, VEA CMD_C [7525]
+7441, 5216, VEA DISP_LP [7416], carácter no reconocido: reintentar sin imprimir '?'
+7442, 4752, VAS I P_RD4 [7552], AC = DIR (valor leído)
+7443, 3345, DEL DIR [7545], DIR = valor, AC = 0
+7444, 4401, VAS I P_GETC [0001], AC = código del siguiente carácter
+7445, 3002, DEL TMP [0002], TMP = código, AC = 0
+7446, 1002, SUM TMP [0002], AC = TMP
+7447, 7050, CAC IAC, AC = -TMP
+7450, 1000, SUM K_CR [0000], AC = K_CR - TMP
+7451, 7450, SAD, skip si AC != 0 (TMP != CR)
+7452, 5260, VEA r_cr [7460], si TMP == CR, single read
+7453, 4752, VAS I P_RD4 [7552], lee la segunda dirección
+7454, 3347, DEL DIR2 [7547], DIR2 = valor, AC = 0
+7455, 4401, VAS I P_GETC [0001], espera Enter final
+7456, 7200, LAC, AC = 0 (GETC dejó el código de CR)
+7457, 5263, VEA r_range [7463], ejecuta el rango
+7460, 1345, SUM DIR [7545], AC = DIR (AC = 0 al entrar por VEA)
+7461, 3347, DEL DIR2 [7547], DIR2 = DIR, AC = 0
+7462, 5263, VEA r_range [7463]
+7463, 1345, SUM DIR [7545], AC = DIR (asume AC=0)
+7464, 4753, VAS I P_POCT [7553], imprime "dddd", AC = 0
+7465, 1343, SUM K_C [7543], AC = 0016 = ':' en FIGS
+7466, 6130, TAP LIP, emite ':' , AC = 0
+7467, 6140, SIP, espera al perforador
+7470, 5267, VEA rs_c [7467]
+7471, 1345, SUM DIR [7545], AC = DIR
+7472, 3004, DEL PTR [0004], PTR = DIR, AC = 0
+7473, 1404, SUM I PTR [0004], AC = [DIR]
+7474, 4753, VAS I P_POCT [7553], imprime "[DIR]" = "vvvv", AC = 0
+7475, 4751, VAS I P_PCRL [7551], emite CR+LF, AC = 0
+7476, 1345, SUM DIR [7545], AC = DIR
+7477, 7050, CAC IAC, AC = -DIR
+7500, 1347, SUM DIR2 [7547], AC = DIR2 - DIR
+7501, 7450, SAD, skip si AC != 0 (DIR != DIR2)
+7502, 5335, VEA DISP_RETURN [7535], si DIR == DIR2, salir
+7503, 7200, LAC, AC = 0 (SAD no limpia AC)
+7504, 1345, SUM DIR [7545], AC = DIR
+7505, 7010, IAC, AC = DIR + 1
+7506, 3345, DEL DIR [7545], DIR = DIR + 1, AC = 0
+7507, 5263, VEA r_range [7463], siguiente iteración
+7510, 4752, VAS I P_RD4 [7552], AC = DIR
+7511, 3345, DEL DIR [7545], DIR = valor, AC = 0
+7512, 4752, VAS I P_RD4 [7552], AC = DIR2
+7513, 3347, DEL DIR2 [7547], DIR2 = valor, AC = 0
+7514, 4401, VAS I P_GETC [0001], espera Enter
+7515, 7200, LAC, AC = 0
+7516, 1345, SUM DIR [7545], AC = DIR
+7517, 3004, DEL PTR [0004], PTR = DIR, AC = 0
+7520, 1347, SUM DIR2 [7547], AC = DIR2
+7521, 3404, DEL I PTR [0004], [DIR] = DIR2, AC = 0
+7522, 1345, SUM DIR [7545], AC = DIR (prepara r_range)
+7523, 3347, DEL DIR2 [7547], DIR2 = DIR, AC = 0
+7524, 5263, VEA r_range [7463], imprime "DIR:DIR2" (confirmación)
+7525, 4752, VAS I P_RD4 [7552], AC = DIR
+7526, 3345, DEL DIR [7545], DIR = valor, AC = 0
+7527, 4401, VAS I P_GETC [0001], espera Enter
+7530, 7200, LAC, AC = 0
+7531, 1345, SUM DIR [7545], AC = DIR
+7532, 4753, VAS I P_POCT [7553], imprime "dddd", AC = 0
+7533, 4751, VAS I P_PCRL [7551], emite CR+LF, AC = 0
+7534, 5745, VEA I DIR [7545], CP = [DIR] = dirección destino
+7535, 4751, VAS I P_PCRL [7551], emite CR+LF, AC = 0
+7536, 5205, VEA DISP [7405], vuelve al dispatcher
+7540, 0033, K_FIGS [0033], código ITA2 de FIGS (START, DISP)
+7541, 0012, K_R [0012], 'R' en LTRS (DISP_LP)
+7542, 0003, K_A [0003], 'A' en LTRS (DISP_LP)
+7543, 0016, K_C [0016], 'C' en LTRS, ':' en FIGS (DISP_LP, r_range)
+7544, 0031, K_QMARK [0031], '?' en FIGS (prompt)
+7545, 0000, DIR [0000], dirección actual (2 words)
+7546, 0000, 0000 [0000]
+7547, 0000, DIR2 [0000], dirección final del rango / valor a escribir (2 words)
+7550, 0000, 0000 [0000]
+7551, 7620, P_PCRL [7620], puntero a PRINT_CRLF (pág. 31)
+7552, 7633, P_RD4 [7633], puntero a READ_OCT4 (pág. 31)
+7553, 7710, P_POCT [7710], puntero a PRINT_OCT4 (pág. 31)
+7554, 0026, TAB_DIG [0026]
+7555, 0027, 0027 [0027]
+7556, 0023, 0023 [0023]
+7557, 0001, 0001 [0001]
+7560, 0012, 0012 [0012]
+7561, 0020, 0020 [0020]
+7562, 0025, 0025 [0025]
+7563, 0007, 0007 [0007]
+7600, 0000, GETCHAR [0000], slot para VAS I
+7601, 6240, SIL, skip si el lector tiene dato
+7602, 5201, VEA gc_lp [7601], si no, seguir esperando
+7603, 7200, LAC, AC = 0 (TLA suma al AC existente)
+7604, 6230, TLA LIL, AC += código leído; limpia flag
+7605, 5600, VEA I GETCHAR [7600], retorno
+7606, 0000, PRINT_DIG [0000], slot para VAS I
+7607, 3344, DEL DIG [7744], DIG = dígito, AC = 0
+7610, 1341, SUM K_TABD [7741], AC = dirección base de TAB_DIG
+7611, 1344, SUM DIG [7744], AC = base + dígito (índice)
+7612, 3004, DEL PTR [0004], PTR = dirección del código
+7613, 1404, SUM I PTR [0004], AC = TAB_DIG[dígito] = código Murray
+7614, 6130, TAP LIP, emite el código, AC = 0
+7615, 6140, SIP, espera al perforador
+7616, 5215, VEA pd_w [7615]
+7617, 5606, VEA I PRINT_DIG [7606], retorno
+7620, 0000, PRINT_CRLF [0000], slot para VAS I
+7621, 7200, LAC, AC = 0
+7622, 1000, SUM K_CR [0000], AC = 0010 (CR)
+7623, 6130, TAP LIP, emite CR, AC = 0
+7624, 6140, SIP, espera al perforador
+7625, 5224, VEA pc_w1 [7624]
+7626, 1334, SUM K_LF [7734], AC = 0002 (LF); SUM aprovecha AC=0
+7627, 6130, TAP LIP, emite LF, AC = 0
+7630, 6140, SIP
+7631, 5230, VEA pc_w2 [7630]
+7632, 5620, VEA I PRINT_CRLF [7620], retorno
+7633, 0000, READ_OCT4 [0000], slot para VAS I
+7634, 7200, LAC
+7635, 3342, DEL ACC [7742], ACC = 0, AC = 0
+7636, 1337, SUM K_NEG4 [7737], AC = 7774 (-4 en complemento a 2)
+7637, 3346, DEL TD0 [7746], TD0 = -4 (contador de dígitos)
+7640, 4401, VAS I P_GETC [0001], AC = código del carácter
+7641, 3002, DEL TMP [0002], TMP = código, AC = 0
+7642, 7200, LAC, AC = 0
+7643, 1340, SUM K_NEG8 [7740], AC = -8 (inicio del índice de búsqueda)
+7644, 3350, DEL TD1 [7750], TD1 = -8, AC = 0
+7645, 1341, SUM K_TABD [7741], AC = base de TAB_DIG
+7646, 3004, DEL PTR [0004], PTR = TAB_DIG[0], AC = 0
+7647, 7200, LAC, AC = 0
+7650, 1404, SUM I PTR [0004], AC = TAB_DIG[PTR]
+7651, 7050, CAC IAC, AC = -TAB_DIG[PTR]
+7652, 1002, SUM TMP [0002], AC = TMP - TAB_DIG[PTR]
+7653, 7440, SAC, skip si AC == 0 (match)
+7654, 5263, VEA ro_next [7663], AC != 0: no match, siguiente
+7655, 7200, LAC, AC = 0 (SAC no limpia AC)
+7656, 1340, SUM K_NEG8 [7740], AC = -8
+7657, 7050, CAC IAC, AC = +8 (complemento a 2)
+7660, 1350, SUM TD1 [7750], AC = 8 + TD1 (TD1 va de -8 a -1)
+7661, 3344, DEL DIG [7744], DIG = 8 + TD1 = índice 0..7
+7662, 5275, VEA ro_ok [7675], encontrado, acumular
+7663, 7200, LAC, AC = 0
+7664, 1004, SUM PTR [0004], AC = PTR (dirección actual)
+7665, 7010, IAC, AC = PTR + 1 (siguiente entrada)
+7666, 3004, DEL PTR [0004], PTR = PTR + 1, AC = 0
+7667, 2350, ISC TD1 [7750], TD1++; si TD1 == 0, skip
+7670, 5247, VEA ro_find [7647], si TD1 != 0, seguir buscando
+7671, 7200, LAC, (no encontrado) AC = 0
+7672, 1336, SUM K_7777 [7736], AC = 7777 (centinela "no es dígito")
+7673, 3344, DEL DIG [7744], DIG = 7777, AC = 0
+7674, 5240, VEA ro_lp [7640], reintentar con otro carácter
+7675, 7200, LAC, AC = 0
+7676, 1342, SUM ACC [7742], AC = ACC
+7677, 7100, LEN, EN = 0 (prepara rotación limpia)
+7700, 7262, RI3, rota AC+EN 3 a la izquierda (<<3)
+7701, 0335, YLO K_7770 [7735], aísla los 9 bits bajos (descarta los 3 altos)
+7702, 1344, SUM DIG [7744], AC = (ACC << 3) + DIG
+7703, 3342, DEL ACC [7742], ACC = nuevo valor, AC = 0
+7704, 2346, ISC TD0 [7746], TD0++; si TD0 == 0, skip (4º dígito hecho)
+7705, 5240, VEA ro_lp [7640], si TD0 != 0, leer siguiente dígito
+7706, 1342, SUM ACC [7742], AC = ACC (valor completo)
+7707, 5633, VEA I READ_OCT4 [7633], retorno
+7710, 0000, PRINT_OCT4 [0000], slot para VAS I (retorno)
+7711, 3002, DEL TMP [0002], TMP = valor, AC = 0
+7712, 1002, SUM TMP [0002], AC = valor
+7713, 7062, RD9, rota 9: dígito 3 alineado a bits 0-2
+7714, 0332, YLO K_7 [7732], AC = dígito 3 (0..7)
+7715, 4733, VAS I P_PDIG [7733], imprime dígito, AC = 0
+7716, 1002, SUM TMP [0002]
+7717, 7142, RD6, dígito 2
+7720, 0332, YLO K_7 [7732]
+7721, 4733, VAS I P_PDIG [7733]
+7722, 1002, SUM TMP [0002]
+7723, 7302, RD3, dígito 1
+7724, 0332, YLO K_7 [7732]
+7725, 4733, VAS I P_PDIG [7733]
+7726, 1002, SUM TMP [0002]
+7727, 0332, YLO K_7 [7732], dígito 0 (ya está alineado)
+7730, 4733, VAS I P_PDIG [7733]
+7731, 5710, VEA I PRINT_OCT4 [7710], retorno
+7732, 0007, K_7 [0007], máscara 0o7 (PRINT_OCT4)
+7733, 7606, P_PDIG [7606], puntero a PRINT_DIG (pág. 31)
+7734, 0002, K_LF [0002], LF (PRINT_CRLF)
+7735, 7770, K_7770 [7770], máscara 7770 (READ_OCT4, aislar 9 bits bajos)
+7736, 7777, K_7777 [7777], centinela "no es dígito" (READ_OCT4)
+7737, 7774, K_NEG4 [7774], -4 en complemento a 2 (READ_OCT4, TD0)
+7740, 7770, K_NEG8 [7770], -8 en complemento a 2 (READ_OCT4, TD1)
+7741, 7554, K_TABD [7554], dirección de TAB_DIG (pág. 30)
+7742, 0000, ACC [0000], acumulador del valor en curso (2 words)
+7743, 0000, 0000 [0000]
+7744, 0000, DIG [0000], dígito decodificado (0..7 o 7777) (2 words)
+7745, 0000, 0000 [0000]
+7746, 0000, TD0 [0000], contador de dígitos pendientes (2 words)
+7747, 0000, 0000 [0000]
+7750, 0000, TD1 [0000], índice de búsqueda en TAB_DIG (2 words)
+7751, 0000, 0000 [0000]

@@ -1,0 +1,47 @@
+0200, 7200, LAC
+0201, 7402, ORI, AC = AC | RI. semilla defini por los interruptores
+0202, 3253, DEL SD [0253]
+0203, 6414, LID, barre tecla residual previa al arranque
+0204, 3252, DEL SC [0252], puntos = 0 (DEL deja AC=0)
+0205, 7200, LAC
+0206, 1253, SUM SD [0253]
+0207, 7100, LEN, EN=0 ANTES de rotar (raíz del bug A/B)
+0210, 7162, RI2, AC = SD*4
+0211, 1253, SUM SD [0253], AC = SD*5
+0212, 7010, IAC, +1
+0213, 3253, DEL SD [0253], SD = 5*SD+1
+0214, 7200, LAC
+0215, 1253, SUM SD [0253]
+0216, 0256, YLO M7 [0256], P = SD & 7
+0217, 3254, DEL P [0254], AC=0
+0220, 7010, IAC, 1
+0221, 3255, DEL CT [0255], CT=1 -> ~4096 vueltas de reaccion (~0,33 s)
+0222, 1254, SUM P [0254], AC = P
+0223, 6522, TAT, enciende el topo; AC=0
+0224, 6444, SID, tecla? salta lo siguiente
+0225, 5227, VEA no [0227], sin tecla -> cuenta tiempo
+0226, 5232, VEA tecla [0232], con tecla -> compara
+0227, 2255, ISC CT [0255], CT++; si ==0 salta lo siguiente
+0230, 5224, VEA reac [0224], sigue esperando
+0231, 5246, VEA muest [0246], CT==0: timeout = fallo
+0232, 6414, LID, debounce: consume la tecla
+0233, 7200, LAC
+0234, 6420, TRA, AC = d (0-7)
+0235, 7040, CAC
+0236, 7010, IAC, AC = -d
+0237, 1254, SUM P [0254], AC = P - d
+0240, 7440, SAC, d==P: salta lo siguiente (acierto)
+0241, 5246, VEA muest [0246], d!=P: fallo sin incrementar
+0242, 7200, LAC
+0243, 1252, SUM SC [0252]
+0244, 7010, IAC
+0245, 3252, DEL SC [0252], solo acierto: SC++
+0246, 7200, LAC
+0247, 1252, SUM SC [0252]
+0250, 6524, TAR, muestra puntos en el display numérico
+0251, 5205, VEA nuevo [0205], siguiente topo
+0252, 0000, SC,
+0253, 0000, SD,
+0254, 0000, P,
+0255, 0000, CT,
+0256, 0007, M7,
