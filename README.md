@@ -40,8 +40,6 @@ python -m http.server 8000
 # y visitar http://localhost:8000/CID201A.html
 ```
 
-También puede publicarse directamente en **GitHub Pages** sin build ni configuración adicional.
-
 **Primeros pasos recomendados:**
 
 1. Pulsar **ON-OFF** (botón rojo circular). El estado pasa a `ALTO`.
