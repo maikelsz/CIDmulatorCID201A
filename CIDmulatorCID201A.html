@@ -1,0 +1,3134 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>CIDmulator CID 201-A</title>
+
+<style>
+/* =================================================================
+   1) RESET, VARIABLES Y LAYOUT GLOBAL
+   ================================================================= */
+* { box-sizing: border-box; user-select: none; -webkit-user-select: none; }
+:root { --console-w: 1030px; --hp-w: 440px; --mm-w: 320px; --tt-w: 546px; --side-w: 150px; --rd-w: 178px; --gap: 14px; }
+@media (max-width: 1900px) { :root { --tt-w: 624px; } }
+body { margin: 0; min-height: 100vh; background: radial-gradient(circle at 50% 30%, #2a3447, #060810 80%); font-family: Arial, Helvetica, sans-serif; display: flex; justify-content: center; align-items: flex-start; gap: 20px; padding: 16px; color: #fff; }
+.main-wrap { display: flex; flex-direction: column; gap: var(--gap); align-items: center; max-width: 100%; }
+.main-row { display: flex; gap: var(--gap); align-items: flex-start; justify-content: center; max-width: 100%; }
+.is-hidden { display: none !important; }
+
+/* =================================================================
+   2) CONSOLA — SHELL Y PANELES SUPERIOR/INFERIOR
+   ================================================================= */
+.console {
+  background: #1a5a8a;
+  border-radius: 12px;
+  padding: 14px;
+  width: var(--console-w);
+  max-width: 100%;
+  box-shadow: 0 25px 70px rgba(0,0,0,.75), inset 0 0 0 1px rgba(255,255,255,.06), 0 0 0 3px #0a0f18;
+  border: 1px solid #060810;
+  flex-shrink: 0;
+}
+.top-panel, .bottom-panel { display: grid; grid-template-columns: 480px 150px 296px 1fr; gap: 10px; padding: 14px 18px; background: #181f2c; border-radius: 8px; box-shadow: inset 0 0 20px rgba(0,0,0,.55); }
+.top-panel { margin-bottom: 12px; align-items: center; }
+.bottom-panel { align-items: flex-start; }
+
+/* =================================================================
+   3) PANEL SUPERIOR — REGISTROS AC / RM / CP
+   ================================================================= */
+.reg-row { display: flex; align-items: center; gap: 8px; }
+.reg-label { width: 34px; flex-shrink: 0; font-size: 11px; font-weight: bold; color: #fff; letter-spacing: .5px; margin-left: 4px; }
+.en-spacer { width: 28px; height: 28px; flex-shrink: 0; visibility: hidden; }
+.en-box { width: 28px; height: 28px; flex-shrink: 0; border-radius: 3px; border: 1px solid rgba(0,0,0,.6); transition: background .08s, box-shadow .08s; }
+.bit-labels-row { display: flex; align-items: center; gap: 8px; margin-bottom: 2px; }
+.bit-label { width: 28px; text-align: center; color: #fff; font-size: 11px; font-weight: bold; }
+.bit-label.en-label, .bit-label.reg-spacer { width: 28px; flex-shrink: 0; }
+.bit-label.reg-spacer { width: 34px; visibility: hidden; }
+.bit-groups { display: flex; gap: 10px; }
+.bit-group { display: flex; gap: 4px; }
+.bit { width: 28px; height: 28px; border-radius: 3px; border: 1px solid rgba(0,0,0,.6); transition: background .08s, box-shadow .08s; }
+.bit.color-red, .en-box.color-red { background: #4a0c08; box-shadow: inset 0 0 3px rgba(0,0,0,.75); }
+.bit.color-red.on, .en-box.color-red.on { background: radial-gradient(circle at 40% 35%, #ff5544, #d02010); box-shadow: 0 0 14px #ff4433, inset 0 0 6px #ffb0a8; border-color: #6a0d08; }
+.bit.color-white { background: #4a4a4a; box-shadow: inset 0 0 3px rgba(0,0,0,.75); }
+.bit.color-white.on { background: radial-gradient(circle at 40% 35%, #fff, #d8d8d8); box-shadow: 0 0 14px #fff, inset 0 0 6px #fff; border-color: #aaa; }
+.col-regs { display: flex; flex-direction: column; gap: 6px; transform: translateY(-10.5px); }
+
+/* =================================================================
+   4) PANEL SUPERIOR — LETRAS ALFABÉTICAS A–O
+   ================================================================= */
+.col-letters { display: flex; justify-content: flex-start; }
+.letters-panel { display: grid; grid-template-columns: repeat(4, 33px); grid-template-rows: repeat(4, 33px); gap: 5px; }
+.letter { background: #4f4f4f; color: #ddd; display: flex; align-items: center; justify-content: center; border-radius: 3px; font-size: 20px; font-weight: bold; border: 1px solid #222; box-shadow: inset 0 1px 0 rgba(255,255,255,.1), 0 2px 3px rgba(0,0,0,.4); }
+.letter.active { background: radial-gradient(circle at 40% 35%, #fff, #c8c8c8); color: #111; box-shadow: 0 0 12px #fff, inset 0 0 5px #fff; border-color: #888; }
+
+/* =================================================================
+   5) PANEL SUPERIOR — DISPLAY NUMÉRICO NIXIE
+   ================================================================= */
+.col-display { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; width: 296px; transform: translateY(-20.5px) translateX(22px); }
+.logo { color: #fff; padding: 3px 14px; font-size: 22px; font-weight: 900; font-family: 'Arial Black', Arial, sans-serif; letter-spacing: 1px; border-radius: 3px; border: 1px solid #222; align-self: flex-end; width: fit-content; white-space: nowrap; }
+.num-display { background: #000; border: 3px solid #0a0a0a; border-radius: 6px; padding: 10px 14px; display: inline-flex; align-items: center; gap: 2px; box-shadow: inset 0 0 20px rgba(255,90,0,0.25), 0 0 0 2px #2a2a2a, 0 4px 10px rgba(0,0,0,0.5); min-height: 68px; }
+.num-digit { font-family: 'Courier New', monospace; font-size: 50px; font-weight: bold; color: #ff6a00; text-shadow: 0 0 18px #ff6a00, 0 0 8px #ffaa00, 0 0 2px #fff; width: 26px; text-align: center; line-height: 1; }
+.num-digit.dim { color: #552000; text-shadow: 0 0 6px #552000; }
+.num-sep { color: #ff6a00; font-size: 26px; font-weight: bold; text-shadow: 0 0 14px #ff6a00; margin-bottom: -10px; width: 6px; text-align: center; opacity: .55; }
+.sign-digit { font-family: 'Courier New', monospace; font-size: 43px; color: #ff6a00; text-shadow: 0 0 18px #ff6a00; margin-right: 8px; line-height: 1; width: 26px; text-align: center; }
+
+/* =================================================================
+   6) PANEL INFERIOR — COLUMNA DE CONTROLES
+   ================================================================= */
+.col-controls { display: flex; flex-direction: column; gap: 12px; }
+.control-row { position: relative; height: 90px; }
+
+/* -----------------------------------------------------------------
+   6.1 INTERRUPTORES BASE 28×48 (común a los 12 + ON-OFF aux)
+   ----------------------------------------------------------------- */
+.switch-row { display: flex; align-items: center; gap: 8px; }
+.switch { width: 28px; height: 48px; background: linear-gradient(to bottom, #6a6a6a, #4a4a4a); border-radius: 4px; position: relative; cursor: pointer; border: 2px solid #2a2a2a; box-shadow: inset 0 2px 3px rgba(255,255,255,.15), 0 3px 5px rgba(0,0,0,.5); }
+.switch::after { content: ''; position: absolute; width: 20px; height: 18px; background: linear-gradient(to bottom, #e8e8e8, #b0b0b0); border-radius: 3px; left: 50%; transform: translateX(-50%); top: 24px; transition: top .15s; box-shadow: 0 2px 4px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.8); }
+.switch.on::after { top: 3px; background: linear-gradient(to bottom, #fff, #d0d0d0); }
+
+/* -----------------------------------------------------------------
+   6.2 INTERRUPTORES 3 POSICIONES (mando de modo + LEC)
+   ----------------------------------------------------------------- */
+.switch.switch-3pos { width: 28px; height: 48px; flex-shrink: 0; }
+.switch.switch-3pos::after { width: 20px; height: 14px; top: 17px; }
+.switch.switch-3pos[data-pos="0"]::after { top: 2px; }
+.switch.switch-3pos[data-pos="1"]::after { top: 17px; }
+.switch.switch-3pos[data-pos="2"]::after { top: 32px; }
+
+/* -----------------------------------------------------------------
+   6.3 FILA DE 12 INTERRUPTORES (región + 4 subregiones delineadas)
+   ----------------------------------------------------------------- */
+.switch-groups { display: flex; gap: 0; background: transparent; border: 2px solid #fff; border-radius: 4px; padding: 0; }
+.switch-bank { display: flex; gap: 4px; border-left: 2px solid #fff; padding-left: 3px; padding-right: 4px; }
+.switch-bank:first-child { border-left: none; padding-left: 0; }
+.switch-bank:last-child { padding-right: 0; }
+
+/* -----------------------------------------------------------------
+   6.4 REGIONES COMUNES (fondo transparente + borde blanco 2 px)
+   ----------------------------------------------------------------- */
+.control-box,
+.mode-selector-wrapper,
+.cycle-panel,
+.aux-unified-box,
+.keypad {
+  background: transparent;
+  border: 2px solid #fff;
+}
+
+/* -----------------------------------------------------------------
+   6.5 ON-OFF y MANDO DE MODO DE EJECUCIÓN
+   ----------------------------------------------------------------- */
+.control-box { border-radius: 5px; padding: 6px; }
+.onoff-box { position: absolute; left: 60px; top: 15px; display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 6px 6px 3px 6px; }
+.onoff-btn { width: 30px; height: 30px; background: radial-gradient(circle at 40% 35%, #7a2018, #45100a 70%); border-radius: 50%; border: 2px solid #2a2a2a; cursor: pointer; box-shadow: inset 0 2px 5px rgba(0,0,0,.4), 0 2px 4px rgba(0,0,0,.5); transition: all .15s; padding: 0; }
+.onoff-label { font-size: 7px; letter-spacing: .3px; color: #fff; white-space: nowrap; line-height: 1; }
+.onoff-btn.on { background: radial-gradient(circle at 40% 35%, #ff4433, #8a1510 70%); box-shadow: 0 0 18px #ff4433, inset 0 2px 5px rgba(255,255,255,.3), 0 2px 4px rgba(0,0,0,.5); }
+
+.mode-selector-wrapper { position: absolute; left: 165px; top: 15px; display: flex; gap: 4px; align-items: flex-start; border-radius: 5px; padding: 4px; }
+.switch-labels-right { width: 26px; height: 48px; display: flex; flex-direction: column; justify-content: space-around; font-size: 7.5px; font-weight: bold; color: #fff; text-align: left; line-height: 1; }
+.switch-labels-right span { border: 1px solid #fff; padding: 0; border-radius: 0; white-space: nowrap; overflow: hidden; }
+
+/* -----------------------------------------------------------------
+   6.6 INDICADORES DE CICLO (CD / CM / CI / AD / CV / CO)
+   ----------------------------------------------------------------- */
+.cycle-panel { position: absolute; left: 236px; top: 15px; display: flex; flex-direction: column; gap: 6px; border-radius: 5px; padding: 3px; }
+.cycle-row { display: flex; gap: 8px; justify-content: center; border: 1px solid #fff; border-radius: 3px; padding: 0; }
+.cycle-item { display: flex; flex-direction: column; align-items: center; gap: 3px; }
+.cycle-led { width: 24px; height: 20px; border-radius: 3px; border: 1px solid rgba(0,0,0,.75); transition: all .1s; }
+.cycle-led.color-white { background: #4a4a4a; box-shadow: inset 0 0 3px rgba(0,0,0,.75); }
+.cycle-led.color-white.on { background: radial-gradient(circle at 40% 35%, #fff, #d8d8d8); box-shadow: 0 0 12px #fff, inset 0 0 6px #fff; border-color: #aaa; }
+.cycle-led.color-red { background: #4a0c08; box-shadow: inset 0 0 3px rgba(0,0,0,.75); }
+.cycle-led.color-red.on { background: radial-gradient(circle at 40% 35%, #ff5544, #d02010); box-shadow: 0 0 12px #ff4433, inset 0 0 6px #ffb0a8; border-color: #6a0d08; }
+.cycle-let { color: #fff; font-size: 9px; font-weight: bold; text-align: center; border: 1px solid #fff; padding: 0 3px; border-radius: 2px; }
+
+/* -----------------------------------------------------------------
+   6.7 INTERRUPTORES AUXILIARES (4 × ON-OFF + mando LEC/LT/ESC)
+   ----------------------------------------------------------------- */
+.aux-row { display: flex; gap: 12px; align-items: flex-start; padding-left: 36px; margin-top: -3px; }
+.aux-unified-box { display: flex; gap: 4px; align-items: flex-start; border-radius: 5px; padding: 2px 0; }
+
+.aux-switch-bank { display: flex; gap: 4px; align-items: center; }
+.aux-switch-bank .switch { width: 28px; height: 48px; }
+.aux-switch-bank .switch::after { width: 20px; height: 18px; top: 24px; }
+.aux-switch-bank .switch.on::after { top: 3px; }
+
+.aux-lec-wrapper { display: flex; gap: 4px; align-items: flex-start; padding-left: 3px; border-left: 2px solid #fff; }
+.aux-lec-wrapper .switch { width: 28px; height: 48px; flex-shrink: 0; }
+.aux-lec-wrapper .switch::after { width: 20px; height: 14px; }
+.aux-lec-wrapper .switch[data-pos="0"]::after { top: 2px; }
+.aux-lec-wrapper .switch[data-pos="1"]::after { top: 17px; }
+.aux-lec-wrapper .switch[data-pos="2"]::after { top: 32px; }
+
+.lec-labels { width: 26px; height: 48px; display: flex; flex-direction: column; justify-content: space-around; font-size: 7.5px; font-weight: bold; color: #fff; text-align: left; line-height: 1; margin-right: -2px; }
+.lec-labels span { border: 1px solid #fff; padding: 0; border-radius: 0; white-space: nowrap; overflow: hidden; }
+
+/* =================================================================
+   7) PANEL INFERIOR — BOTONES (LEFT / KEYPAD / RIGHT)
+   ================================================================= */
+.pbtn { width: 48px; height: 48px; background: linear-gradient(to bottom, #e8e8e8, #b8b8b8); color: #111; border: 2px solid #555; border-radius: 4px; font-weight: bold; font-size: 15px; cursor: pointer; box-shadow: inset 0 2px 3px rgba(255,255,255,.7), 0 3px 4px rgba(0,0,0,.5); transition: all .08s; font-family: Arial, sans-serif; letter-spacing: .3px; padding: 0; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.pbtn:hover { background: linear-gradient(to bottom, #f0f0f0, #c0c0c0); }
+.pbtn:active, .pbtn.pressed { transform: translateY(2px); box-shadow: inset 0 2px 4px rgba(0,0,0,.3), 0 1px 2px rgba(0,0,0,.5); background: linear-gradient(to bottom, #c8c8c8, #a0a0a0); }
+
+.keypad-section { grid-column: 2 / 4; justify-self: start; margin-left: -60px; display: flex; gap: 36px; align-items: flex-start; }
+.left-buttons { display: grid; grid-template-columns: repeat(3, 48px); grid-template-rows: repeat(3, 48px); gap: 6px 18px; align-content: space-between; height: 224px; position: relative; left: -4.5px; }
+.keypad { display: grid; grid-template-columns: repeat(3, 48px); grid-template-rows: repeat(4, 48px); gap: 4px; padding: 8px; border-radius: 5px; }
+.keypad .pbtn { font-size: 18px; }
+.keypad .wide { grid-column: span 2; width: 100px; }
+.keypad .dot { font-size: 18px; }
+.right-buttons { display: grid; grid-template-columns: repeat(2, 48px); gap: 6px 18px; align-content: space-between; height: 224px; }
+
+.left-buttons .pbtn,
+.right-buttons .pbtn {
+  outline: 2px solid #fff;
+  outline-offset: 4px;
+  border-radius: 1px;
+}
+
+/* =================================================================
+   8) BARRA DE ESTADO
+   ================================================================= */
+.status-bar { margin-top: 10px; padding: 6px 12px; background: #101828; border-radius: 4px; color: #88ff88; font-family: 'Courier New', monospace; font-size: 12px; display: flex; gap: 15px; flex-wrap: wrap; align-items: center; transition: all .15s; min-height: 32px; }
+.status-bar .lbl { color: #88aaff; }
+.status-bar .sb-field.disabled { opacity: .25; color: #445544; }
+.status-bar .sb-field.disabled .lbl { color: #445577; }
+#sb-speed { display: inline-flex; align-items: center; gap: 5px; line-height: 1; }
+#sb-speed #st-speed { color: #88ff88; min-width: 42px; display: inline-block; text-align: right; }
+#speed-slider { -webkit-appearance: none; appearance: none; width: 70px; height: 4px; background: #1a2233; border-radius: 2px; outline: none; border: 1px solid #0a0f18; margin: 0; padding: 0; vertical-align: middle; cursor: pointer; display: inline-block; }
+#speed-slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 8px; height: 14px; background: linear-gradient(to bottom, #e8e8e8, #b0b0b0); border: 1px solid #444; border-radius: 2px; cursor: pointer; box-shadow: 0 1px 2px rgba(0,0,0,.5); margin-top: -1px; }
+#speed-slider::-moz-range-thumb { width: 8px; height: 14px; background: linear-gradient(to bottom, #e8e8e8, #b0b0b0); border: 1px solid #444; border-radius: 2px; cursor: pointer; }
+.sb-periph { display: flex; gap: 6px; margin-left: auto; }
+.sb-icon-btn { width: 26px; height: 22px; background: linear-gradient(to bottom, #2a3547, #1a2334); border: 1px solid #0a0f18; border-radius: 3px; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #88aaff; transition: all .15s; padding: 0; font-family: inherit; }
+.sb-icon-btn:hover { background: linear-gradient(to bottom, #3a4560, #202b3f); color: #aac8ff; }
+.sb-icon-btn.active { background: linear-gradient(to bottom, #4a6080, #2a3a55); border-color: #6a90c0; box-shadow: 0 0 8px rgba(120,170,255,.5), inset 0 0 4px rgba(120,170,255,.3); color: #fff; }
+.sb-icon-btn svg { width: 16px; height: 14px; display: block; }
+
+/* =================================================================
+   9) TÍTULOS COMUNES DE PANELES PERIFÉRICOS
+   ================================================================= */
+.tt-title-center, .rd-title-center, .hp-title-center, .mm-title, .tt-side-title { background: #050505; color: #fff; padding: 4px 10px; font-size: 16px; font-weight: 900; font-family: 'Arial Black', Arial, sans-serif; letter-spacing: 1px; border-radius: 3px; border: 1px solid #222; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 32px; line-height: 1.15; box-sizing: border-box; }
+.tt-title-center span, .rd-title-center span, .hp-title-center span, .tt-side-title span { display: block; }
+.tt-title-center .big, .rd-title-center .big, .hp-title-center .big, .tt-side-title .big { font-size: 16px; }
+.tt-title-center .small, .rd-title-center .small, .hp-title-center .small, .tt-side-title .small { font-size: 11px; letter-spacing: .8px; }
+
+/* =================================================================
+   10) PANEL: MAPA DE MEMORIA
+   ================================================================= */
+.memmap-panel { width: 0; overflow: hidden; background: #1b2435; border-radius: 12px; box-shadow: 0 25px 70px rgba(0,0,0,.75), inset 0 0 0 1px rgba(255,255,255,.06), 0 0 0 3px #0a0f18; border: 1px solid #060810; transition: width .4s ease, padding .4s ease, opacity .3s ease; opacity: 0; padding: 0; flex-shrink: 0; }
+.memmap-panel.open { width: var(--mm-w); padding: 12px; opacity: 1; }
+.mm-inner { display: flex; flex-direction: column; gap: 8px; width: 100%; }
+.mm-controls { background: #33405a; border: 2px solid #202b3f; border-radius: 5px; padding: 5px 6px; display: flex; flex-direction: column; gap: 4px; }
+.mm-ctrl-row { display: flex; gap: 4px; align-items: center; justify-content: center; }
+.mm-nav-btn { padding: 4px 8px; font-size: 11px; font-weight: bold; background: linear-gradient(to bottom, #e8e8e8, #b8b8b8); color: #111; border: 2px solid #555; border-radius: 4px; cursor: pointer; font-family: inherit; transition: all .08s; box-shadow: inset 0 2px 3px rgba(255,255,255,.7), 0 2px 3px rgba(0,0,0,.5); white-space: nowrap; }
+.mm-page-label { color: #aac8ff; font-size: 9px; font-weight: bold; letter-spacing: 1px; padding: 0 3px; white-space: nowrap; }
+.mm-body { background: #050810; border: 3px solid #0a0a0a; border-radius: 4px; height: 480px; overflow-y: scroll; overflow-x: hidden; font-family: 'Courier New', monospace; font-size: 11px; box-shadow: inset 0 0 20px rgba(0,0,0,.5); position: relative; }
+.mm-header-row { display: flex; position: sticky; top: 0; background: #101828; border-bottom: 2px solid #2a3547; z-index: 2; font-weight: bold; color: #aac8ff; font-size: 11px; }
+.mm-header-row > span { padding: 4px 6px; text-align: center; border-right: 1px solid #2a3547; }
+.mm-page-divider { background: linear-gradient(to right, #2a3547, #1a2535); color: #aac8ff; padding: 2px 6px; font-size: 10px; font-weight: bold; border-top: 2px solid #4a6080; border-bottom: 1px solid #0a1220; display: flex; justify-content: space-between; align-items: center; gap: 6px; }
+.mm-page-divider .mm-page-num { color: #88ff88; }
+.mm-page-divider .mm-page-range { color: #88aaff; font-weight: normal; font-size: 9px; }
+.mm-row { display: flex; border-bottom: 1px solid #0a1220; line-height: 1.3; transition: background .08s; }
+.mm-row:hover { background: #0e1626; }
+.mm-row > span { padding: 1px 6px; border-right: 1px solid #0a1220; flex-shrink: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mm-col-abs { width: 62px; color: #88aaff; }
+.mm-col-rel { width: 56px; color: #6a8ac0; }
+.mm-col-val { flex: 1; min-width: 0; color: #88ff88; }
+.mm-row.current { background: #4a2080; box-shadow: inset 0 0 10px rgba(170,136,255,.6); }
+.mm-row.current > span { color: #fff !important; text-shadow: 0 0 6px #aa88ff, 0 0 2px #fff; font-weight: bold; }
+.mm-edit-input { background: #050810; color: #88ff88; border: 1px solid #88ff88; font-family: 'Courier New', monospace; font-size: 11px; width: 100%; padding: 0; margin: 0; outline: none; text-align: center; box-shadow: 0 0 6px rgba(136,255,136,0.5); }
+
+/* =================================================================
+   11) PANEL: TELETIPO / PERFORADOR
+   ================================================================= */
+.teletipo-panel { width: 0; overflow: hidden; background: #1b2435; border-radius: 12px; box-shadow: 0 25px 70px rgba(0,0,0,.75), inset 0 0 0 1px rgba(255,255,255,.06), 0 0 0 3px #0a0f18; border: 1px solid #060810; transition: width .4s ease, padding .4s ease, opacity .3s ease; opacity: 0; padding: 0; flex-shrink: 0; }
+.teletipo-panel.open { width: var(--tt-w); padding: 14px; opacity: 1; }
+.tt-inner { display: flex; flex-direction: column; gap: 10px; min-width: 590px; }
+.tt-header-row { display: flex; gap: 10px; align-items: stretch; }
+.tt-header-row > .tt-side-title { width: var(--side-w); flex-shrink: 0; justify-content: center; }
+.tt-header-row > .tt-title-center { flex: 1; }
+.tt-main { display: flex; gap: 10px; align-items: flex-start; }
+.tt-side-col { width: var(--side-w); display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; align-items: stretch; }
+.tt-center-col { flex: 1; display: flex; flex-direction: column; gap: 8px; min-width: 0; align-items: center; }
+.tt-paper { background: #f5f2e8; color: #222; border: 3px solid #0a0a0a; border-radius: 4px; padding: 8px 10px; height: 320px; overflow-y: auto; font-family: 'Courier New', monospace; font-size: 12px; line-height: 1.35; white-space: pre-wrap; box-shadow: inset 0 0 20px rgba(0,0,0,.12); display: flex; flex-direction: column; width: 100%; max-width: 100%; box-sizing: border-box; }
+.tt-cursor{display:inline-block;width:7px;height:13px;background:#222; vertical-align:text-bottom;margin-left:1px; animation:tt-blink 1s steps(2,start) infinite}
+@keyframes tt-blink{0%,50%{opacity:1}50.01%,100%{opacity:0}}
+.tt-paper-spacer { flex: 1 0 0; min-height: 0; }
+.tt-paper-content { flex: 0 0 auto; }
+.tt-line { display: block; }
+.tt-mode-control { background: #33405a; border: 2px solid #202b3f; border-radius: 5px; padding: 6px 10px; display: flex; align-items: center; gap: 8px; font-size: 11px; color: #fff; flex-wrap: wrap; }
+.tt-mode-control label { font-weight: bold; letter-spacing: .5px; color: #aac8ff; flex-shrink: 0; }
+.tt-mode-btns { display: flex; gap: 4px; }
+.tt-mode-btn { padding: 3px 10px; font-size: 10px; font-weight: bold; background: #1a2233; color: #ddd; border: 1px solid #0a0f18; border-radius: 3px; cursor: pointer; transition: all .12s; font-family: inherit; }
+.tt-mode-btn.active { background: #dcdcdc; color: #000; box-shadow: 0 0 6px rgba(255,255,255,.4); }
+.tt-mode-control .tt-ready-btn { padding: 4px 10px; font-size: 10px; width: auto; flex-shrink: 0; }
+.tt-mode-control .tt-sound-toggle { margin-left: auto; flex-shrink: 0; }
+.tt-sound-toggle { padding: 3px 8px; font-size: 10px; font-weight: bold; background: #1a2233; color: #ddd; border: 1px solid #0a0f18; border-radius: 3px; cursor: pointer; transition: all .12s; font-family: inherit; display: flex; align-items: center; gap: 4px; }
+.tt-sound-toggle.on { background: #dcdcdc; color: #000; }
+.tt-keyboard { background: #33405a; border: 2px solid #202b3f; border-radius: 5px; padding: 6px; display: flex; flex-direction: column; gap: 4px; width: 100%; max-width: 100%; box-sizing: border-box; }
+/* Teclado del teletipo: 12 columnas de 28 px */
+.tt-key-row { display: grid; grid-template-columns: repeat(12, 28px); gap: 3px; justify-content: center; }
+.tt-key { min-width: 28px; height: 28px; padding: 0 5px; background: linear-gradient(to bottom, #e8e8e8, #b0b0b0); border: 2px solid #444; border-radius: 3px; font-weight: bold; font-size: 11px; color: #111; cursor: pointer; box-shadow: inset 0 2px 3px rgba(255,255,255,.6), 0 2px 3px rgba(0,0,0,.5); transition: all .05s; font-family: 'Courier New', monospace; display: flex; align-items: center; justify-content: center; user-select: none; }
+.tt-key:active, .tt-key.pressed { transform: translateY(2px); background: linear-gradient(to bottom, #b8b8b8, #909090); }
+.tt-key.wide { min-width: 55px; }
+.tt-key.special { background: linear-gradient(to bottom, #d8d0b8, #a09878); }
+.tt-key.figs-key { background: linear-gradient(to bottom, #e0c8a0, #b09060); border-color: #6a4a20; color: #2a1500; font-weight: bold; }
+.tt-key.inactive { opacity: .45; cursor: not-allowed; background: linear-gradient(to bottom, #888, #666); color: #ccc; }
+.tt-key.active-char { background: linear-gradient(to bottom, #ffd060, #d09020); box-shadow: 0 0 10px #ffd060; }
+.tt-key-ltr { grid-column: span 2; }
+.tt-key-espacio { grid-column: span 6; }
+.tt-key-lf { grid-column: span 2; }
+.tt-key-cr { height: 60px; margin-bottom: -32px; align-self: start; z-index: 1; }
+.tt-tape-vertical { background: #d8cfb0; border: 3px solid #0a0a0a; border-radius: 3px; padding: 6px 4px; height: 347px; overflow-y: scroll; font-family: 'DejaVu Sans Mono', 'Courier New', monospace; font-size: 12px; line-height: 1.3; white-space: pre; color: #222; box-shadow: inset 0 0 15px rgba(0,0,0,.25); width: 100%; }
+.tt-tape-vertical .row-line { display: block; min-height: 15px; white-space: pre; }
+.tt-tape-vertical .row-line.shift { color: #8a3a00; font-weight: bold; }
+.tt-tape-vertical .row-line.raw { color: #4a3050; }
+.tt-tape-vertical .header-comment { color: #5a4a30; font-style: italic; }
+.tt-side-controls { display: flex; flex-direction: column; gap: 4px; width: 100%; }
+.tt-side-btn, .tt-ready-btn, .tt-stop-btn { width: 100%; padding: 5px 8px; font-size: 10px; font-weight: bold; background: linear-gradient(to bottom, #e8e8e8, #b8b8b8); color: #111; border: 2px solid #555; border-radius: 4px; cursor: pointer; box-shadow: inset 0 2px 3px rgba(255,255,255,.7), 0 2px 3px rgba(0,0,0,.5); transition: all .08s; font-family: inherit; display: flex; align-items: center; justify-content: center; gap: 5px; box-sizing: border-box; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tt-ready-btn::before { content: ''; display: inline-block; width: 9px; height: 9px; border-radius: 50%; background: #3a0505; border: 1px solid #6a0a0a; box-shadow: inset 0 1px 2px rgba(0,0,0,.6); transition: all .15s; }
+.tt-ready-btn.ready { background: linear-gradient(to bottom, #ccffcc, #66dd66); border-color: #2a8a2a; color: #062a06; }
+.tt-ready-btn.ready::before { background: #22ff22; border-color: #006600; box-shadow: 0 0 8px #22ff22, inset 0 0 3px #fff; }
+.tt-stop-btn { background: linear-gradient(to bottom, #e8b0b0, #c07070); color: #2a0505; border-color: #8a3030; }
+
+/* =================================================================
+   12) PANEL: LECTOR DE CINTA
+   ================================================================= */
+.reader-panel { width: 0; overflow: hidden; background: #1b2435; border-radius: 12px; box-shadow: 0 25px 70px rgba(0,0,0,.75), inset 0 0 0 1px rgba(255,255,255,.06), 0 0 0 3px #0a0f18; border: 1px solid #060810; transition: width .4s ease, padding .4s ease, opacity .3s ease; opacity: 0; padding: 0; flex-shrink: 0; }
+.reader-panel.open { width: var(--rd-w); padding: 14px; opacity: 1; }
+.rd-inner { display: flex; flex-direction: column; gap: 10px; align-items: stretch; width: 100%; }
+
+/* =================================================================
+   13) PANEL: AYUDA
+   ================================================================= */
+.help-panel { width: 0; overflow: hidden; background: #1b2435; border-radius: 12px; box-shadow: 0 25px 70px rgba(0,0,0,.75), inset 0 0 0 1px rgba(255,255,255,.06), 0 0 0 3px #0a0f18; border: 1px solid #060810; transition: width .4s ease, padding .4s ease, opacity .3s ease; opacity: 0; padding: 0; flex-shrink: 0; }
+.help-panel.open { width: var(--hp-w); padding: 14px; opacity: 1; }
+.help-panel.row2-full.open { width: var(--console-w); }
+.hp-inner { display: flex; flex-direction: column; gap: 10px; width: 100%; }
+.hp-content { background: #f5f2e8; color: #222; border: 3px solid #0a0a0a; border-radius: 4px; padding: 12px 14px; height: 620px; overflow-y: auto; font-family: Arial, sans-serif; font-size: 12px; line-height: 1.45; }
+.hp-content h3 { margin: 14px 0 6px; font-size: 13px; color: #0a2a4a; border-bottom: 1px solid #c8c0a8; padding-bottom: 2px; }
+.hp-content h3:first-child { margin-top: 0; }
+.hp-content p { margin: 4px 0 8px; }
+.hp-content ul, .hp-content ol { margin: 4px 0 8px; padding-left: 20px; }
+.hp-content code { background: #e0dcc8; padding: 1px 4px; border-radius: 2px; font-family: 'Courier New', monospace; font-size: 11px; }
+.hp-content b { color: #1a3a5a; }
+.hp-code { background: #faf8f0; border: 1px solid #c8c0a8; border-radius: 3px; padding: 8px 10px; margin: 8px 0; font-family: 'Courier New', monospace; font-size: 10px; line-height: 1.4; white-space: pre; overflow-x: auto; color: #111; }
+
+/* =================================================================
+   14) MEDIA QUERIES
+   ================================================================= */
+@media (max-width: 1900px) {
+  .tt-inner { min-width: 540px; }
+  .tt-tape-vertical { height: 293px; font-size: 11px; }
+  .tt-paper { height: 260px; }
+  .mm-body { height: 420px; }
+  .hp-content { height: 540px; }
+}
+</style>
+
+</head>
+<body>
+<div class="main-wrap" id="main-wrap">
+  <div class="main-row" id="main-row-1">
+  
+   
+<div class="teletipo-panel is-hidden" id="teletipo-panel">
+      <div class="tt-inner">
+        <div class="tt-header-row">
+          <div class="tt-side-title"><span class="big">PERFORADOR</span></div>
+          <div class="tt-title-center"><span class="big">TELETIPO</span><span class="small">RFT T-51</span></div>
+        </div>
+        <div class="tt-main">
+          <div class="tt-side-col">
+            <div class="tt-tape-vertical" id="tt-tape-out"><span class="header-comment">= Cinta vacía =</span></div>
+            <div class="tt-side-controls"><button class="tt-side-btn" id="tt-save-btn">Guardar cinta</button><button class="tt-side-btn" id="tt-clear-out-btn">Limpiar cinta</button></div>
+          </div>
+          <div class="tt-center-col">
+            <div class="tt-paper" id="tt-paper"><div class="tt-paper-spacer"></div><div class="tt-paper-content" id="tt-paper-content"></div></div>
+<div class="tt-keyboard">
+  <!-- Fila 1: números -->
+  <div class="tt-key-row">
+    <button class="tt-key" data-tt="1">1</button>
+    <button class="tt-key" data-tt="2">2</button>
+    <button class="tt-key" data-tt="3">3</button>
+    <button class="tt-key" data-tt="4">4</button>
+    <button class="tt-key" data-tt="5">5</button>
+    <button class="tt-key" data-tt="6">6</button>
+    <button class="tt-key" data-tt="7">7</button>
+    <button class="tt-key" data-tt="8">8</button>
+    <button class="tt-key" data-tt="9">9</button>
+    <button class="tt-key" data-tt="0">0</button>
+  </div>
+
+  <!-- Fila 2: símbolos FIGS + LF a la derecha de "=" (debajo de "0") -->
+	<div class="tt-key-row">
+	  <button class="tt-key figs-key" data-tt="?">?</button>
+	  <button class="tt-key figs-key" data-tt="&amp;">&amp;</button>
+	  <button class="tt-key figs-key" data-tt="(">(</button>
+	  <button class="tt-key figs-key" data-tt=")">)</button>
+	  <button class="tt-key figs-key" data-tt="%">%</button>
+	  <button class="tt-key figs-key" data-tt="/">/</button>
+	  <button class="tt-key figs-key" data-tt="-">-</button>
+	  <button class="tt-key figs-key" data-tt="+">+</button>
+	  <button class="tt-key figs-key" data-tt="=">=</button>
+	  <button class="tt-key special tt-key-lf" data-tt="LF">LF</button>
+	</div>
+
+  <!-- Fila 3: letras Q…P + CR al lado de P (ocupa 2 filas de alto) -->
+  <div class="tt-key-row">
+    <button class="tt-key" data-tt="Q">Q</button>
+    <button class="tt-key" data-tt="W">W</button>
+    <button class="tt-key" data-tt="E">E</button>
+    <button class="tt-key" data-tt="R">R</button>
+    <button class="tt-key" data-tt="T">T</button>
+    <button class="tt-key" data-tt="Y">Y</button>
+    <button class="tt-key" data-tt="U">U</button>
+    <button class="tt-key" data-tt="I">I</button>
+    <button class="tt-key" data-tt="O">O</button>
+    <button class="tt-key" data-tt="P">P</button>
+	<button class="tt-key special tt-key-cr" data-tt="CR">CR</button>
+  </div>
+
+  <!-- Fila 4: letras A…' (sin LF, que se ha movido a la fila 2) -->
+  <div class="tt-key-row">
+    <button class="tt-key" data-tt="A">A</button>
+    <button class="tt-key" data-tt="S">S</button>
+    <button class="tt-key" data-tt="D">D</button>
+    <button class="tt-key" data-tt="F">F</button>
+    <button class="tt-key" data-tt="G">G</button>
+    <button class="tt-key" data-tt="H">H</button>
+    <button class="tt-key" data-tt="J">J</button>
+    <button class="tt-key" data-tt="K">K</button>
+    <button class="tt-key" data-tt="L">L</button>
+	<button class="tt-key figs-key" data-tt="'">'</button>
+  </div>
+
+  <!-- Fila 5: letras Z…M + signos -->
+  <div class="tt-key-row">
+    <button class="tt-key" data-tt="Z">Z</button>
+    <button class="tt-key" data-tt="X">X</button>
+    <button class="tt-key" data-tt="C">C</button>
+    <button class="tt-key" data-tt="V">V</button>
+    <button class="tt-key" data-tt="B">B</button>
+    <button class="tt-key" data-tt="N">N</button>
+    <button class="tt-key" data-tt="M">M</button>
+    <button class="tt-key figs-key" data-tt=",">,</button>
+    <button class="tt-key figs-key" data-tt=".">.</button>
+    <button class="tt-key figs-key" data-tt=":">:</button>
+  </div>
+
+  <!-- Fila 6: LTR + ESPACIO -->
+  <div class="tt-key-row">
+    <button class="tt-key special inactive tt-key-ltr" data-tt="LTR" disabled>LTR</button>
+    <button class="tt-key special tt-key-espacio" data-tt=" ">ESPACIO</button>
+  </div>
+</div>
+
+	<div class="reader-panel is-hidden" id="reader-panel">
+      <div class="rd-inner">
+        <div class="rd-title-center"><span class="big">LECTOR</span><span class="small">RFT T-53</span></div>
+        <div class="tt-tape-vertical" id="tt-tape-in"><span class="header-comment">= Sin cinta =</span></div>
+        <div class="tt-side-controls">
+          <button class="tt-side-btn" id="tt-load-btn">Cargar cinta</button>
+          <button class="tt-side-btn" id="tt-read-btn">Leer → Teletipo</button>
+          <button class="tt-ready-btn ready" id="tt-reader-ready-btn">LISTO</button>
+          <button class="tt-stop-btn" id="tt-reader-stop-btn">DETENER</button>
+          <input type="file" id="tt-file-input" accept=".txt,.cinta" style="display:none">
+        </div>
+      </div>
+    </div>
+	
+            <div class="tt-mode-control">
+              <button class="tt-ready-btn ready" id="tt-teletype-ready-btn" title="Recepción">LISTO</button>
+              <div class="tt-mode-btns">
+                <button class="tt-mode-btn" data-mode="print">Imprimir</button>
+                <button class="tt-mode-btn active" data-mode="both">Ambos</button>
+                <button class="tt-mode-btn" data-mode="tape">Perforar</button>
+                <button class="tt-mode-btn" data-mode="raw">Binario</button>
+              </div>
+              <button class="tt-sound-toggle on" id="tt-sound-toggle" title="Sonido">🔊</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>	
+	
+
+	
+	 <div class="console">
+      <div class="top-panel">
+        <div class="col-regs">
+          <div class="bit-labels-row"><div class="bit-label en-label"></div><div class="bit-groups" id="bit-labels-groups"></div><div class="bit-label reg-spacer"></div></div>
+          <div class="reg-row"><div class="en-box color-red" id="en-ac"></div><div class="bit-groups" id="bits-ac"></div><span class="reg-label">AC</span></div>
+          <div class="reg-row"><div class="en-spacer"></div><div class="bit-groups" id="bits-rm"></div><span class="reg-label">RM</span></div>
+          <div class="reg-row"><div class="en-spacer"></div><div class="bit-groups" id="bits-cp"></div><span class="reg-label">CP</span></div>
+        </div>
+        <div class="col-letters"><div class="letters-panel" id="letters-panel"></div></div>
+        <div class="col-display"><div class="logo">CID 201-A</div><div class="num-display" id="num-display"></div></div>
+      </div>
+      <div class="bottom-panel">
+        <div class="col-controls">
+          <div class="switch-row">
+            <div class="bit-label en-label"></div>
+            <div class="switch-groups"><div class="switch-bank" id="sw-bank-0"></div><div class="switch-bank" id="sw-bank-1"></div><div class="switch-bank" id="sw-bank-2"></div><div class="switch-bank" id="sw-bank-3"></div></div>
+            <div class="bit-label reg-spacer"></div>
+          </div>
+          <div class="control-row">
+            <div class="control-box onoff-box"><div class="onoff-btn" id="btn-onoff"></div><span class="onoff-label">ON-OFF</span></div>
+            <div class="mode-selector-wrapper"><div class="switch switch-3pos" id="mode-switch" data-pos="0"></div><div class="switch-labels-right"><span>CONT</span><span>CICLO</span><span>PASO</span></div></div>
+            <div class="cycle-panel">
+              <div class="cycle-row">
+                <div class="cycle-item"><div class="cycle-led color-white" data-cycle="CD"></div><span class="cycle-let">CD</span></div>
+                <div class="cycle-item"><div class="cycle-led color-red" data-cycle="CM"></div><span class="cycle-let">CM</span></div>
+                <div class="cycle-item"><div class="cycle-led color-white" data-cycle="CI"></div><span class="cycle-let">CI</span></div>
+              </div>
+              <div class="cycle-row">
+                <div class="cycle-item"><div class="cycle-led color-red" data-cycle="AD"></div><span class="cycle-let">AD</span></div>
+                <div class="cycle-item"><div class="cycle-led color-white" data-cycle="CV"></div><span class="cycle-let">CV</span></div>
+                <div class="cycle-item"><div class="cycle-led color-red" data-cycle="CO"></div><span class="cycle-let">CO</span></div>
+              </div>
+            </div>
+          </div>
+          <div class="aux-row"><div class="aux-unified-box"><div class="aux-switch-bank" id="aux-bank-1"></div><div class="aux-lec-wrapper"><div class="switch switch-3pos" id="lec-switch" data-pos="0"></div><div class="lec-labels"><span>LEC</span><span>LT</span><span>ESC</span></div></div></div></div>
+        </div>
+        <div class="keypad-section">
+          <div class="left-buttons">
+            <button class="pbtn" data-key="DEP" style="grid-column:2;grid-row:1;">DEP</button>
+            <button class="pbtn" data-key="COM" style="grid-column:3;grid-row:1;">COM</button>
+            <button class="pbtn" data-key="EXA" style="grid-column:2;grid-row:2;">EXA</button>
+            <button class="pbtn" data-key="ALT" style="grid-column:3;grid-row:2;">ALT</button>
+            <button class="pbtn" data-key="PUL" style="grid-column:1;grid-row:3;">PUL</button>
+            <button class="pbtn" data-key="CPR" style="grid-column:2;grid-row:3;">CPR</button>
+            <button class="pbtn" data-key="REC" style="grid-column:3;grid-row:3;">REC</button>
+          </div>
+          <div class="keypad">
+            <button class="pbtn" data-num="7">7</button><button class="pbtn" data-num="8">8</button><button class="pbtn" data-num="9">9</button>
+            <button class="pbtn" data-num="4">4</button><button class="pbtn" data-num="5">5</button><button class="pbtn" data-num="6">6</button>
+            <button class="pbtn" data-num="1">1</button><button class="pbtn" data-num="2">2</button><button class="pbtn" data-num="3">3</button>
+            <button class="pbtn wide" data-num="0">0</button><button class="pbtn dot" data-key="FRAC">.</button>
+          </div>
+          <div class="right-buttons">
+            <button class="pbtn" data-key="ALM">ALM</button><button class="pbtn" data-key="ENC">ENC</button>
+            <button class="pbtn" data-key="BOR">BOR</button><button class="pbtn" data-key="ENB">ENB</button>
+            <button class="pbtn" data-key="SIGN">−</button><button class="pbtn" data-key="ENA">ENA</button>
+          </div>
+        </div>
+      </div>
+      <div class="status-bar" id="status-bar">
+        <span class="sb-field" id="sb-en"><span class="lbl">EN:</span> <span id="st-en">0</span></span>
+        <span class="sb-field" id="sb-ac"><span class="lbl">AC:</span> <span id="st-ac">0000</span></span>
+        <span class="sb-field" id="sb-rm"><span class="lbl">RM:</span> <span id="st-rm">0000</span></span>
+        <span class="sb-field" id="sb-cp"><span class="lbl">CP:</span> <span id="st-cp">0000</span></span>
+        <span class="sb-field" id="sb-sw"><span class="lbl">SW:</span> <span id="st-sw">0000</span></span>
+        <span class="sb-field" id="sb-mode"><span class="lbl">Modo:</span> <span id="st-mode">CONT</span></span>
+        <span class="sb-field" id="sb-state"><span class="lbl">Estado:</span> <span id="st-state">APAGADO</span></span>
+        <span class="sb-field" id="sb-speed"><span class="lbl">Velocidad:</span><input type="range" id="speed-slider" min="0" max="2" step="1" value="2"><span id="st-speed">75000</span> inst/s</span>
+        <span class="sb-periph">
+            <button class="sb-icon-btn" id="btn-load" title="Cargar programa compilado (.lst)">
+                <svg viewBox="0 0 24 20" fill="none" stroke="currentColor" stroke-width="1.6">
+                    <path d="M3 16 V6 a1 1 0 0 1 1-1 h4 l2 2 h9 a1 1 0 0 1 1 1 v2" /><!-- fondo + pestaña -->
+                    <path d="M3 16 L6 9 H22 L19 16 Z" /><!-- tapa abierta (trapecio) -->
+                </svg>
+            </button>
+            <input type="file" id="load-lst-input" accept=".lst,.txt" style="display:none">
+
+            <button class="sb-icon-btn" id="btn-rd" title="Lector">
+                <svg viewBox="0 0 24 20" fill="none" stroke="currentColor" stroke-width="1.6">
+                    <rect x="2" y="2" width="21" height="16" rx="1" />
+                    <circle cx="6" cy="7" r="0.5" fill="currentColor" />
+                    <circle cx="12" cy="7" r="0.5" fill="currentColor" />
+                    <circle cx="18" cy="7" r="0.5" fill="currentColor" />
+                    <circle cx="6" cy="13" r="1" fill="currentColor" />
+                    <circle cx="12" cy="13" r="1" fill="currentColor" />
+                    <circle cx="18" cy="13" r="1" fill="currentColor" />
+                </svg>
+            </button>
+            <button class="sb-icon-btn" id="btn-tt" title="Teletipo">
+                <svg viewBox="0 0 24 20" fill="none" stroke="currentColor" stroke-width="1.6">
+                    <rect x="1" y="1" width="22" height="6" rx="1" />
+                    <rect x="2" y="8" width="20" height="12" rx="1" />
+                    <line x1="5" y1="12" x2="5" y2="14" />
+                    <line x1="8" y1="12" x2="8" y2="14" />
+                    <line x1="11" y1="12" x2="11" y2="14" />
+                    <line x1="14" y1="12" x2="14" y2="14" />
+                    <line x1="17" y1="12" x2="17" y2="14" />
+                    <line x1="6" y1="15" x2="6" y2="17" />
+                    <line x1="9" y1="15" x2="9" y2="17" />
+                    <line x1="12" y1="15" x2="12" y2="17" />
+                    <line x1="15" y1="15" x2="15" y2="17" />
+                    //
+                    <line x1="18" y1="15" x2="18" y2="17" />
+                </svg>
+            </button>
+            <button class="sb-icon-btn" id="btn-mm" title="Mapa de memoria">
+                <svg viewBox="0 0 24 20" fill="none" stroke="currentColor" stroke-width="1.6">
+                    <rect x="2" y="3" width="20" height="14" rx="1" />
+                    <line x1="2" y1="7" x2="22" y2="7" />
+                    <line x1="2" y1="11" x2="22" y2="11" />
+                    <line x1="2" y1="15" x2="22" y2="15" />
+                </svg>
+            </button>
+            <button class="sb-icon-btn" id="btn-hp" title="Ayuda">
+                <svg viewBox="0 0 24 20" fill="none" stroke="currentColor" stroke-width="1.6">
+                    <path d="M3 3 Q8 2 12 5 Q16 2 21 3 L21 17 Q16 16 12 19 Q8 16 3 17 Z" />
+                    <line x1="12" y1="5" x2="12" y2="19" />
+                </svg>
+            </button>
+
+
+
+        </span>
+      </div>
+    </div>
+
+   <div class="memmap-panel is-hidden" id="memmap-panel">
+      <div class="mm-inner">
+        <div class="mm-title">MAPA DE MEMORIA</div>
+        <div class="mm-controls">
+          <div class="mm-ctrl-row"><button class="mm-nav-btn" id="mm-prev">◀</button><span class="mm-page-label">PAGINA</span><button class="mm-nav-btn" id="mm-next">▶</button></div>
+          <div class="mm-ctrl-row"><button class="mm-nav-btn" id="mm-goto-cp">Ir a CP</button><button class="mm-nav-btn" id="mm-goto-instr">Ir a instrucción</button></div>
+        </div>
+        <div class="mm-body" id="mm-body"></div>
+      </div>
+    </div> 
+	 
+	 <!-- AYUDA / MANUAL -->
+    <div class="help-panel is-hidden" id="help-panel">
+      <div class="hp-inner">
+        <div class="hp-title-center"><span class="big">AYUDA</span><span class="small">MANUAL DE USUARIO</span></div>
+
+        <div class="hp-content">
+            <h3>CIDmulator-A v0.1.0</h3>
+            <h3>CID 201-A</h3>
+            <p> Minicomputadora de 12 bits, versión de producción en serie de la CID 201 de 1970.
+                Creada por el Instituto Central de Investigación Digital (ICID) de Cuba en 1971.
+            <p>25000 sumas registro+memoria por segundo.</p>
+            <p>Memoria de 4096 palabras con ciclo de 1.5 us.</p>
+            <p>
+                Sus periféricos son un <b>teletipo</b> (teclado + impresora + perforador de cinta) y
+                un <b>lector de cinta</b> de papel.
+            </p>
+
+            <h3>Encender y arrancar</h3>
+            <ol>
+                <li>Pulse <b>ON-OFF</b>. El estado pasa a <code>ALTO</code>.</li>
+                <li>
+                    Fije la dirección de arranque con los interruptores y
+                    pulse <b>CPR</b> (carga el CP).
+                </li>
+                <li>Pulse <b>COM</b> para comenzar la ejecución.</li>
+                <li>Para detenerla, pulse <b>ALT</b>.</li>
+            </ol>
+
+            <h3>Controles de la consola</h3>
+            <ul>
+                <li><b>Interruptores</b> (12): escriben un valor binario. Arriba=1, Abajo=0</li>
+                <li><b>CPR</b>: pasa el valor de los interruptores al CP.</li>
+                <li>
+                    <b>DEP</b>: escribe el valor de los interruptores en la
+                    memoria en la dirección CP, e incrementa CP.
+                </li>
+                <li><b>EXA</b>: muestra el contenido de la memoria en CP.</li>
+                <li><b>COM</b>: ejecuta. <b>ALT</b>: detiene.</li>
+                <li><b>ENA / ENB / ENC</b>: cargan programas de ejemplo.</li>
+            </ul>
+
+            <h3>Interruptor de modo (CONT / CICLO / PASO)</h3>
+            <p>
+                A la izquierda de la consola, el interruptor de tres
+                posiciones controla cómo avanza la ejecución:
+            </p>
+            <ul>
+                <li>
+                    <b>CONT</b> (arriba): ejecución continua. La CPU corre a
+                    la velocidad que fije el deslizador de velocidad.
+                </li>
+                <li>
+                    <b>CICLO</b> (medio): cada pulsación de <b>PUL</b>
+                    ejecuta un ciclo de máquina de la instrucción en curso.
+                    Una misma instrucción pasa por varios ciclos (CI, CD, CO,
+                    CM, CV), por lo que hacen falta varias pulsaciones para
+                    completarla. Permite ver cómo la CPU avanza ciclo a ciclo
+                    dentro de una misma instrucción.
+                </li>
+                <li>
+                    <b>PASO</b> (abajo): cada pulsación de <b>PUL</b>
+                    ejecuta una instrucción completa, con todos sus ciclos.
+                    Permite seguir la ejecución instrucción a instrucción sin
+                    detenerse en los ciclos intermedios.
+                </li>
+            </ul>
+
+            <h3>Tecla PUL</h3>
+            <p>
+                Sólo tiene efecto con el interruptor de modo en <b>CICLO</b>
+                o <b>PASO</b>. Cada pulsación avanza la ejecución según el
+                modo elegido. En <b>CONT</b> se ignora.
+            </p>
+
+            <h3>Indicadores de ciclo</h3>
+            <p>
+                Los seis LED del panel indican en qué ciclo de máquina se
+                encuentra la CPU en cada momento:
+            </p>
+            <ul>
+                <li>
+                    <b>CI</b> — Ciclo de Instrucción: se busca la instrucción
+                    apuntada por CP.
+                </li>
+                <li>
+                    <b>CD</b> — Ciclo de Dirección: se calcula la dirección
+                    efectiva (accesos indirectos).
+                </li>
+                <li>
+                    <b>CO</b> — Ciclo de Operación: se ejecuta la operación
+                    indicada por la instrucción.
+                </li>
+                <li>
+                    <b>CV</b> — Ciclo de VEA: corresponde a la instrucción
+                    <code>VEA</code>.
+                </li>
+                <li>
+                    <b>CM</b> — Ciclo de Microinstrucción: para las
+                    microinstrucciones (LAC, SUM, RDx, …).
+                </li>
+                <li>
+                    <b>AD</b> — Alto Dinámico: la CPU está detenida esperando
+                    una tecla o un evento externo.
+                </li>
+            </ul>
+
+            <h3>Programas de ejemplo</h3>
+            <ul>
+                <li><b>ENA</b> — imprime "HOLA MUNDO" en bucle.</li>
+                <li>
+                    <b>ENB</b> — pide dos números por el teletipo y muestra
+                    su suma en octal (<code>A = ?</code>, <code>B = ?</code>).
+                </li>
+                <li><b>ENC</b> — monitor de consola. Ver siguiente sección.</li>
+            </ul>
+
+            <h3>Cómo se escribe un programa</h3>
+            <p>
+                Los interruptores son la entrada más primitiva: cada
+                palabra son 12 bits, que se escriben directamente como unos y
+                ceros. Los nemotécnicos (LAC, SUM, RD1…) son solo para leer
+                el programa con comodidad; la máquina ejecuta siempre el
+                patrón binario.
+            </p>
+
+            <h3>Ejemplo: rotar el acumulador a la derecha</h3>
+            <p>
+                Partimos de <code>AC = 0007</code> (octal) y queremos
+                <code>AC = 0003</code>: un desplazamiento de 1 bit a la
+                derecha. El bit que sale por la derecha pasa al registro de
+                Enlace (EN).
+            </p>
+
+            <pre class="hp-code">
+Dir.   Octal  Binario          Nemotécnico   Comentario
+────   ─────  ──────────────   ───────────   ─────────────────────────
+0000   7300   111 011 000 000  LAC LEN       Limpia AC y EN
+0001   1010   001 000 001 000  SUM 0010      AC = 0007
+0002   7202   111 010 000 010  RD1           Rota 1 bit a la derecha (circular)
+0003   5202   101 010 000 010  VEA 0002      Repite la rotación (bucle)
+...
+0010   0007   000 000 000 111  (dato)        Valor inicial = 7 (octal)</pre>
+
+            <p>
+                <b>Rotación circular:</b> en la CID 201-A las rotaciones son
+                "cerradas" (circulares). El bit que sale por un extremo entra por el
+                otro, pasando por el registro de Enlace (EN). No se pierde ningún bit.
+            </p>
+
+            <p>
+                Al ejecutarse el bucle, el contenido de AC+EN va girando
+                indefinidamente:
+            </p>
+
+            <p>
+                Resultado en el acumulador tras <code>RD1</code>:
+                <b>AC = 0003</b>, <b>EN = 1</b>.
+            </p>
+
+            <h3>Monitor "Última Página" (programa ENC)</h3>
+            <p>
+                Es un programa de control básico de la consola,
+                facilitado su uso por parte del operador. Al pulsar
+                <b>ENC</b> arranca y queda a la escucha del teclado decimal y
+                los botones asociados.
+            </p>
+            <p>
+                <b>Escribir un número:</b> pulse las teclas del teclado
+                decimal (0–7). Cada dígito se añade a la derecha del número
+                mostrado. Ejemplo: pulsar <code>1</code>, <code>0</code>,
+                <code>0</code> muestra <code>0000100</code>.
+            </p>
+            <p><b>BOR</b>: borra el último dígito entrado.</p>
+            <p>
+                <b>ALM</b> (almacenar): la primera pulsación fija la
+                dirección inicial; las siguientes escriben el número mostrado
+                en direcciones consecutivas y borran el display para el
+                próximo valor.
+            </p>
+            <p>
+                <b>REC</b> (recuperar): la primera pulsación fija la
+                dirección inicial; las siguientes leen y muestran el
+                contenido de direcciones consecutivas.
+            </p>
+            <p>
+                Mientras se escribe un número nuevo, la operación de
+                recuperación se cancela y el número escrito pasa a ser la
+                nueva dirección inicial.
+            </p>
+
+            <h3>Control de velocidad</h3>
+            <p>
+                En la barra de estado, el deslizador <b>Velocidad</b> ajusta
+                la velocidad de ejecución en modo CONTINUO. Sus tres posiciones
+                aplican un factor de escala sobre la velocidad real de la
+                máquina:
+            </p>
+            <ul>
+                <li><b>MIN</b> (izquierda): velocidad real / 7500.</li>
+                <li><b>MED</b> (centro): velocidad real / 750.</li>
+                <li><b>MAX</b> (derecha): velocidad real de la máquina.</li>
+            </ul>
+
+            <p>
+                La cifra mostrada es la velocidad <i>base</i>, es decir, la de
+                las instrucciones más rápidas. En la CID 201-A los tiempos reales
+                dependen del tipo de instrucción:
+            </p>
+            <ul>
+                <li>
+                    <b>Referencias a memoria con acceso directo</b> (YLO, SUM,
+                    ISC, DEL, VAS, VEA): <b>25 000</b> por segundo.
+                </li>
+                <li>
+                    <b>Referencias a memoria con acceso indirecto</b> (mismas
+                    instrucciones con el bit de indirección activo): <b>14 000</b>
+                    por segundo (necesitan dos ciclos de memoria).
+                </li>
+                <li>
+                    <b>Microinstrucciones y E/S</b> (LAC, RD1, TAP, TLA, SIL, …):
+                    <b>75 000</b> por segundo.
+                </li>
+            </ul>
+
+            <p>
+                Esta diferencia refleja la realidad histórica: cada acceso a
+                memoria añade el tiempo del ciclo de memoria correspondiente. Por
+                ejemplo, un bucle de sumas directas sobre 4096 palabras tarda unos
+                164 ms en la máquina real a velocidad máxima.
+            </p>
+
+            <p>
+                El deslizador no afecta a los modos CICLO o PASO, que se
+                controlan con PUL.
+            </p>
+
+            <h3>Ventanas auxiliares</h3>
+            <ul>
+                <li><b>Ayuda</b>: este manual.</li>
+                <li>
+                    <b>Mapa de memoria</b>: muestra toda la RAM en columnas
+                    (dirección absoluta, relativa y contenido).
+                </li>
+                <li><b>Lector de cinta</b>: panel de lectura.</li>
+                <li>
+                    <b>Teletipo</b>: teclado, hoja de impresión y
+                    perforador.
+                </li>
+            </ul>
+
+            <h3>Uso del teletipo</h3>
+            <p>
+                El teletipo tiene la hoja de impresión arriba y el teclado
+                debajo. Al pulsar una tecla, el carácter aparece en la hoja y
+                se transmite a la computadora.
+            </p>
+            <ul>
+                <li>
+                    <b>CR</b>: retorno de carro (nueva línea). <b>LF</b>:
+                    avance de línea sin retorno.
+                </li>
+                <li><b>ESPACIO</b>: espacio en blanco.</li>
+                <li>
+                    <b>Salida</b>: con <b>Imprimir</b> el carácter va a la
+                    hoja; con <b>Perforar</b> va solo a la cinta de salida; con
+                    <b>Ambos</b> va a las dos.
+                </li>
+                <li>
+                    <b>LISTO</b>: habilita la recepción. Si está apagado,
+                    los caracteres no se muestran ni se graban.
+                </li>
+                <li><b>🔊</b>: activa o desactiva el sonido de las teclas.</li>
+            </ul>
+            <p>
+                Cuando la computadora imprime (por ejemplo el programa
+                SUMA con <b>ENB</b>), el teletipo recibe los caracteres
+                automáticamente y se iluminan las teclas correspondientes.
+            </p>
+
+            <h3>Uso del perforador de cinta</h3>
+            <p>
+                El perforador está adosado a la izquierda del teletipo,
+                dentro del mismo panel. Recibe los caracteres que la
+                computadora envía al perforador.
+            </p>
+            <ul>
+                <li>La cinta se va llenando con los códigos perforados.</li>
+                <li>
+                    <b>Guardar cinta</b>: descarga el contenido como
+                    archivo <code>.cinta</code>.
+                </li>
+                <li><b>Limpiar cinta</b>: borra el contenido actual.</li>
+            </ul>
+            <p>
+                Para que la computadora perfore, el modo de salida del
+                teletipo debe incluir <b>Perforar</b> (<b>Perforar</b> o
+                <b>Ambos</b>).
+            </p>
+
+            <h3>Uso del lector de cinta</h3>
+            <p>
+                El lector alimenta a la computadora o al teletipo según
+                quién lo controle. Es una ventana independiente.
+            </p>
+            <ul>
+                <li><b>Cargar cinta</b>: abre un archivo <code>.cinta</code>.</li>
+                <li><b>LISTO</b>: habilita el lector.</li>
+                <li>
+                    <b>Leer → Teletipo</b>: operación manual. El lector
+                    envía los caracteres al teletipo, que los imprime.
+                </li>
+                <li><b>DETENER</b>: detiene la lectura.</li>
+            </ul>
+            <p>
+                Si la computadora ejecuta <code>COL</code>, arranca el
+                motor del lector y va tomando caracteres con <code>TLA</code>.
+                En ese caso el teletipo <b>no</b> se entera: la cinta
+                alimenta directamente a la CPU.
+            </p>
+
+            <h3>Pendiente de documentar</h3>
+            <p>
+                Los <b>interruptores auxiliares</b> (bloque A/B/C/D, a la
+                izquierda del mando de modo) y los <b>indicadores alfabéticos</b>
+                (A–O, en la esquina superior derecha de la consola) son
+                funcionalidades que aún no se han implementado en el
+                simulador. Se documentarán cuando se complete su
+                comportamiento.
+            </p>
+        </div>
+      </div>
+    </div>
+
+    
+
+   
+
+
+  </div>
+  <div class="main-row" id="main-row-2"></div>
+</div>
+<script>
+"use strict";
+
+/* ================================================================
+   CACHÉ DE REFERENCIAS DOM
+   ================================================================ */
+const DOM = {
+  wrap:    document.getElementById('main-wrap'),
+  row1:    document.getElementById('main-row-1'),
+  row2:    document.getElementById('main-row-2'),
+  hpPanel: document.getElementById('help-panel'),
+  mmPanel: document.getElementById('memmap-panel'),
+  console: document.querySelector('.console'),
+  ttPanel: document.getElementById('teletipo-panel'),
+  rdPanel: document.getElementById('reader-panel'),
+};
+
+/* ================================================================
+   ESTADO GLOBAL
+   ================================================================ */
+const S = {
+  EN: 0, AC: 0, RM: 0, CP: 0,
+  RI: 0, RD: 0, RP: 0,
+  memory: new Uint16Array(4096),
+  switches: new Array(20).fill(false),
+  power: false, running: false,
+  mode: 'CONT', state: 'APAGADO', cycle: 5,
+  letters: 0, lastInstr: 0,
+
+  RegistroNumeros: 0, RegistroSigno: 0, RegistroTitulos: 0,
+  RegistroFraccion: 0, RegistroDigito: 0,
+
+  indDigitos: 0, indFraccion: 0, indSigno: 0,
+  indAlmacena: 0, indBorrado: 0, indRecupera: 0,
+  indPerforador: 0, indLector: 0, indOut: 0, indMuestreo: 0,
+
+  regPerforacion: 0, indPerfListo: 1,
+};
+
+const TR = {
+  tapeIn: [], readIndex: 0, outputReg: 0, readReady: 0,
+  running: false, ready: true, reading: false,
+  serialLinked: true, manualMode: true,
+};
+
+const REG_MASK = 0xFFF;
+function mask12(v) { return v & REG_MASK; }
+function toOctal(v) { return (v & 0xFFF).toString(8).padStart(4, '0'); }
+function toOctal5(v) { return (v & 0x1F).toString(8).padStart(2, '0'); }
+
+/* ================================================================
+   LAYOUT RESPONSIVE
+   Prioridad para bajar: ayuda → mapa → lector → teletipo
+   ================================================================ */
+function updateMainLayout() {
+  const hpOpen = HP.isOpen, mmOpen = MM.isOpen;
+  const ttOpen = TT.panelOpen, rdOpen = RD.panelOpen;
+
+  const rs = getComputedStyle(document.documentElement);
+  const consoleW = parseFloat(rs.getPropertyValue('--console-w')) || 1030;
+  const hpW = parseFloat(rs.getPropertyValue('--hp-w')) || 440;
+  const mmW = parseFloat(rs.getPropertyValue('--mm-w')) || 320;
+  const ttW = parseFloat(rs.getPropertyValue('--tt-w')) || 780;
+  const rdW = parseFloat(rs.getPropertyValue('--rd-w')) || 178;
+  const gap = 14;
+  const avail = window.innerWidth - 48;
+
+  let moveHp = false, moveMm = false, moveRd = false, moveTt = false;
+
+  function row1Width() {
+    let w = consoleW;
+    if (hpOpen && !moveHp) w += hpW + gap;
+    if (mmOpen && !moveMm) w += mmW + gap;
+    if (ttOpen && !moveTt) w += ttW + gap;
+    if (rdOpen && !moveRd) w += rdW + gap;
+    return w;
+  }
+
+  while (row1Width() > avail) {
+    if (hpOpen && !moveHp) { moveHp = true; continue; }
+    if (mmOpen && !moveMm) { moveMm = true; continue; }
+    if (rdOpen && !moveRd) { moveRd = true; continue; }
+    if (ttOpen && !moveTt) { moveTt = true; continue; }
+    break;
+  }
+
+  /* Orden en fila 1: lector | teletipo | consola | mapa | ayuda
+     Orden en fila 2: lector | teletipo | mapa | ayuda
+     (la consola siempre queda arriba, en el centro). */
+  const order1 = [], order2 = [];
+  if (rdOpen && !moveRd) order1.push(DOM.rdPanel);
+  if (ttOpen && !moveTt) order1.push(DOM.ttPanel);
+  order1.push(DOM.console);
+  if (mmOpen && !moveMm) order1.push(DOM.mmPanel);
+  if (hpOpen && !moveHp) order1.push(DOM.hpPanel);
+
+  if (rdOpen && moveRd) order2.push(DOM.rdPanel);
+  if (ttOpen && moveTt) order2.push(DOM.ttPanel);
+  if (mmOpen && moveMm) order2.push(DOM.mmPanel);
+  if (hpOpen && moveHp) order2.push(DOM.hpPanel);
+
+  for (const el of order1) if (el.parentElement !== DOM.row1) DOM.row1.appendChild(el);
+  for (const el of order2) if (el.parentElement !== DOM.row2) DOM.row2.appendChild(el);
+
+  order1.forEach((el, i) => { const cur = DOM.row1.children[i]; if (cur !== el) DOM.row1.insertBefore(el, cur || null); });
+  order2.forEach((el, i) => { const cur = DOM.row2.children[i]; if (cur !== el) DOM.row2.insertBefore(el, cur || null); });
+
+  DOM.row2.style.display = order2.length === 0 ? 'none' : 'flex';
+
+  /* Si el panel de Ayuda ha bajado solo a la fila 2, se ensancha al ancho de la consola. */
+  const hpAloneInRow2 = order2.length === 1 && order2[0] === DOM.hpPanel;
+  DOM.hpPanel.classList.toggle('row2-full', hpAloneInRow2);
+}
+
+/* ================================================================
+   PROGRAMAS DE EJEMPLO
+   ================================================================
+   Distribución de memoria:
+
+     Página 0 (0000-0177)  Minibin + subrutinas y variables compartidas
+     Página 1 (0200-0377)  ENA - "HOLA MUNDO"
+     Página 2 (0400-0577)  Tablas del programa SUMA
+     Página 3 (0600-0777)  ENB - "SUMA OCTAL"
+     Página 4 (1000-1177)  imprOct + check_print
+     Página 31 (7600-7716) ENC - "Última Página"
+   ================================================================ */
+function loadExamplePrograms() {
+  for (let i = 0; i < 4096; i++) S.memory[i] = 0o7000;
+  programShared(S.memory);
+  programPage4(S.memory);
+  programENA(S.memory);
+  programENB(S.memory);
+  programENC(S.memory);
+}
+
+/* ----------------------------------------------------------------
+   PÁGINA 0 — Minibin + subrutinas y variables compartidas
+   ----------------------------------------------------------------
+   Minibin (0o000-0o013):
+     Carga un programa desde la cinta perforada de 5 canales y lo
+     deposita en memoria a partir de la dirección guardada en Hacia.
+     Cada palabra de 12 bits se reconstruye a partir de 3 caracteres
+     de 5 bits, usando el bit 2 del primer carácter como marcador de
+     fin de palabra (llega al registro EN tras la 3ª rotación).
+
+   Variables:
+     0o014 A         Primer operando
+     0o015 B         Segundo operando
+     0o016 suma      Resultado A+B
+     0o017 num       Acumulador de número (decimal/octal)
+     0o020 temp      Auxiliar
+     0o021 char      Carácter leído por getChar
+     0o022 ptr       Puntero de trabajo
+     0o023 digit     Dígito 0-7 en curso
+
+   Constantes:
+     0o024 cCR       Código Murray del CR
+     0o025 cOnes     Centinela "no es dígito" (0o7777)
+     0o026 cFIGS     Código Murray FIGS
+     0o027 pTabla    Dirección de tabla de dígitos (pág. 2)
+     0o030 pCodDig   Dirección de tabla codDig[dígito] (pág. 2)
+     0o031 imprDigAd Dirección de imprDig (pág. 3)
+     0o032 m7        Máscara 0o0007
+     0o033 m70       Máscara 0o0070
+     0o034 m700      Máscara 0o0700
+     0o035 m7000     Máscara 0o7000
+     0o036 printed   Flag de "ya imprimí algún dígito"
+     0o037 cdigit    Dígito octal en curso (para imprOct)
+     0o040 imprOctAd Puntero a imprOct (pág. 4)
+     0o041 checkPAd  Puntero a check_print (pág. 4)
+
+   Subrutinas:
+     0o042 putStr        Imprime cadena terminada en 0
+     0o067 getChar       Lee un carácter del lector
+     0o075 leerNum       Lee número decimal hasta CR
+   ---------------------------------------------------------------- */
+function programShared(memory) {
+  const P0 = [
+    /* --- Minibin (0o000-0o013) -------------------------------------
+       Instrucciones:
+         COL LIL   inicia el motor del lector y limpia su indicador
+         LAC LEN   limpia AC y EN
+         RI 5      rota 5 bits a la izquierda el par (AC,EN)
+         SIL       espera al lector
+         TLA LIL   transfiere 5 bits y limpia indicador
+         SED       salta si EN==1 (desbordamiento = fin de palabra)
+         DEL I Hacia  escribe AC en [Hacia]
+         ISC Hacia incrementa Hacia; salta si resulta 0
+         VEA ...   bucles
+       ------------------------------------------------------------- */
+    [0o000, 0o6214],  // COL LIL          inicia el lector
+    [0o001, 0o7300],  // NuevaPalabra: LAC LEN
+    [0o002, 0o7322],  // Nuevos5bits:  RI 5
+    [0o003, 0o6240],  // EsperaLector: SIL
+    [0o004, 0o5003],  //               VEA 0o003
+    [0o005, 0o6230],  //               TLA LIL
+    [0o006, 0o7420],  //               SED
+    [0o007, 0o5002],  //               VEA 0o002
+    [0o010, 0o3413],  //               DEL I Hacia
+    [0o011, 0o2013],  //               ISC Hacia
+    [0o012, 0o5001],  //               VEA 0o001
+    [0o013, 0o0000],  // Hacia
+
+    /* --- Variables (0o014-0o023) --------------------------------- */
+    [0o014, 0o0000],  // A
+    [0o015, 0o0000],  // B
+    [0o016, 0o0000],  // suma
+    [0o017, 0o0000],  // num
+    [0o020, 0o0000],  // temp
+    [0o021, 0o0000],  // char
+    [0o022, 0o0000],  // ptr
+    [0o023, 0o0000],  // digit
+
+    /* --- Constantes (0o024-0o041) -------------------------------- */
+    [0o024, 0o0010],  // cCR       = 0o10
+    [0o025, 0o7777],  // cOnes     = 0o7777 (centinela)
+    [0o026, 0o0033],  // cFIGS     = código Murray de FIGS
+    [0o027, 0o0400],  // pTabla    = 0o400
+    [0o030, 0o0440],  // pCodDig   = 0o440
+    [0o031, 0o0720],  // imprDigAd = 0o720
+    [0o032, 0o0007],  // m7        = 0o0007
+    [0o033, 0o0070],  // m70       = 0o0070
+    [0o034, 0o0700],  // m700      = 0o0700
+    [0o035, 0o7000],  // m7000     = 0o7000
+    [0o036, 0o0000],  // printed
+    [0o037, 0o0000],  // cdigit
+    [0o040, 0o1000],  // imprOctAd = 0o1000 (imprOct está en pág. 4)
+    [0o041, 0o1032],  // checkPAd  = 0o1032 (check_print está en pág. 4)
+
+    /* --- Subrutina putStr (0o042-0o066) --------------------------
+       Imprime la cadena apuntada por el VAS que la llama, hasta 0.
+       Etiquetas:
+         putStr   slot del VAS
+         ps_lp    bucle principal
+         ps_char  TAP LIP (imprime AC & 0o1F)
+         ps_w     espera al perforador
+       Registros usados: AC, ptr
+       ------------------------------------------------------------- */
+    [0o042, 0o0000],  // putStr:    slot (VAS putStr)
+    [0o043, 0o7200],  //            LAC
+    [0o044, 0o1042],  //            SUM putStr      ; AC = dirección de retorno
+    [0o045, 0o3022],  //            DEL ptr
+    [0o046, 0o7200],  // ps_lp:     LAC
+    [0o047, 0o1622],  //            SUM I ptr       ; AC = [ptr]
+    [0o050, 0o7440],  //            SAC             ; ¿terminador?
+    [0o051, 0o5057],  //            VEA ps_char
+    [0o052, 0o7200],  //            LAC
+    [0o053, 0o1022],  //            SUM ptr
+    [0o054, 0o7010],  //            IAC
+    [0o055, 0o3042],  //            DEL putStr      ; guarda dirección de retorno
+    [0o056, 0o5442],  //            VEA I putStr
+    [0o057, 0o6130],  // ps_char:   TAP LIP
+    [0o060, 0o6140],  // ps_w:      SIP
+    [0o061, 0o5060],  //            VEA ps_w
+    [0o062, 0o7200],  //            LAC
+    [0o063, 0o1022],  //            SUM ptr
+    [0o064, 0o7010],  //            IAC
+    [0o065, 0o3022],  //            DEL ptr
+    [0o066, 0o5046],  //            VEA ps_lp
+
+    /* --- Subrutina getChar (0o067-0o074) -------------------------
+       Espera a que el lector tenga un carácter y lo devuelve en AC.
+       ------------------------------------------------------------- */
+    [0o067, 0o0000],  // getChar:   slot
+    [0o070, 0o6240],  // gc_lp:     SIL             ; ¿dato listo?
+    [0o071, 0o5070],  //            VEA gc_lp
+    [0o072, 0o7200],  //            LAC
+    [0o073, 0o6230],  //            TLA LIL         ; AC = código, limpia indicador
+    [0o074, 0o5467],  //            VEA I getChar
+
+    /* --- Subrutina leerNum (0o075-0o145) -------------------------
+       Lee dígitos decimales hasta CR. Devuelve el número en AC.
+       Etiquetas:
+         leerNum  slot del VAS
+         ln_lp    lee siguiente carácter
+         ln_dig   procesa dígito
+         ln_ok    acumula valor
+       ------------------------------------------------------------- */
+    [0o075, 0o0000],  // leerNum:   slot
+    [0o076, 0o7200],  //            LAC
+    [0o077, 0o3017],  //            DEL num
+    [0o100, 0o4067],  // ln_lp:     VAS getChar
+    [0o101, 0o3021],  //            DEL char
+    [0o102, 0o7200],  //            LAC
+    [0o103, 0o1021],  //            SUM char
+    [0o104, 0o7040],  //            CAC             ; AC = ~char
+    [0o105, 0o7010],  //            IAC
+    [0o106, 0o1024],  //            SUM cCR         ; ¿es CR?
+    [0o107, 0o7440],  //            SAC
+    [0o110, 0o5114],  //            VEA ln_dig
+    [0o111, 0o7200],  //            LAC
+    [0o112, 0o1017],  //            SUM num         ; devuelve el número
+    [0o113, 0o5475],  //            VEA I leerNum
+    [0o114, 0o7200],  // ln_dig:    LAC
+    [0o115, 0o1027],  //            SUM pTabla
+    [0o116, 0o1021],  //            SUM char
+    [0o117, 0o3022],  //            DEL ptr
+    [0o120, 0o7200],  //            LAC
+    [0o121, 0o1422],  //            SUM I ptr       ; AC = valor del dígito
+    [0o122, 0o7040],  //            CAC
+    [0o123, 0o7010],  //            IAC
+    [0o124, 0o1025],  //            SUM cOnes       ; ¿centinela?
+    [0o125, 0o7440],  //            SAC
+    [0o126, 0o5130],  //            VEA ln_ok
+    [0o127, 0o5100],  //            VEA ln_lp       ; carácter no dígito
+    [0o130, 0o7200],  // ln_ok:     LAC
+    [0o131, 0o1422],  //            SUM I ptr       ; recarga el valor
+    [0o132, 0o3023],  //            DEL digit
+    [0o133, 0o7200],  //            LAC
+    [0o134, 0o1017],  //            SUM num
+    [0o135, 0o7262],  //            RI3             ; num*8
+    [0o136, 0o3020],  //            DEL temp
+    [0o137, 0o7200],  //            LAC
+    [0o140, 0o1017],  //            SUM num
+    [0o141, 0o7362],  //            RI1             ; num*2
+    [0o142, 0o1020],  //            SUM temp        ; num*10
+    [0o143, 0o1023],  //            SUM digit
+    [0o144, 0o3017],  //            DEL num
+    [0o145, 0o5100],  //            VEA ln_lp
+  ];
+  P0.forEach(([a, v]) => memory[a] = v);
+}
+
+/* ----------------------------------------------------------------
+   PÁGINA 4 — imprOct y check_print
+   ----------------------------------------------------------------
+   Movidas desde la página 0 para hacer sitio al Minibin.
+   Se invocan con VAS I imprOctAd (0o040) o VAS I checkPAd (0o041).
+   ---------------------------------------------------------------- */
+function programPage4(memory) {
+  const P4 = [
+    /* imprOct (0o1000-0o1031):
+       Imprime AC en octal, sin ceros a la izquierda.
+       Extrae 4 dígitos de 3 bits (d3 d2 d1 d0) y los pasa por
+       check_print; el último (d0) se imprime siempre. */
+    [0o1000, 0o0000],  // imprOct:   slot
+    [0o1001, 0o3017],  //            DEL num
+    [0o1002, 0o3036],  //            DEL printed     ; printed = 0
+    [0o1003, 0o7200],  //            LAC
+    [0o1004, 0o1017],  //            SUM num
+    [0o1005, 0o0035],  //            YLO m7000
+    [0o1006, 0o7062],  //            RD9
+    [0o1007, 0o3037],  //            DEL cdigit
+    [0o1010, 0o4232],  //            VAS check_print
+    [0o1011, 0o7200],  //            LAC
+    [0o1012, 0o1017],  //            SUM num
+    [0o1013, 0o0034],  //            YLO m700
+    [0o1014, 0o7142],  //            RD6
+    [0o1015, 0o3037],  //            DEL cdigit
+    [0o1016, 0o4232],  //            VAS check_print
+    [0o1017, 0o7200],  //            LAC
+    [0o1020, 0o1017],  //            SUM num
+    [0o1021, 0o0033],  //            YLO m70
+    [0o1022, 0o7302],  //            RD3
+    [0o1023, 0o3037],  //            DEL cdigit
+    [0o1024, 0o4232],  //            VAS check_print
+    [0o1025, 0o7200],  //            LAC
+    [0o1026, 0o1017],  //            SUM num
+    [0o1027, 0o0032],  //            YLO m7
+    [0o1030, 0o4431],  //            VAS I imprDigAd
+    [0o1031, 0o5600],  //            VEA I imprOct
+
+    /* check_print (0o1032-0o1047):
+       Si cdigit != 0 o printed != 0, imprime cdigit y pone
+       printed = 1. */
+    [0o1032, 0o0000],  // check_print: slot
+    [0o1033, 0o7200],  //            LAC
+    [0o1034, 0o1037],  //            SUM cdigit
+    [0o1035, 0o1036],  //            SUM printed
+    [0o1036, 0o7440],  //            SAC             ; ¿cdigit==0 y printed==0?
+    [0o1037, 0o5241],  //            VEA cp_print
+    [0o1040, 0o5632],  //            VEA I check_print
+    [0o1041, 0o7200],  // cp_print:  LAC
+    [0o1042, 0o1037],  //            SUM cdigit
+    [0o1043, 0o4431],  //            VAS I imprDigAd
+    [0o1044, 0o7200],  //            LAC
+    [0o1045, 0o7010],  //            IAC
+    [0o1046, 0o3036],  //            DEL printed
+    [0o1047, 0o5632],  //            VEA I check_print
+  ];
+  P4.forEach(([a, v]) => memory[a] = v);
+}
+
+
+/* ----------------------------------------------------------------
+   PÁGINA 1 — ENA: "HOLA MUNDO"
+   Imprime el mensaje en bucle infinito usando putStr.
+
+   inicio:  LAC
+            VAS putStr
+            LTRS
+            CR
+            'H' 'O' 'L' 'A' ' ' 'M' 'U' 'N' 'D' 'O' CR LF
+            0
+            VEA inicio
+   ---------------------------------------------------------------- */
+/*function programENA(memory) {
+  const ENA = [
+    [0o200, 0o7200],  // inicio:  LAC
+    [0o201, 0o4042],  //          VAS putStr      (0o042, pág. 0)
+    [0o202, 0o0037],  //          LTRS            (cambia a modo letras)
+    [0o203, 0o0010],  //          CR
+    [0o204, 0o0024],  //          'H'             = 0o24
+    [0o205, 0o0030],  //          'O'             = 0o30
+    [0o206, 0o0022],  //          'L'             = 0o22
+    [0o207, 0o0003],  //          'A'             = 0o03
+    [0o210, 0o0004],  //          ' '             = 0o04
+    [0o211, 0o0034],  //          'M'             = 0o34
+    [0o212, 0o0007],  //          'U'             = 0o07
+    [0o213, 0o0014],  //          'N'             = 0o14
+    [0o214, 0o0011],  //          'D'             = 0o11
+    [0o215, 0o0030],  //          'O'             = 0o30
+    [0o216, 0o0010],  //          CR
+    [0o217, 0o0002],  //          LF
+    [0o220, 0o0000],  //          (fin de cadena)
+    [0o221, 0o5200],  //          VEA inicio
+  ];
+  ENA.forEach(([a, v]) => memory[a] = v);
+}*/
+
+/* ----------------------------------------------------------------
+PÁGINA 1 — ENA: barrido del display alfabético A–O
+Enciende en orden, una a una, las letras A–O del display
+alfabético, en bucle y con un blanco separador entre pasadas.
+TAT (6522): código 0 = letras apagadas; códigos 1–15 = A–O.
+Retardo entre lámparas: bucle ISC/VEA de 4096 vueltas
+(2 instrucciones/vuelta a 25 000/s ≈ 0,33 s por lámpara).
+Variables en la PÁGINA ACTUAL (pág. 1) para no colisionar con
+las variables compartidas de página 0 (0o014–0o041).
+---------------------------------------------------------------- */
+/*
+function programENA(memory) {
+const ENA = [
+[0o200, 0o7200],  // inicio:   LAC          ; AC = 0
+[0o201, 0o1222],  //           SUM IDX      ; AC = IDX (0–15, página actual)
+[0o202, 0o6522],  //           TAT          ; enciende la letra del código; AC = 0
+[0o203, 0o2223],  // retardo:  ISC D1       ; 4096 vueltas ≈ 0,33 s
+[0o204, 0o5203],  //           VEA 0203     ; espera el retardo
+[0o205, 0o2222],  //           ISC IDX      ; IDX++
+[0o206, 0o7200],  //           LAC          ; AC = 0
+[0o207, 0o1222],  //           SUM IDX      ; AC = IDX
+[0o210, 0o0224],  //           YLO M15      ; AC &= 15 (recircula 0–15)
+[0o211, 0o3222],  //           DEL IDX      ; guarda IDX
+[0o212, 0o5201],  //           VEA 0201     ; repite el barrido
+[0o222, 0o0001],  // IDX: 1    ; arranca en 'A'
+[0o223, 0o0000],  // D1:  2048    ; contador del retardo (se rearma solo)
+[0o224, 0o0017],  // M15: 0o17 ; máscara 15
+];
+ENA.forEach(([a, v]) => memory[a] = v);
+}*/
+
+/* ================================================================
+ SIMON - CID 201-A (LEN-1). 8 tonos = digito 0..7. Secuencia
+ creciente en SEC[0..15] (0o300-0o317), gestionada por el .len.
+ Reproduccion: TAT nota, retardo, TAT 0 (hueco), retardo.
+ Jugador: repite con teclado decimal, sin timeout.
+ Fallo -> Longitud alcanzada + ALT. Pseudoaleatorio RD1+IAC &7.
+ ◙  A  B  C ← teclas 0 1 2 3
+ D  E  F  G ← teclas 4 5 6 7
+Fase de observación: la máquina enciende las notas de la secuencia una a una; 
+entre nota y nota mete un destello de ◙ como separador.
+Fase de repetición: cuando el ◙ queda fijo encendido (“tu turno”), 
+repita la secuencia pulsando los dígitos en orden. 
+Sin límite de tiempo para pensar.
+Si acierta toda la ronda, la secuencia crece una nota y se reproduce de nuevo desde el inicio.
+Si falla una nota: el nixie muestra la longitud alcanzada y la máquina se detiene (ALT). 
+ENA para otra partida.
+ ================================================================*/
+function programENA(memory) {
+const ENA = [
+[0o200, 0o7200],
+[0o201, 0o3341],
+[0o202, 0o3342],
+[0o203, 0o3343],
+[0o204, 0o5205],
+[0o205, 0o7200],
+[0o206, 0o1342],
+[0o207, 0o7100],
+[0o210, 0o7162],
+[0o211, 0o1342],
+[0o212, 0o7010],
+[0o213, 0o3342],
+[0o214, 0o7200],
+[0o215, 0o1342],
+[0o216, 0o0350],
+[0o217, 0o3344],
+[0o220, 0o7200],
+[0o221, 0o1341],
+[0o222, 0o1353],
+[0o223, 0o3345],
+[0o224, 0o7200],
+[0o225, 0o1344],
+[0o226, 0o3745],
+[0o227, 0o7200],
+[0o230, 0o1341],
+[0o231, 0o7010],
+[0o232, 0o3341],
+[0o233, 0o7200],
+[0o234, 0o3343],
+[0o235, 0o7200],
+[0o236, 0o1343],
+[0o237, 0o1353],
+[0o240, 0o3345],
+[0o241, 0o7200],
+[0o242, 0o1745],
+[0o243, 0o6522],
+[0o244, 0o7200],
+[0o245, 0o1351],
+[0o246, 0o3346],
+[0o247, 0o2346],
+[0o250, 0o5247],
+[0o251, 0o7200],
+[0o252, 0o6522],
+[0o253, 0o7200],
+[0o254, 0o1352],
+[0o255, 0o3346],
+[0o256, 0o2346],
+[0o257, 0o5256],
+[0o260, 0o7200],
+[0o261, 0o1343],
+[0o262, 0o7010],
+[0o263, 0o3343],
+[0o264, 0o7200],
+[0o265, 0o1343],
+[0o266, 0o7040],
+[0o267, 0o7010],
+[0o270, 0o1341],
+[0o271, 0o7440],
+[0o272, 0o5235],
+[0o273, 0o5274],
+[0o274, 0o7200],
+[0o275, 0o6522],
+[0o276, 0o7200],
+[0o277, 0o3343],
+[0o300, 0o6444],
+[0o301, 0o5300],
+[0o302, 0o6414],
+[0o303, 0o7200],
+[0o304, 0o6420],
+[0o305, 0o3347],
+[0o306, 0o7200],
+[0o307, 0o1343],
+[0o310, 0o1353],
+[0o311, 0o3345],
+[0o312, 0o7200],
+[0o313, 0o1745],
+[0o314, 0o7040],
+[0o315, 0o7010],
+[0o316, 0o1347],
+[0o317, 0o7440],
+[0o320, 0o5335],
+[0o321, 0o7200],
+[0o322, 0o1343],
+[0o323, 0o7010],
+[0o324, 0o3343],
+[0o325, 0o7200],
+[0o326, 0o1343],
+[0o327, 0o7040],
+[0o330, 0o7010],
+[0o331, 0o1341],
+[0o332, 0o7440],
+[0o333, 0o5300],
+[0o334, 0o5205],
+[0o335, 0o7200],
+[0o336, 0o1341],
+[0o337, 0o6524],
+[0o340, 0o7404],
+[0o341, 0o0000],
+[0o342, 0o0000],
+[0o343, 0o0000],
+[0o344, 0o0000],
+[0o345, 0o0000],
+[0o346, 0o0000],
+[0o347, 0o0000],
+[0o350, 0o0007],
+[0o351, 0o4000],
+[0o352, 0o6000],
+[0o353, 0o0000],
+[0o354, 0o0000],
+[0o355, 0o0000],
+[0o356, 0o0000],
+[0o357, 0o0000],
+[0o360, 0o0000],
+[0o361, 0o0000],
+[0o362, 0o0000],
+[0o363, 0o0000],
+[0o364, 0o0000],
+[0o365, 0o0000],
+[0o366, 0o0000],
+[0o367, 0o0000],
+[0o370, 0o0000],
+[0o371, 0o0000],
+[0o372, 0o0000],
+];
+ENA.forEach(([a, v]) => memory[a] = v);
+}
+
+/* ----------------------------------------------------------------
+   PÁGINA 2 — Tablas del programa SUMA
+   ----------------------------------------------------------------
+   tabla[0..31]:  código Murray (0-31) → valor decimal
+                  0o7777 significa "no es dígito".
+   codDig[0..9]:  dígito decimal → código Murray en FIGS.
+
+   IMPORTANTE: los índices de tabla[] corresponden a los códigos
+   ITA2 reales de cada dígito (no a la posición alfabética).
+   ---------------------------------------------------------------- */
+function programENB_Tables(memory) {
+  const Tab = [
+    /* tabla[] */
+    [0o400, 0o7777],  //  0
+    [0o401, 0o0003],  //  1 → '3' ITA2
+    [0o402, 0o7777],  //  2
+    [0o403, 0o7777],  //  3
+    [0o404, 0o7777],  //  4
+    [0o405, 0o7777],  //  5
+    [0o406, 0o0010],  //  6 → '8' ITA2
+    [0o407, 0o0007],  //  7 → '7' ITA2
+    [0o410, 0o7777],  //  8
+    [0o411, 0o0004],  //  9 → '4' ITA2
+    [0o412, 0o7777],  // 10
+    [0o413, 0o7777],  // 11
+    [0o414, 0o7777],  // 12
+    [0o415, 0o7777],  // 13
+    [0o416, 0o0005],  // 14 → '5' ITA2
+    [0o417, 0o7777],  // 15
+    [0o420, 0o7777],  // 16
+    [0o421, 0o7777],  // 17
+    [0o422, 0o7777],  // 18
+    [0o423, 0o0002],  // 19 → '2' ITA2
+    [0o424, 0o7777],  // 20
+    [0o425, 0o0006],  // 21 → '6' ITA2
+    [0o426, 0o0000],  // 22 → '0' ITA2
+    [0o427, 0o0001],  // 23 → '1' ITA2
+    [0o430, 0o0011],  // 24 → '9' ITA2
+    [0o431, 0o7777],  // 25
+    [0o432, 0o7777],  // 26
+    [0o433, 0o7777],  // 27 (FIGS: no es dígito)
+    [0o434, 0o7777],  // 28
+    [0o435, 0o7777],  // 29
+    [0o436, 0o7777],  // 30
+    [0o437, 0o7777],  // 31 (LTRS: no es dígito)
+    /* codDig[]: código ITA2 del dígito en modo FIGS */
+    [0o440, 0o0026],  // '0'
+    [0o441, 0o0027],  // '1'
+    [0o442, 0o0023],  // '2'
+    [0o443, 0o0001],  // '3'
+    [0o444, 0o0012],  // '4'
+    [0o445, 0o0020],  // '5'
+    [0o446, 0o0025],  // '6'
+    [0o447, 0o0007],  // '7'
+    [0o450, 0o0006],  // '8'
+    [0o451, 0o0030],  // '9'
+  ];
+  Tab.forEach(([a, v]) => memory[a] = v);
+}
+
+/* ----------------------------------------------------------------
+   PÁGINA 3 — ENB: "SUMA OCTAL"
+   ----------------------------------------------------------------
+   Flujo:
+     Imprime "SUMA OCTAL"
+     Pide A (octal, terminado en CR)  → "A = ?"
+     Pide B (octal, terminado en CR)  → "B = ?"
+     Muestra "A+B = " + resultado en octal.
+     Vuelve a empezar.
+
+   Etiquetas del programa principal:
+     inicio    LAC y llama a imprSUMA
+     bucle     pide A y B, calcula la suma y la imprime
+
+   Subrutinas (llaman a putStr con cadenas literales):
+     imprSUMA     "SUMA OCTAL" CR LF
+     imprPrefA    "A = ?"
+     imprPrefB    "B = ?"
+     imprResp     "A+B = "
+     imprCRLF     CR LF
+     imprDig      imprime un dígito en FIGS (usado por imprOct)
+   ---------------------------------------------------------------- */
+function programENB(memory) {
+  programENB_Tables(memory);
+
+  const ENB = [
+    /* ---------- Programa principal ---------- */
+    [0o600, 0o7200],  // inicio:  LAC
+    [0o601, 0o4222],  //          VAS imprSUMA
+    [0o602, 0o4245],  // bucle:   VAS imprPrefA
+    [0o603, 0o4075],  //          VAS leerNum      (0o075, pág. 0)
+    [0o604, 0o3014],  //          DEL A
+    [0o605, 0o4260],  //          VAS imprPrefB
+    [0o606, 0o4075],  //          VAS leerNum
+    [0o607, 0o3015],  //          DEL B
+    [0o610, 0o7200],  //          LAC
+    [0o611, 0o1014],  //          SUM A
+    [0o612, 0o1015],  //          SUM B
+    [0o613, 0o3016],  //          DEL suma
+    [0o614, 0o4273],  //          VAS imprResp
+    [0o615, 0o7200],  //          LAC
+    [0o616, 0o1016],  //          SUM suma
+    [0o617, 0o4440],  //          VAS I imprOctAd  (0o040, pág. 0)
+    [0o620, 0o4311],  //          VAS imprCRLF
+    [0o621, 0o5202],  //          VEA bucle
+    /* ---------- imprSUMA: "SUMA OCTAL" CR LF ---------- */
+    [0o622, 0o0000],  // imprSUMA:  slot (VAS imprSUMA)
+    [0o623, 0o7200],  //            LAC
+    [0o624, 0o4042],  //            VAS putStr
+    [0o625, 0o0037],  //            LTRS
+    [0o626, 0o0010],  //            CR
+    [0o627, 0o0005],  //            'S' = 0o05
+    [0o630, 0o0007],  //            'U' = 0o07
+    [0o631, 0o0034],  //            'M' = 0o34
+    [0o632, 0o0003],  //            'A' = 0o03
+    [0o633, 0o0004],  //            ' ' = 0o04
+    [0o634, 0o0030],  //            'O' = 0o30
+    [0o635, 0o0016],  //            'C' = 0o16
+    [0o636, 0o0020],  //            'T' = 0o20
+    [0o637, 0o0003],  //            'A' = 0o03
+    [0o640, 0o0022],  //            'L' = 0o22
+    [0o641, 0o0010],  //            CR
+    [0o642, 0o0002],  //            LF
+    [0o643, 0o0000],  //            (fin de cadena)
+    [0o644, 0o5622],  //            VEA I imprSUMA
+    /* ---------- imprPrefA: "A = ?" ---------- */
+    [0o645, 0o0000],  // imprPrefA: slot
+    [0o646, 0o7200],  //            LAC
+    [0o647, 0o4042],  //            VAS putStr
+    [0o650, 0o0037],  //            LTRS
+    [0o651, 0o0003],  //            'A' = 0o03
+    [0o652, 0o0033],  //            FIGS
+    [0o653, 0o0011],  //            '=' = 0o11
+    [0o654, 0o0004],  //            ' ' = 0o04
+    [0o655, 0o0031],  //            '?' = 0o31
+    [0o656, 0o0000],  //            (fin)
+    [0o657, 0o5645],  //            VEA I imprPrefA
+    /* ---------- imprPrefB: "B = ?" ---------- */
+    [0o660, 0o0000],  // imprPrefB: slot
+    [0o661, 0o7200],  //            LAC
+    [0o662, 0o4042],  //            VAS putStr
+    [0o663, 0o0037],  //            LTRS
+    [0o664, 0o0031],  //            'B' = 0o31
+    [0o665, 0o0033],  //            FIGS
+    [0o666, 0o0011],  //            '='
+    [0o667, 0o0004],  //            ' '
+    [0o670, 0o0031],  //            '?'
+    [0o671, 0o0000],  //            (fin)
+    [0o672, 0o5660],  //            VEA I imprPrefB
+    /* ---------- imprResp: "A+B = " ---------- */
+    [0o673, 0o0000],  // imprResp:  slot
+    [0o674, 0o7200],  //            LAC
+    [0o675, 0o4042],  //            VAS putStr
+    [0o676, 0o0037],  //            LTRS
+    [0o677, 0o0003],  //            'A'
+    [0o700, 0o0033],  //            FIGS
+    [0o701, 0o0036],  //            '+'
+    [0o702, 0o0037],  //            LTRS
+    [0o703, 0o0031],  //            'B'
+    [0o704, 0o0033],  //            FIGS
+    [0o705, 0o0011],  //            '='
+    [0o706, 0o0004],  //            ' '
+    [0o707, 0o0000],  //            (fin)
+    [0o710, 0o5673],  //            VEA I imprResp
+    /* ---------- imprCRLF: CR LF ---------- */
+    [0o711, 0o0000],  // imprCRLF:  slot
+    [0o712, 0o7200],  //            LAC
+    [0o713, 0o4042],  //            VAS putStr
+    [0o714, 0o0010],  //            CR
+    [0o715, 0o0002],  //            LF
+    [0o716, 0o0000],  //            (fin)
+    [0o717, 0o5711],  //            VEA I imprCRLF
+    /* ---------- imprDig: imprime un dígito en FIGS ----------
+       Recibe el dígito (0-9) en AC. Lo imprime como código
+       Murray en modo FIGS. Usa codDig[] (pág. 2) como tabla. */
+    [0o720, 0o0000],  // imprDig:   slot
+    [0o721, 0o3020],  //            DEL temp
+    [0o722, 0o7200],  //            LAC
+    [0o723, 0o1026],  //            SUM cFIGS
+    [0o724, 0o6130],  //            TAP LIP
+    [0o725, 0o6140],  // idig_w:    SIP
+    [0o726, 0o5325],  //            VEA idig_w
+    [0o727, 0o7200],  //            LAC
+    [0o730, 0o1030],  //            SUM pCodDig
+    [0o731, 0o1020],  //            SUM temp
+    [0o732, 0o3022],  //            DEL ptr
+    [0o733, 0o7200],  //            LAC
+    [0o734, 0o1422],  //            SUM I ptr       ; AC = codDig[dígito]
+    [0o735, 0o6130],  //            TAP LIP
+    [0o736, 0o6140],  // idig_w2:   SIP
+    [0o737, 0o5336],  //            VEA idig_w2
+    [0o740, 0o5720],  //            VEA I imprDig
+  ];
+  ENB.forEach(([a, v]) => memory[a] = v);
+}
+
+    /* ----------------------------------------------------------------
+       PÁGINA 31 — ENC: "Última Página" v5
+       ----------------------------------------------------------------
+       Monitor de consola. Controla el display decimal, el teclado
+       numérico y las teclas asociadas (BOR, ALM, REC, "-" = ejecutar).
+    
+       Funcionamiento:
+         - Los dígitos tecleados se acumulan en RegNum.
+         - BOR retrocede un dígito (÷8).
+         - ALM almacena el número en direcciones consecutivas.
+         - REC recupera el contenido de direcciones consecutivas.
+         - "-" EJECUTA la dirección mostrada en el display (salta a ella).
+         - display refresca el display con el valor de RegNum.
+    
+       Variables:
+         RegNum     (0o7605)  valor mostrado en el display
+         maskH      (0o7606)  0o7000, máscara de los 3 bits altos
+         maskL      (0o7607)  0o7770, máscara de los 3 bits bajos
+         RECdir     (0o7636)  dirección de recuperación
+         RECstate   (0o7637)  estado de recuperación
+         ALMdir     (0o7663)  dirección de almacenamiento
+         ALMstate   (0o7664)  estado de almacenamiento
+    
+       Etiquetas:
+         inicio      bucle principal de escaneo de teclas
+         fincomun    limpieza común y vuelta al bucle
+         Entrada     procesa dígitos tecleados (SID, LID, TRA)
+         BORrar      procesa tecla BOR
+         RECupera    procesa tecla REC
+         guardadir   guarda dirección inicial de REC
+         readAdr     lee memoria en dirección de REC
+         ALMacena    procesa tecla ALM
+         direccion   guarda dirección inicial de ALM
+         write       escribe el número en memoria
+         endALM      finaliza la operación ALM
+         ejecutar    nueva: pulsar "-" salta a la dirección del display
+         display     subrutina de refresco del display (slot de retorno)
+       ---------------------------------------------------------------- */
+    function programENC(memory) {
+        const ENC = [
+            /* --- inicio / fincomun: bucle principal --- */
+            [0o7600, 0o7200],  // inicio:     LAC             ; AC = 0
+            [0o7601, 0o5210],  //             VEA Entrada     ; (0o7610)
+            [0o7602, 0o7200],  // fincomun:   LAC             ; AC = 0
+            [0o7603, 0o3237],  //             DEL RECstate    ; limpia RECstate
+            [0o7604, 0o5200],  //             VEA inicio      ; reinicia el bucle
+
+            /* --- Constantes y variables --- */
+            [0o7605, 0o0000],  // RegNum:     0               ; valor mostrado en el display
+            [0o7606, 0o7000],  // maskH:      0o7000          ; máscara de los 3 bits altos
+            [0o7607, 0o7770],  // maskL:      0o7770          ; máscara de los 3 bits bajos
+
+            /* --- Entrada: procesa dígitos del teclado decimal --- */
+            [0o7610, 0o6444],  // Entrada:    SID             ; ¿tecla dígito presionada?
+            [0o7611, 0o5226],  //             VEA BORrar      ; no → probar BOR
+            [0o7612, 0o6414],  //             LID             ; limpia indicador de dígito
+            [0o7613, 0o1205],  //             SUM RegNum      ; AC = 0 + RegNum
+            [0o7614, 0o0206],  //             YLO maskH       ; aísla los 3 bits altos
+            [0o7615, 0o7440],  //             SAC             ; ¿AC == 0?
+            [0o7616, 0o5202],  //             VEA fincomun    ; no → 4 dígitos ya, descarta
+            [0o7617, 0o7200],  //             LAC             ; AC = 0
+            [0o7620, 0o1205],  //             SUM RegNum      ; AC = RegNum
+            [0o7621, 0o7262],  //             RI3             ; AC = (RegNum << 3) circular
+            [0o7622, 0o0207],  //             YLO maskL       ; borra los 3 bits rotados
+            [0o7623, 0o6420],  //             TRA             ; AC = AC + RegDigito
+            [0o7624, 0o4320],  //             VAS display     ; actualiza display (0o7720)
+            [0o7625, 0o5202],  //             VEA fincomun    ; vuelve al bucle
+
+            /* --- BORrar: borra el último dígito --- */
+            [0o7626, 0o6541],  // BORrar:     SIB             ; ¿BOR presionado?
+            [0o7627, 0o5240],  //             VEA RECupera    ; no → probar REC
+            [0o7630, 0o6511],  //             LIB             ; limpia indicador BOR
+            [0o7631, 0o1205],  //             SUM RegNum      ; AC = RegNum
+            [0o7632, 0o0207],  //             YLO maskL       ; borra los 3 bits bajos
+            [0o7633, 0o7302],  //             RD3             ; desplaza 3 bits a la derecha
+            [0o7634, 0o4320],  //             VAS display     ; actualiza display
+            [0o7635, 0o5202],  //             VEA fincomun    ; vuelve al bucle
+
+            /* --- Variables de REC --- */
+            [0o7636, 0o0000],  // RECdir:     0               ; dirección de recuperación
+            [0o7637, 0o0000],  // RECstate:   0               ; estado de recuperación
+
+            /* --- RECupera: recupera memoria en direcciones consecutivas --- */
+            [0o7640, 0o6544],  // RECupera:   SIR             ; ¿REC presionado?
+            [0o7641, 0o5265],  //             VEA ALMacena    ; no → probar ALM
+            [0o7642, 0o6514],  //             LIR             ; limpia indicador REC
+            [0o7643, 0o1237],  //             SUM RECstate    ; AC = RECstate
+            [0o7644, 0o7440],  //             SAC             ; ¿RECstate == 0?
+            [0o7645, 0o5253],  //             VEA readAdr     ; no → sólo leer
+            [0o7646, 0o7200],  // guardadir:  LAC             ; AC = 0
+            [0o7647, 0o1205],  //             SUM RegNum      ; AC = RegNum
+            [0o7650, 0o3236],  //             DEL RECdir      ; RECdir = RegNum
+            [0o7651, 0o7040],  //             CAC             ; AC = ~0 = 0o7777
+            [0o7652, 0o3237],  //             DEL RECstate    ; RECstate != 0
+            [0o7653, 0o7200],  // readAdr:    LAC             ; AC = 0
+            [0o7654, 0o1636],  //             SUM I RECdir    ; AC = [RECdir]
+            [0o7655, 0o4320],  //             VAS display     ; muestra el valor
+            [0o7656, 0o1236],  //             SUM RECdir      ; AC = RECdir
+            [0o7657, 0o7010],  //             IAC             ; AC = RECdir + 1
+            [0o7660, 0o3236],  //             DEL RECdir      ; RECdir++
+            [0o7661, 0o3264],  //             DEL ALMstate    ; limpia ALMstate
+            [0o7662, 0o5200],  //             VEA inicio      ; vuelve al bucle
+
+            /* --- Variables de ALM --- */
+            [0o7663, 0o0000],  // ALMdir:     0               ; dirección de almacenamiento
+            [0o7664, 0o0000],  // ALMstate:   0               ; estado de almacenamiento
+
+            /* --- ALMacena: almacena en direcciones consecutivas --- */
+            [0o7665, 0o6442],  // ALMacena:   SIA             ; ¿ALM presionado?
+            [0o7666, 0o5312],  //             VEA ejecutar    ; no → probar "-" (0o7712)
+            [0o7667, 0o6412],  //             LIA             ; limpia indicador ALM
+            [0o7670, 0o1264],  //             SUM ALMstate    ; AC = ALMstate
+            [0o7671, 0o7440],  //             SAC             ; ¿ALMstate == 0?
+            [0o7672, 0o5301],  //             VEA write       ; no → escribir dato
+            [0o7673, 0o7200],  // direccion:  LAC             ; AC = 0
+            [0o7674, 0o1205],  //             SUM RegNum      ; AC = RegNum
+            [0o7675, 0o3263],  //             DEL ALMdir      ; ALMdir = RegNum
+            [0o7676, 0o7040],  //             CAC             ; AC = ~0 = 0o7777
+            [0o7677, 0o3264],  //             DEL ALMstate    ; ALMstate != 0
+            [0o7700, 0o5307],  //             VEA endALM      ; salta a endALM
+            [0o7701, 0o7200],  // write:      LAC             ; AC = 0
+            [0o7702, 0o1205],  //             SUM RegNum      ; AC = RegNum
+            [0o7703, 0o3663],  //             DEL I ALMdir    ; [ALMdir] = AC
+            [0o7704, 0o1263],  //             SUM ALMdir      ; AC = ALMdir
+            [0o7705, 0o7010],  //             IAC             ; AC = ALMdir + 1
+            [0o7706, 0o3263],  //             DEL ALMdir      ; ALMdir++
+            [0o7707, 0o3237],  // endALM:     DEL RECstate    ; limpia RECstate
+            [0o7710, 0o4320],  //             VAS display     ; actualiza display
+            [0o7711, 0o5200],  //             VEA inicio      ; vuelve al bucle
+
+            /* --- ejecutar: pulsar "-" salta a la dirección del display --- */
+            [0o7712, 0o6542],  // ejecutar:   SIS             ; ¿tecla "-" presionada? (IF = 1)
+            [0o7713, 0o5200],  //             VEA inicio      ; no → vuelve al bucle
+            [0o7714, 0o6512],  //             LIS             ; limpia indicador IF / tecla "-"
+            [0o7715, 0o7200],  //             LAC             ; AC = 0
+            [0o7716, 0o1205],  //             SUM RegNum      ; AC = RegNum
+            [0o7717, 0o5605],  //             VEA I RegNum    ; PC = [[RegNum]] → salta a la dirección
+
+            /* --- display: subrutina de refresco del display (slot de retorno) --- */
+            [0o7720, 0o0000],  // display:    0               ; slot para VAS display
+            [0o7721, 0o3205],  //             DEL RegNum      ; RegNum = AC
+            [0o7722, 0o1205],  //             SUM RegNum      ; AC = RegNum
+            [0o7723, 0o6524],  //             TAR             ; RegNum = AC, AC = 0
+            [0o7724, 0o5720],  //             VEA I display   ; retorno
+        ];
+        ENC.forEach(([a, v]) => memory[a] = v);
+    }
+
+/* ================================================================
+   AYUDA
+   ================================================================ */
+const HP = { isOpen: false };
+function openHelp() { if (HP.isOpen) return; HP.isOpen = true; DOM.hpPanel.classList.remove('is-hidden'); void DOM.hpPanel.offsetWidth; DOM.hpPanel.classList.add('open'); document.getElementById('btn-hp').classList.add('active'); updateMainLayout(); }
+function closeHelp() { if (!HP.isOpen) return; HP.isOpen = false; DOM.hpPanel.classList.remove('open'); document.getElementById('btn-hp').classList.remove('active'); setTimeout(() => { if (!HP.isOpen) { DOM.hpPanel.classList.add('is-hidden'); updateMainLayout(); } }, 450); }
+function toggleHelp() { HP.isOpen ? closeHelp() : openHelp(); }
+document.getElementById('btn-hp').addEventListener('click', toggleHelp);
+
+/* ================================================================
+   MAPA DE MEMORIA
+   ================================================================ */
+const MM = { isOpen: false, refreshTimer: null, cpFocus: false };
+function openMemMap() { if (MM.isOpen) return; MM.isOpen = true; DOM.mmPanel.classList.remove('is-hidden'); void DOM.mmPanel.offsetWidth; DOM.mmPanel.classList.add('open'); document.getElementById('btn-mm').classList.add('active'); updateMainLayout(); buildMMGrid(); if (MM.refreshTimer) clearInterval(MM.refreshTimer); MM.refreshTimer = setInterval(mmAutoTick, 300); setTimeout(() => { updateMMHighlight(); mmScrollToCenter(MM.cpFocus ? S.CP : S.lastInstr); }, 450); }
+function closeMemMap() { if (!MM.isOpen) return; MM.isOpen = false; DOM.mmPanel.classList.remove('open'); document.getElementById('btn-mm').classList.remove('active'); if (MM.refreshTimer) { clearInterval(MM.refreshTimer); MM.refreshTimer = null; } setTimeout(() => { if (!MM.isOpen) { DOM.mmPanel.classList.add('is-hidden'); updateMainLayout(); } }, 450); }
+function toggleMemMap() { MM.isOpen ? closeMemMap() : openMemMap(); }
+    function mmAutoTick() {
+        if (!MM.isOpen) return;
+        // Si el usuario está editando una celda, no la sobreescribimos
+        if (!document.querySelector('.mm-edit-input')) {
+            updateMMValues();
+            updateMMHighlight();
+            if (S.mode === 'CONT' && S.power && S.running) mmScrollToCenter(MM.cpFocus ? S.CP : S.lastInstr);
+        }
+    }
+    function buildMMGrid() {
+  const body = document.getElementById('mm-body'); if (!body) return;
+  let html = '<div class="mm-header-row"><span class="mm-col-abs">Dir.abs</span><span class="mm-col-rel">Dir.rel</span><span class="mm-col-val">Contenido</span></div>';
+  for (let abs = 0; abs < 4096; abs++) {
+    const page = abs >> 7, rel = abs & 0x7F;
+    if (rel === 0) {
+      const pS = (page*128).toString(8).padStart(4,'0'), pE = (page*128+127).toString(8).padStart(4,'0'), pO = page.toString(8).padStart(2,'0');
+      html += `<div class="mm-page-divider"><span class="mm-page-num">— Pág ${pO} —</span><span class="mm-page-range">${pS} – ${pE}</span></div>`;
+    }
+    html += `<div class="mm-row" data-abs="${abs}"><span class="mm-col-abs">${abs.toString(8).padStart(4,'0')}</span><span class="mm-col-rel">${rel.toString(8).padStart(3,'0')}</span><span class="mm-col-val">${(S.memory[abs]&0xFFF).toString(8).padStart(4,'0')}</span></div>`;
+  }
+  body.innerHTML = html;
+}
+function updateMMValues() {
+  const body = document.getElementById('mm-body'); if (!body) return;
+  const rows = body.querySelectorAll('.mm-row');
+  for (let i = 0; i < rows.length; i++) {
+    const row = rows[i], abs = +row.dataset.abs, vEl = row.children[2];
+    const v = (S.memory[abs] & 0xFFF).toString(8).padStart(4, '0');
+    if (vEl && vEl.textContent !== v) vEl.textContent = v;
+  }
+}
+function updateMMHighlight() {
+  const body = document.getElementById('mm-body'); if (!body) return;
+  body.querySelectorAll('.mm-row.current').forEach(r => r.classList.remove('current'));
+  if (!S.power) return;
+  const addr = MM.cpFocus ? S.CP : S.lastInstr;
+  const row = body.querySelector(`.mm-row[data-abs="${addr}"]`);
+  if (row) row.classList.add('current');
+}
+function mmScrollToCenter(abs) {
+  const body = document.getElementById('mm-body'); if (!body) return;
+  const row = body.querySelector(`.mm-row[data-abs="${abs}"]`); if (!row) return;
+  const bR = body.getBoundingClientRect(), rR = row.getBoundingClientRect();
+  const cy = bR.top + bR.height/2, rcY = rR.top + rR.height/2;
+  if (Math.abs(rcY - cy) < 2) return;
+  body.scrollTop += rcY - cy;
+}
+function mmScrollToTop(abs) {
+  const body = document.getElementById('mm-body'); if (!body) return;
+  const row = body.querySelector(`.mm-row[data-abs="${abs}"]`); if (!row) return;
+  let tEl = row; const prev = row.previousElementSibling;
+  if (prev && prev.classList.contains('mm-page-divider')) tEl = prev;
+  const h = body.querySelector('.mm-header-row'), hH = h ? h.offsetHeight : 0;
+  const bR = body.getBoundingClientRect(), tR = tEl.getBoundingClientRect();
+  body.scrollTop += tR.top - bR.top - hH;
+}
+function getCurCenterAbs() {
+  const body = document.getElementById('mm-body'); if (!body) return 0;
+  const r = body.getBoundingClientRect();
+  const el = document.elementFromPoint(r.left + r.width/2, r.top + r.height/2);
+  if (el) { const row = el.closest('.mm-row'); if (row) return parseInt(row.dataset.abs, 10); }
+  return MM.cpFocus ? S.CP : S.lastInstr;
+}
+
+    function mmPrevPage() { const c = getCurCenterAbs(); mmScrollToTop(Math.max(0, (c >> 7) - 1) * 128); updateMMHighlight(); }
+    function mmNextPage() { const c = getCurCenterAbs(); mmScrollToTop(Math.min(31, (c >> 7) + 1) * 128); updateMMHighlight(); }
+    function mmGotoCP() { MM.cpFocus = true; mmScrollToCenter(S.CP); updateMMHighlight(); }
+    function mmGotoInstr() { MM.cpFocus = false; mmScrollToCenter(S.lastInstr); updateMMHighlight(); }
+
+    /* ===== EDITOR DE MEMORIA (CID 201-A) ===== */
+    function startCellEdit(row) {
+        if (!row) return;
+        const valSpan = row.querySelector('.mm-col-val');
+        if (!valSpan || valSpan.querySelector('input')) return;
+
+        const abs = parseInt(row.dataset.abs, 10);
+        const currentVal = valSpan.textContent.trim();
+
+        // Crear el input
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.value = currentVal;
+        input.className = 'mm-edit-input';
+        input.maxLength = 4;
+
+        valSpan.innerHTML = '';
+        valSpan.appendChild(input);
+        input.focus();
+        input.select();
+
+        let isDone = false;
+        const finishEdit = (save) => {
+            if (isDone) return;
+            isDone = true;
+
+            if (save) {
+                let newVal = parseInt(input.value, 8); // Parsear como octal
+                if (isNaN(newVal)) newVal = 0;         // Si es inválido, poner 0
+                S.memory[abs] = mask12(newVal);        // Guardar en memoria
+            }
+
+            // Restaurar el texto visual
+            valSpan.textContent = (S.memory[abs] & 0xFFF).toString(8).padStart(4, '0');
+        };
+
+        input.addEventListener('keydown', (ev) => {
+            if (ev.key === 'Enter') {
+                ev.preventDefault();
+                finishEdit(true);
+
+                // --- SALTO A LA SIGUIENTE DIRECCIÓN ---
+                const nextAbs = abs + 1;
+                const nextRow = document.querySelector(`.mm-row[data-abs="${nextAbs}"]`);
+
+                if (nextRow) {
+                    nextRow.scrollIntoView({ block: 'nearest' });
+                    startCellEdit(nextRow);
+                }
+
+            } else if (ev.key === 'Escape') {
+                ev.preventDefault();
+                finishEdit(false);
+            }
+        });
+
+        input.addEventListener('blur', () => {
+            finishEdit(true); // Guardar si el usuario hace clic fuera
+        });
+    }
+
+    // Delegación de eventos para el clic inicial
+    document.getElementById('mm-body').addEventListener('click', (e) => {
+        const row = e.target.closest('.mm-row');
+        if (row) startCellEdit(row);
+    });
+
+/* ================================================================
+   BUILD BIT GROUPS, LETRAS, SWITCHES, DISPLAY
+   ================================================================ */
+const COLOR_MAP = {
+  AC: ['red','white','red','white'],
+  RM: ['white','red','white','red'],
+  CP: ['red','white','red','white'],
+};
+function buildBitGroups(container, regName) {
+  const palette = COLOR_MAP[regName];
+  for (let g = 0; g < 4; g++) {
+    const group = document.createElement('div');
+    group.className = 'bit-group';
+    for (let j = 0; j < 3; j++) {
+      const b = document.createElement('div');
+      b.className = 'bit color-' + palette[g];
+      b.dataset.reg = regName;
+      b.dataset.bit = g * 3 + j;
+      group.appendChild(b);
+    }
+    container.appendChild(group);
+  }
+}
+(function buildBitLabels() {
+  const c = document.getElementById('bit-labels-groups');
+  for (let g = 0; g < 4; g++) {
+    const grp = document.createElement('div');
+    grp.className = 'bit-group';
+    for (let j = 0; j < 3; j++) {
+      const l = document.createElement('div');
+      l.className = 'bit-label';
+      l.textContent = g * 3 + j;
+      grp.appendChild(l);
+    }
+    c.appendChild(grp);
+  }
+})();
+buildBitGroups(document.getElementById('bits-ac'), 'AC');
+buildBitGroups(document.getElementById('bits-rm'), 'RM');
+buildBitGroups(document.getElementById('bits-cp'), 'CP');
+
+(function buildLetters() {
+  const c = document.getElementById('letters-panel');
+  ['◙','A','B','C','D','E','F','G','H','I','J','K','L','M','N','O'].forEach((it, i) => {
+    const el = document.createElement('div');
+    el.className = 'letter'; el.textContent = it; el.dataset.letra = i;
+    c.appendChild(el);
+  });
+})();
+
+(function buildSwitches() {
+  for (let bank = 0; bank < 4; bank++) {
+    const c = document.getElementById('sw-bank-' + bank);
+    for (let j = 0; j < 3; j++) {
+      const idx = bank * 3 + j;
+      const s = document.createElement('div');
+      s.className = 'switch'; s.dataset.sw = idx;
+      s.addEventListener('click', () => { S.switches[idx] = !S.switches[idx]; renderSwitches(); renderStatus(); });
+      c.appendChild(s);
+    }
+  }
+})();
+
+(function buildAux1() {
+  const c = document.getElementById('aux-bank-1');
+  ['A','B','C','D'].forEach(lbl => {
+    const s = document.createElement('div');
+    s.className = 'switch'; s.title = lbl;
+    s.addEventListener('click', () => s.classList.toggle('on'));
+    c.appendChild(s);
+  });
+})();
+
+(function buildDisplay() {
+  const c = document.getElementById('num-display');
+  const sign = document.createElement('div');
+  sign.className = 'sign-digit'; sign.id = 'disp-sign'; sign.textContent = '+';
+  c.appendChild(sign);
+  for (let i = 0; i < 7; i++) {
+    const d = document.createElement('div');
+    d.className = 'num-digit'; d.id = 'disp-d' + i; d.textContent = '0';
+    c.appendChild(d);
+    if (i < 6) {
+      const sep = document.createElement('div');
+      sep.className = 'num-sep'; sep.id = 'disp-sep' + i; sep.textContent = '.';
+      c.appendChild(sep);
+    }
+  }
+})();
+
+/* ================================================================
+   INTERRUPTOR DE MODO
+   ================================================================ */
+const MODES = ['CONT', 'CICLO', 'PASO'];
+function applyModeFromSwitch() {
+  const pos = parseInt(document.getElementById('mode-switch').dataset.pos, 10);
+  S.mode = MODES[pos];
+  if (S.mode !== 'CONT' && S.running) {
+    S.running = false;
+    if (autoTimer) { clearInterval(autoTimer); autoTimer = null; }
+    if (S.power) S.state = 'ALTO';
+  }
+  renderState(); updateMMHighlight();
+}
+document.getElementById('mode-switch').addEventListener('click', () => {
+  const el = document.getElementById('mode-switch');
+  el.dataset.pos = (parseInt(el.dataset.pos, 10) + 1) % 3;
+  applyModeFromSwitch();
+});
+document.getElementById('lec-switch').addEventListener('click', () => {
+  const el = document.getElementById('lec-switch');
+  el.dataset.pos = (parseInt(el.dataset.pos, 10) + 1) % 3;
+  renderStatus();
+});
+
+/* ================================================================
+   TIEMPOS HISTÓRICOS DE LA CID 201-A
+   ================================================================
+   Microinstrucciones y E/S ............ 75 000 / s
+   IRM con acceso directo a memoria .... 25 000 / s
+   IRM con acceso indirecto ............ 14 000 / s
+   ================================================================ */
+const BASE_RATE_HZ = 75000;
+const NS_PER_SEC = 1e9;
+const NS_FAST = NS_PER_SEC / 75000;
+const NS_MEM_DIRECT = NS_PER_SEC / 25000;
+const NS_MEM_INDIRECT = NS_PER_SEC / 14000;
+const SPEED_FACTORS = [1/7500, 1/750, 1];
+const MAX_BACKLOG_NS = 50e6;
+
+function getSpeedFactor() {
+  const slider = document.getElementById('speed-slider');
+  if (!slider) return 1;
+  return SPEED_FACTORS[parseInt(slider.value, 10)] || 1;
+}
+function updateSpeedLabel() {
+  const label = document.getElementById('st-speed');
+  if (label) label.textContent = Math.round(BASE_RATE_HZ * getSpeedFactor());
+}
+(function initSpeedControl() {
+  const slider = document.getElementById('speed-slider');
+  if (slider) { updateSpeedLabel(); slider.addEventListener('input', updateSpeedLabel); }
+})();
+
+/* ================================================================
+   ON-OFF
+   ================================================================ */
+document.getElementById('btn-onoff').addEventListener('click', () => {
+  S.power = !S.power;
+  if (autoTimer) { clearInterval(autoTimer); autoTimer = null; }
+  S.running = false;
+  if (S.power) {
+    S.cycle = 3; S.state = 'ALTO'; S.letters = 0;
+	S.RegistroTitulos = 0; S.letters = 1;   // reset: código 0 → ◙ encendido
+  } else {
+    S.state = 'APAGADO'; S.cycle = 5; S.letters = 0;
+    S.EN = 0; S.AC = 0; S.RM = 0; S.CP = 0;
+    S.RI = 0; S.RD = 0; S.RP = 0; S.lastInstr = 0;
+    MM.cpFocus = false;
+    S.RegistroNumeros = 0; S.RegistroSigno = 0;
+    S.RegistroTitulos = 0; S.RegistroFraccion = 0; S.RegistroDigito = 0;
+    S.indDigitos = 0; S.indFraccion = 0; S.indSigno = 0;
+    S.indAlmacena = 0; S.indBorrado = 0; S.indRecupera = 0;
+    S.indPerforador = 0; S.indLector = 0;
+    S.indOut = 0; S.indMuestreo = 0;
+    S.regPerforacion = 0; S.indPerfListo = 1;
+    TR.outputReg = 0; TR.readReady = 0;
+    TR.running = false; TR.reading = false; TR.manualMode = true;
+  }
+  renderAll(); updateMMHighlight();
+});
+
+/* ================================================================
+   TECLAS DEL KEYPAD
+   ================================================================ */
+document.querySelectorAll('.pbtn').forEach(btn => {
+  btn.addEventListener('mousedown', () => btn.classList.add('pressed'));
+  btn.addEventListener('mouseup', () => btn.classList.remove('pressed'));
+  btn.addEventListener('mouseleave', () => btn.classList.remove('pressed'));
+  btn.addEventListener('click', () => {
+    if (btn.dataset.num !== undefined) handleDigitKey(parseInt(btn.dataset.num, 10));
+    else if (btn.dataset.key) handleButton(btn.dataset.key);
+  });
+});
+function handleDigitKey(d) {
+  if (!S.power) return;
+  if (d === 8 || d === 9) return;
+  S.RegistroDigito = d; S.indDigitos = 1;
+  renderStatus();
+}
+function handleButton(key) {
+  switch (key) {
+    case 'PUL':
+      if (!S.power) break;
+      if (S.mode === 'CONT') break;
+      if (S.mode === 'CICLO') {
+        S.cycle = (S.cycle + 1) % 6;
+        if (S.cycle === 5) executeInstruction();
+        renderAll();
+      } else if (S.mode === 'PASO') { executeInstruction(); renderAll(); }
+      if (MM.isOpen) { updateMMValues(); updateMMHighlight(); mmScrollToCenter(MM.cpFocus ? S.CP : S.lastInstr); }
+      break;
+    case 'CPR':
+      if (!S.power) break;
+      S.CP = getSwitchValue() & 0xFFF;
+      renderAll();
+      if (MM.isOpen) { updateMMHighlight(); mmScrollToCenter(MM.cpFocus ? S.CP : S.lastInstr); }
+      break;
+    case 'DEP': {
+      if (!S.power) break;
+      const val = getSwitchValue() & 0xFFF;
+      S.memory[S.CP] = val; S.RM = val;
+      renderAll();
+      if (MM.isOpen) updateMMValues();
+      break;
+    }
+    case 'EXA': {
+      if (!S.power) break;
+      const val = S.memory[S.CP] & 0xFFF;
+      S.RM = val; S.AC = val;
+      renderAll();
+      break;
+    }
+    case 'COM':
+      if (!S.power) break;
+      S.running = true; S.state = 'EJECUTA';
+      if (S.mode === 'CONT') startAutoRun();
+      renderState();
+      break;
+    case 'ALT':
+      if (!S.power) break;
+      S.running = false;
+      if (autoTimer) { clearInterval(autoTimer); autoTimer = null; }
+      S.cycle = 3; S.state = 'ALTO';
+      renderState();
+      break;
+    case 'REC': S.indRecupera = 1; renderStatus(); break;
+    case 'ALM': S.indAlmacena = 1; renderStatus(); break;
+    case 'BOR': S.indBorrado = 1; renderStatus(); break;
+    case 'SIGN': S.RegistroSigno = S.RegistroSigno ? 0 : 1; S.indSigno = 1; renderDisplay(); renderStatus(); break;
+    case 'FRAC': S.indFraccion = 1; renderStatus(); break;
+    case 'ENA':
+      if (!S.power) break;
+      S.CP = 0o200; S.running = true; S.state = 'EJECUTA';
+      S.lastInstr = 0o200; MM.cpFocus = false;
+      renderAll();
+      if (MM.isOpen) { updateMMHighlight(); mmScrollToCenter(S.lastInstr); }
+      if (S.mode === 'CONT') startAutoRun();
+      break;
+    case 'ENB':
+      if (!S.power) break;
+      S.CP = 0o600; S.running = true; S.state = 'EJECUTA';
+      S.lastInstr = 0o600; MM.cpFocus = false;
+      renderAll();
+      if (MM.isOpen) { updateMMHighlight(); mmScrollToCenter(S.lastInstr); }
+      if (S.mode === 'CONT') startAutoRun();
+      break;
+    case 'ENC':
+      if (!S.power) break;
+      S.CP = 0o7600; S.running = true; S.state = 'EJECUTA';
+      S.lastInstr = 0o7600; MM.cpFocus = false;
+      renderAll();
+      if (MM.isOpen) { updateMMHighlight(); mmScrollToCenter(S.lastInstr); }
+      if (S.mode === 'CONT') startAutoRun();
+      break;
+  }
+}
+function getSwitchValue() {
+  let v = 0;
+  for (let i = 0; i < 12; i++) v = (v << 1) | (S.switches[i] ? 1 : 0);
+  return v & 0xFFF;
+}
+
+/* ================================================================
+   TELECLAS DEL SISTEMA (solo cuando el teletipo está cerrado)
+   ================================================================ */
+    document.addEventListener('keydown', e => {
+        // Si el usuario está escribiendo en un input (como el editor de memoria), ignorar atajos globales
+        if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+
+        if (DOM.ttPanel.classList.contains('open')) return;
+        if (e.repeat) return;
+        const k = e.key;
+        if (k >= '0' && k <= '9') { handleDigitKey(parseInt(k, 10)); e.preventDefault(); return; }
+        if (k === 'Enter') { handleButton('PUL'); e.preventDefault(); return; }
+        if (k === 'Escape') { handleButton('ALT'); e.preventDefault(); return; }
+        if (k === '.') { handleButton('FRAC'); e.preventDefault(); return; }
+        if (k === '-') { handleButton('SIGN'); e.preventDefault(); return; }
+        if (k === '+') { handleButton('ALM'); e.preventDefault(); return; }
+        if (k === 'Delete') { handleButton('BOR'); e.preventDefault(); return; }
+        if (k === ' ') { S.running ? handleButton('ALT') : handleButton('COM'); e.preventDefault(); return; }
+    });
+
+
+/* ================================================================
+   EJECUCIÓN (presupuesto de tiempo simulado)
+   ================================================================ */
+let autoTimer = null;
+let cpuTimeNs = 0;
+let lastTickMs = performance.now();
+
+function startAutoRun() {
+  if (autoTimer) return;
+  if (!S.power || S.mode !== 'CONT') return;
+  lastTickMs = performance.now();
+  cpuTimeNs = 0;
+  autoTimer = setInterval(autoTick, 10);
+}
+function instructionCostNs(instr) {
+  const opcode = (instr >> 9) & 0x7;
+  if (opcode <= 5) return ((instr >> 8) & 1) ? NS_MEM_INDIRECT : NS_MEM_DIRECT;
+  return NS_FAST;
+}
+function autoTick() {
+  const now = performance.now();
+  const dtMs = now - lastTickMs;
+  lastTickMs = now;
+  if (!S.power || !S.running || S.mode !== 'CONT') { cpuTimeNs = 0; renderAll(); return; }
+  const cappedMs = Math.min(dtMs, 100);
+  cpuTimeNs += cappedMs * 1e6 * getSpeedFactor();
+  if (cpuTimeNs > MAX_BACKLOG_NS) cpuTimeNs = MAX_BACKLOG_NS;
+  let executed = 0;
+  while (cpuTimeNs > 0 && executed < 1000 && S.running && S.power) {
+    const instr = S.memory[S.CP] & 0xFFF;
+    const cost = instructionCostNs(instr);
+    if (cost > cpuTimeNs) break;
+    cpuTimeNs -= cost;
+    executeInstruction();
+    executed++;
+  }
+  renderAll();
+}
+
+/* ================================================================
+   INTÉRPRETE
+   ================================================================ */
+function executeInstruction() {
+  const fetchAddr = S.CP;
+  S.lastInstr = fetchAddr;
+  MM.cpFocus = false;
+
+  const instr = S.memory[fetchAddr] & 0xFFF;
+  S.RM = instr;
+  const opcode = (instr >> 9) & 0x7;
+  const indirect = (instr >> 8) & 1;
+  const page = (instr >> 7) & 1;
+  const addr7 = instr & 0x7F;
+  S.RI = (instr >> 7) & 0x1F;
+  S.RD = addr7;
+
+  if (opcode === 7) { S.cycle = (instr === 0o7404) ? 3 : 1; }
+  else if (opcode === 6) { S.cycle = 1; }
+  else if (opcode === 5) { S.cycle = 4; }
+  else { S.cycle = indirect ? 0 : 5; }
+
+  const pageBase = page ? ((S.CP >> 7) << 7) : 0;
+  let effAddr = (pageBase | addr7) & 0xFFF;
+  if (indirect) effAddr = S.memory[effAddr] & 0xFFF;
+
+  switch (opcode) {
+    case 0: S.AC = mask12(S.AC & (S.memory[effAddr] & 0xFFF)); S.CP = mask12(S.CP + 1); break;
+    case 1: {
+      const sum = S.AC + (S.memory[effAddr] & 0xFFF);
+      S.AC = sum & 0xFFF;
+      S.EN = (sum >> 12) & 1;
+      S.CP = mask12(S.CP + 1);
+      break;
+    }
+    case 2:
+      S.memory[effAddr] = mask12(S.memory[effAddr] + 1);
+      S.CP = (S.memory[effAddr] === 0) ? mask12(S.CP + 2) : mask12(S.CP + 1);
+      break;
+    case 3:
+      S.memory[effAddr] = S.AC; S.AC = 0;
+      S.CP = mask12(S.CP + 1);
+      break;
+    case 4:
+      S.memory[effAddr] = mask12(S.CP + 1);
+      S.CP = mask12(effAddr + 1);
+      S.lastInstr = effAddr;
+      break;
+    case 5:
+      S.CP = effAddr;
+      S.lastInstr = effAddr;
+      break;
+    case 6:
+      handleIO(instr); S.CP = mask12(S.CP + 1); break;
+    case 7:
+      handleMicro(instr); S.CP = mask12(S.CP + 1); break;
+  }
+}
+
+/* ================================================================
+   E/S
+   ================================================================ */
+function handleIO(instr) {
+  const group = (instr >> 6) & 0x7;
+
+  if (group === 0o1) {
+    const op = instr & 0x7F;
+    if (op & 0o010) S.indPerfListo = 0;
+    if (op & 0o020) {
+      const code5 = S.AC & 0x1F;
+      S.regPerforacion = code5;
+      S.AC = 0;
+      teletypeReceiveCode5(code5);
+      S.indPerfListo = 0;
+      setTimeout(() => { S.indPerfListo = 1; }, TT.PRINT_DELAY_MS);
+    }
+    if ((op & 0o040) && S.indPerfListo === 1) S.CP = mask12(S.CP + 1);
+    return;
+  }
+
+  if (group === 0o2) {
+    const op = instr & 0x7F;
+    if (op & 0o002) { TR.running = false; TR.reading = false; }
+    if (op & 0o004) { TR.manualMode = false; TR.running = true; startReaderLoop(); }
+    if (op & 0o010) TR.readReady = 0;
+    if (op & 0o020) { const s = S.AC + TR.outputReg; S.AC = s & 0xFFF; if (s > 0xFFF) S.EN = 1; }
+    if ((op & 0o040) && TR.readReady === 1) S.CP = mask12(S.CP + 1);
+    return;
+  }
+
+  if (group === 0o3) {
+    const sub = instr & 0x3F;
+    if (sub === 0o10) {
+      S.indDigitos = 0; S.indFraccion = 0; S.indSigno = 0;
+      S.indAlmacena = 0; S.indBorrado = 0; S.indRecupera = 0;
+      S.indPerforador = 0; S.indLector = 0;
+      S.indOut = 0; S.indMuestreo = 0;
+    }
+    return;
+  }
+
+  if (group === 0o4) {
+    const sub = instr & 0x3F;
+    if (sub === 0o11) { S.indFraccion = 0; return; }
+    if (sub === 0o12) { S.indAlmacena = 0; return; }
+    if (sub === 0o14) { S.indDigitos = 0; return; }
+    if (sub === 0o20) { S.AC = mask12(S.AC + S.RegistroDigito); return; }
+    if (sub === 0o41 && S.indFraccion) { S.CP = mask12(S.CP + 1); return; }
+    if (sub === 0o42 && S.indAlmacena) { S.CP = mask12(S.CP + 1); return; }
+    if (sub === 0o44 && S.indDigitos) { S.CP = mask12(S.CP + 1); return; }
+    return;
+  }
+
+  if (group === 0o5) {
+    const sub = instr & 0x3F;
+    if (sub === 0o00) { S.RegistroSigno = 1; renderDisplay(); return; }
+    if (sub === 0o11) { S.indBorrado = 0; return; }
+    if (sub === 0o12) { S.indSigno = 0; return; }
+    if (sub === 0o14) { S.indRecupera = 0; return; }
+    if (sub === 0o21) { S.RegistroFraccion = S.AC & 1; S.AC = 0; return; }
+    if (sub === 0o22) {
+      S.RegistroTitulos = S.AC & 0xF;
+      if (S.power) S.letters = (1 << S.RegistroTitulos) & 0xFFFF;
+      renderLetters();
+      S.AC = 0;
+      return;
+    }
+    if (sub === 0o24) { S.RegistroNumeros = S.AC & 0xFFF; renderDisplay(); S.AC = 0; return; }
+    if (sub === 0o41 && S.indBorrado) { S.CP = mask12(S.CP + 1); return; }
+    if (sub === 0o42 && S.indSigno) { S.CP = mask12(S.CP + 1); return; }
+    if (sub === 0o44 && S.indRecupera) { S.CP = mask12(S.CP + 1); return; }
+    return;
+  }
+
+  if (group === 0o6) {
+    const sub = instr & 0x3F;
+    if (sub === 0o11) { S.indOut = 0; return; }
+    if (sub === 0o12) { S.indMuestreo = 0; return; }
+    if (sub === 0o21) { S.AC = mask12(S.AC + 0); return; }
+    if (sub === 0o22) { S.AC = mask12(S.AC + 0); return; }
+    if (sub === 0o41 && S.indOut) { S.CP = mask12(S.CP + 1); return; }
+    if (sub === 0o42 && S.indMuestreo) { S.CP = mask12(S.CP + 1); return; }
+    return;
+  }
+}
+
+/* ================================================================
+   MICROINSTRUCCIONES
+   ================================================================ */
+const ROTATION_TABLE = {
+  0o7202: 1, 0o7102: 2, 0o7302: 3,
+  0o7042: 4, 0o7242: 5, 0o7142: 6, 0o7342: 7,
+  0o7322: 8, 0o7062: 9, 0o7262: 10, 0o7162: 11, 0o7362: 12,
+};
+
+    function handleMicro(instr) {
+        const op = instr & 0xFFF;
+		if (op & 0o400) {
+			const SAN = (op & 0o100) !== 0, SAC = (op & 0o040) !== 0;
+			const SED = (op & 0o020) !== 0, SLT = (op & 0o010) !== 0;
+			const ALT = (op & 0o004) !== 0, ORI = (op & 0o002) !== 0;
+			const LAC_SALTO = (op & 0o200) !== 0;
+
+			// Semántica (doc + PDP-8):
+			//   Sin SLT → grupo * (OR):
+			//       SAN: AC < 0   SAC: AC == 0   SED: EN == 1
+			//   Con SLT → grupo ** (AND, cada prueba negada):
+			//       SAP (SAN+SLT): AC >= 0   SAD (SAC+SLT): AC != 0   SEC (SED+SLT): EN == 
+            let skip = false;
+			if (SLT) {
+			  // Grupo ** (SAP/SAD/SEC): AND, cada prueba negada
+			  let cond = true;
+			  if (SAN) cond = cond && ((S.AC & 0o4000) === 0);  // SAP: AC >= 0
+			  if (SAC) cond = cond && (S.AC !== 0);             // SAD: AC != 0
+			  if (SED) cond = cond && (S.EN === 0);             // SEC: EN == 0
+			  skip = cond;   // SLT sola → cond=true → skip siempre ✓
+			} else {
+			  // Grupo * (SAN/SAC/SED): OR, cada prueba positiva
+			  if (SAN) skip = skip || ((S.AC & 0o4000) !== 0);  // AC < 0
+			  if (SAC) skip = skip || (S.AC === 0);             // AC == 0
+			  if (SED) skip = skip || (S.EN === 1);             // EN == 1
+			}
+
+            if (skip) S.CP = mask12(S.CP + 1);
+
+			if (LAC_SALTO) S.AC = 0;
+
+			if (!skip && ORI) S.AC = mask12(S.AC | getSwitchValue());
+
+			if (!skip && ALT) { S.running = false; S.cycle = 3; S.state = 'ALTO'; }
+
+			return;
+		  }
+		  if (op & 0o002) {
+			const rc = ROTATION_TABLE[op];
+			if (rc !== undefined) {
+			  let comb = ((S.EN & 1) << 12) | (S.AC & 0xFFF);
+			  const sh = ((rc % 13) + 13) % 13;
+			  comb = ((comb >> sh) | (comb << (13 - sh))) & 0x1FFF;
+			  S.AC = comb & 0xFFF;
+			  S.EN = (comb >> 12) & 1;
+			}
+			return;
+		  }
+		  const LAC = (op & 0o200) !== 0, LEN = (op & 0o100) !== 0;
+		  const CAC = (op & 0o040) !== 0, CEN = (op & 0o020) !== 0;
+		  const IAC = (op & 0o010) !== 0;
+		  if (LAC) S.AC = 0;
+		  if (LEN) S.EN = 0;
+		  if (CAC) S.AC = (~S.AC) & 0xFFF;
+		  if (CEN) S.EN = S.EN ? 0 : 1;
+		  if (IAC) S.AC = (S.AC + 1) & 0xFFF;   // ← CAMBIO: no toca EN
+    }
+
+/* ================================================================
+   RENDERIZADO
+   ================================================================ */
+function renderBits(regName, value) {
+  document.querySelectorAll(`.bit[data-reg="${regName}"]`).forEach(b => {
+    const bit = parseInt(b.dataset.bit, 10);
+    b.classList.toggle('on', S.power && !!((value >> (11 - bit)) & 1));
+  });
+}
+function renderEN() { const el = document.getElementById('en-ac'); if (el) el.classList.toggle('on', S.EN === 1 && S.power); }
+function renderLetters() {
+	const mask = S.power ? S.letters : 0;
+	document.querySelectorAll('.letter').forEach(el => {
+	const i = parseInt(el.dataset.letra, 10);
+	el.classList.toggle('active', !!(mask & (1 << i)));
+	});
+}
+function renderSwitches() {
+  document.querySelectorAll('.switch[data-sw]').forEach(el => {
+    const i = parseInt(el.dataset.sw, 10);
+    el.classList.toggle('on', S.switches[i]);
+  });
+}
+function renderDisplay() {
+  const sign = document.getElementById('disp-sign');
+  sign.textContent = (S.RegistroSigno === 1) ? '−' : '+';
+  sign.style.opacity = S.power ? '1' : '0.35';
+  const numStr = (S.RegistroNumeros & 0xFFF).toString(8).padStart(7, '0');
+  for (let i = 0; i < 7; i++) {
+    const d = document.getElementById('disp-d' + i);
+    d.textContent = numStr[i];
+    d.classList.toggle('dim', !S.power);
+  }
+}
+function renderCycles() {
+  const map = { CD:0, CM:1, CI:2, AD:3, CV:4, CO:5 };
+  document.querySelectorAll('.cycle-led').forEach(el => {
+    el.classList.toggle('on', S.power && (map[el.dataset.cycle] === S.cycle));
+  });
+}
+function renderStatus() {
+  const disableFields = (S.mode === 'CONT') || !S.power;
+  ['sb-ac','sb-rm','sb-cp','sb-en','sb-sw'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.classList.toggle('disabled', disableFields);
+  });
+  if (!disableFields) {
+    document.getElementById('st-ac').textContent = toOctal(S.AC);
+    document.getElementById('st-rm').textContent = toOctal(S.RM);
+    document.getElementById('st-cp').textContent = toOctal(S.CP);
+    document.getElementById('st-en').textContent = S.EN;
+    document.getElementById('st-sw').textContent = toOctal(getSwitchValue());
+  }
+  document.getElementById('st-mode').textContent = S.mode;
+  document.getElementById('st-state').textContent = S.state;
+}
+function renderState() {
+  document.getElementById('btn-onoff').classList.toggle('on', S.power);
+  renderCycles(); renderLetters(); renderDisplay(); renderStatus();
+}
+function renderAll() {
+  renderBits('AC', S.AC); renderBits('RM', S.RM); renderBits('CP', S.CP);
+  renderEN(); renderLetters(); renderSwitches(); renderDisplay(); renderState();
+  if (MM.isOpen) updateMMHighlight();
+}
+
+/* ================================================================
+   TELETIPO — tablas ITA2 (CCITT-2)
+   ================================================================
+   Cada array es [b0, b1, b2, b3, b4] con b0 = LSB.
+   En ITA2 el orden de transmisión es LSB-first.
+   ================================================================ */
+const TT = {
+  panelOpen: false, mode: 'both', soundOn: true,
+  paperLines: [''], currentLine: 0, tapeOut: [],
+  currentMode: 'LTRS', teletypeReady: true,
+  printQueue: [], printTimer: null,
+  PRINT_DELAY_MS: 143, TAPE_ONLY_DELAY_MS: 17, PAPER_LINE_MAX: 60,
+
+  codeLTRS: [1,1,1,1,1],
+  codeFIGS: [1,1,0,1,1],
+
+  tableLTRS: {
+    'A': [1,1,0,0,0], 'B': [1,0,0,1,1], 'C': [0,1,1,1,0], 'D': [1,0,0,1,0],
+    'E': [1,0,0,0,0], 'F': [1,0,1,1,0], 'G': [0,1,0,1,1], 'H': [0,0,1,0,1],
+    'I': [0,1,1,0,0], 'J': [1,1,0,1,0], 'K': [1,1,1,1,0], 'L': [0,1,0,0,1],
+    'M': [0,0,1,1,1], 'N': [0,0,1,1,0], 'O': [0,0,0,1,1], 'P': [0,1,1,0,1],
+    'Q': [1,1,1,0,1], 'R': [0,1,0,1,0], 'S': [1,0,1,0,0], 'T': [0,0,0,0,1],
+    'U': [1,1,1,0,0], 'V': [0,1,1,1,1], 'W': [1,1,0,0,1], 'X': [1,0,1,1,1],
+    'Y': [1,0,1,0,1], 'Z': [1,0,0,0,1],
+    ' ':  [0,0,1,0,0],
+    'CR': [0,0,0,1,0],
+    'LF': [0,1,0,0,0],
+  },
+
+  tableFIGS: {
+    '1': [1,1,1,0,1],   // código 23 (Q)
+    '2': [1,1,0,0,1],   // código 19 (W)
+    '3': [1,0,0,0,0],   // código 1  (E)
+    '4': [0,1,0,1,0],   // código 10 (R)
+    '5': [0,0,0,0,1],   // código 16 (T)
+    '6': [1,0,1,0,1],   // código 21 (Y)
+    '7': [1,1,1,0,0],   // código 7  (U)
+    '8': [0,1,1,0,0],   // código 6  (I)
+    '9': [0,0,0,1,1],   // código 24 (O)
+    '0': [0,1,1,0,1],   // código 22 (P)
+    '-': [1,1,0,0,0],   // código 3  (A)
+    '?': [1,0,0,1,1],   // código 25 (B)
+    ':': [0,1,1,1,0],   // código 14 (C)
+    '(': [1,1,1,1,0],   // código 15 (K)
+    ')': [0,1,0,0,1],   // código 18 (L)
+    '.': [0,0,1,1,1],   // código 28 (M)
+    ',': [0,0,1,1,0],   // código 12 (N)
+    '/': [1,0,1,1,1],   // código 29 (X)
+    "'": [1,0,1,0,0],   // código 5  (S)
+    '&': [0,1,0,1,1],   // código 26 (G)
+    '+': [0,1,1,1,1],   // código 30 (V) — no estándar
+    '=': [1,0,0,1,0],   // código 9  (D) — no estándar
+    '%': [0,0,1,0,1],   // código 20 (H) — no estándar
+    ' ':  [0,0,1,0,0],
+    'CR': [0,0,0,1,0],
+    'LF': [0,1,0,0,0],
+  },
+
+  lookupLTRS(holes) { for (const [ch, code] of Object.entries(this.tableLTRS)) if (code.every((b, i) => b === holes[i])) return ch; return null; },
+  lookupFIGS(holes) { for (const [ch, code] of Object.entries(this.tableFIGS)) if (code.every((b, i) => b === holes[i])) return ch; return null; },
+  holesMatch(a, b) { return a.length === b.length && a.every((v, i) => v === b[i]); }
+};
+
+function holesToCode5(h) { return ((h[0]&1)<<0)|((h[1]&1)<<1)|((h[2]&1)<<2)|((h[3]&1)<<3)|((h[4]&1)<<4); }
+function code5ToHoles(c) { return [(c>>0)&1,(c>>1)&1,(c>>2)&1,(c>>3)&1,(c>>4)&1]; }
+
+let audioCtx = null;
+function ensureAudio() {
+  if (!audioCtx) { try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { audioCtx = null; } }
+  if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+}
+function playKeySound() {
+  if (!TT.soundOn) return;
+  const p = DOM.ttPanel;
+  if (!p || !p.classList.contains('open')) return;
+  ensureAudio();
+  if (!audioCtx) return;
+  const now = audioCtx.currentTime;
+  const osc = audioCtx.createOscillator();
+  const g = audioCtx.createGain();
+  const f = audioCtx.createBiquadFilter();
+  osc.type = 'square';
+  osc.frequency.setValueAtTime(1400, now);
+  osc.frequency.exponentialRampToValueAtTime(800, now + 0.035);
+  f.type = 'bandpass';
+  f.frequency.value = 1800;
+  f.Q.value = 6;
+  g.gain.setValueAtTime(0.0001, now);
+  g.gain.exponentialRampToValueAtTime(0.40, now + 0.004);
+  g.gain.exponentialRampToValueAtTime(0.0001, now + 0.055);
+  osc.connect(f); f.connect(g); g.connect(audioCtx.destination);
+  osc.start(now); osc.stop(now + 0.06);
+}
+function flashTeletypeKey(ch) {
+  if (!ch) return;
+  document.querySelectorAll('.tt-key').forEach(k => {
+    if (k.dataset.tt === ch) { k.classList.add('active-char'); setTimeout(() => k.classList.remove('active-char'), 250); }
+  });
+}
+function ttRenderPaper() {
+  const paper = document.getElementById('tt-paper');
+  const content = document.getElementById('tt-paper-content');
+  content.innerHTML = '';
+  const last = TT.paperLines.length - 1;              //línea activa
+  for (let i = 0; i < TT.paperLines.length; i++) {
+    const ln = document.createElement('span');
+    ln.className = 'tt-line';
+    const text = TT.paperLines[i];
+    if (i === last) { //cursor al final de la línea activa
+      ln.innerHTML = escapeHtml(text);
+      const cur = document.createElement('span');
+      cur.className = 'tt-cursor';
+      ln.appendChild(cur);
+    } else {
+      ln.innerHTML = escapeHtml(text) || '&nbsp;';
+    }
+    content.appendChild(ln);
+  }
+  paper.scrollTop = paper.scrollHeight;
+}
+function escapeHtml(s) { return s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]); }
+function enqueuePrint(ch, holes) {
+  TT.printQueue.push({ ch, holes: holes ? holes.slice() : null });
+  if (!TT.printTimer) { TT.printTimer = setInterval(flushPrint, TT.PRINT_DELAY_MS); flushPrint(); }
+}
+function flushPrint() {
+  if (TT.printQueue.length === 0) { clearInterval(TT.printTimer); TT.printTimer = null; return; }
+  const item = TT.printQueue.shift();
+  doOutput(item.ch, item.holes);
+}
+function doOutput(ch, holes) {
+  if (TT.mode === 'print' || TT.mode === 'both') doPrint(ch);
+  if ((TT.mode === 'tape' || TT.mode === 'both') && holes) {
+    TT.tapeOut.push({ ch, holes: holes.slice() });
+    renderTapeVertical(TT.tapeOut, document.getElementById('tt-tape-out'));
+  }
+}
+function doPrint(ch) {
+  if (ch === 'CR') { TT.paperLines.push(''); TT.currentLine = TT.paperLines.length - 1; ttRenderPaper(); return; }
+  if (ch === 'LF') {
+    if (TT.paperLines[TT.currentLine].length > 0) { TT.paperLines.push(''); TT.currentLine = TT.paperLines.length - 1; }
+    ttRenderPaper();
+    return;
+  }
+  if (TT.paperLines[TT.currentLine].length >= TT.PAPER_LINE_MAX) { TT.paperLines.push(''); TT.currentLine = TT.paperLines.length - 1; }
+  TT.paperLines[TT.currentLine] += (ch === ' ') ? ' ' : ch;
+  ttRenderPaper();
+}
+function tapeLineFromHoles(h) {
+  let s = '';
+  s += h[0] ? '●' : ' ';
+  s += h[1] ? '●' : ' ';
+  s += '•';
+  s += h[2] ? '●' : ' ';
+  s += h[3] ? '●' : ' ';
+  s += h[4] ? '●' : ' ';
+  return s;
+}
+function charLabel(ch) {
+  if (ch === 'LTRS') return 'L';
+  if (ch === 'FIGS') return 'F';
+  if (ch === 'CR') return '↵';
+  if (ch === 'LF') return '↓';
+  if (ch === ' ') return '·';
+  if (ch === undefined || ch === null) return ' ';
+  return ch;
+}
+function renderTapeVertical(tapeCells, containerEl) {
+  containerEl.innerHTML = '';
+  if (tapeCells.length === 0) {
+    const empty = document.createElement('span');
+    empty.className = 'header-comment';
+    empty.textContent = '= Cinta vacía =';
+    containerEl.appendChild(empty);
+    return;
+  }
+  for (const cell of tapeCells) {
+    const row = document.createElement('span');
+    row.className = 'row-line';
+    if (cell.ch === 'LTRS' || cell.ch === 'FIGS') row.classList.add('shift');
+    if (cell.raw) row.classList.add('raw');
+    let label;
+    if (cell.raw) label = (cell.code5 & 0x1F).toString(8).padStart(2, '0');
+    else label = charLabel(cell.ch);
+    row.textContent = tapeLineFromHoles(cell.holes) + '  ' + label;
+    containerEl.appendChild(row);
+  }
+  containerEl.scrollTop = containerEl.scrollHeight;
+}
+function teletypeReceiveCode5(code5) {
+  if (!TT.teletypeReady) return;
+  const holes = code5ToHoles(code5);
+
+  /* Modo BINARIO: cada código de 5 bits va directo a la cinta,
+     sin interpretarlo como carácter ITA2 ni gestionar cambios
+     LTRS/FIGS. Necesario para las cintas del Minibin. */
+  if (TT.mode === 'raw') {
+    TT.tapeOut.push({ ch: null, holes: holes.slice(), raw: true, code5 });
+    renderTapeVertical(TT.tapeOut, document.getElementById('tt-tape-out'));
+    return;
+  }
+
+  if (TT.holesMatch(holes, TT.codeLTRS)) {
+    TT.currentMode = 'LTRS';
+    if (TT.mode === 'tape' || TT.mode === 'both') {
+      TT.tapeOut.push({ ch: 'LTRS', holes: holes.slice() });
+      renderTapeVertical(TT.tapeOut, document.getElementById('tt-tape-out'));
+    }
+    return;
+  }
+  if (TT.holesMatch(holes, TT.codeFIGS)) {
+    TT.currentMode = 'FIGS';
+    if (TT.mode === 'tape' || TT.mode === 'both') {
+      TT.tapeOut.push({ ch: 'FIGS', holes: holes.slice() });
+      renderTapeVertical(TT.tapeOut, document.getElementById('tt-tape-out'));
+    }
+    return;
+  }
+
+  if (code5 === 0) return;
+  const ch = (TT.currentMode === 'LTRS') ? TT.lookupLTRS(holes) : TT.lookupFIGS(holes);
+  if (!ch) return;
+
+  if (TT.mode === 'print' || TT.mode === 'both') { flashTeletypeKey(ch); playKeySound(); }
+  enqueuePrint(ch, holes);
+}
+function ttSendAndFeed(code5) { TR.outputReg = code5; TR.readReady = 1; teletypeReceiveCode5(code5); }
+function ttSendChar(ch) {
+  if (!TT.teletypeReady) return;
+  if (ch === 'LTR') return;
+
+  const inL = TT.tableLTRS[ch] !== undefined;
+  const inF = TT.tableFIGS[ch] !== undefined;
+  if (!inL && !inF) return;
+
+  const isCommon = (ch === ' ' || ch === 'CR' || ch === 'LF');
+  let targetMode;
+  if (isCommon) targetMode = TT.currentMode;
+  else if (inL && !inF) targetMode = 'LTRS';
+  else if (inF && !inL) targetMode = 'FIGS';
+  else targetMode = /^[A-Z]$/.test(ch) ? 'LTRS' : 'FIGS';
+
+  if (targetMode !== TT.currentMode) {
+    const shiftHoles = (targetMode === 'LTRS') ? TT.codeLTRS : TT.codeFIGS;
+    ttSendAndFeed(holesToCode5(shiftHoles));
+    TT.currentMode = targetMode;
+  }
+  const code = targetMode === 'LTRS' ? TT.tableLTRS[ch] : TT.tableFIGS[ch];
+  ttSendAndFeed(holesToCode5(code));
+  flashTeletypeKey(ch);
+}
+function startReaderLoop() {
+  if (TR.reading) return;
+  if (TR.tapeIn.length === 0) return;
+  TR.reading = true;
+  TR.readIndex = 0;
+  TT.currentMode = 'LTRS';
+
+  const delay = (TT.mode === 'tape') ? TT.TAPE_ONLY_DELAY_MS : TT.PRINT_DELAY_MS;
+  function step() {
+    if (!TR.reading || !TR.running) { TR.reading = false; return; }
+    if (!TR.ready) { setTimeout(step, 100); return; }
+    if (TR.readIndex >= TR.tapeIn.length) { TR.reading = false; return; }
+
+    const cell = TR.tapeIn[TR.readIndex];
+    TR.outputReg = holesToCode5(cell.holes);
+    TR.readReady = 1;
+
+    if (!TR.manualMode) { renderStatus(); TR.readIndex++; setTimeout(step, delay); return; }
+    if (!TT.teletypeReady) { setTimeout(step, 100); return; }
+
+    if (cell.ch === 'LTRS') {
+      TT.currentMode = 'LTRS';
+      if (TT.mode === 'tape' || TT.mode === 'both') {
+        TT.tapeOut.push({ ch: 'LTRS', holes: cell.holes.slice() });
+        renderTapeVertical(TT.tapeOut, document.getElementById('tt-tape-out'));
+      }
+    } else if (cell.ch === 'FIGS') {
+      TT.currentMode = 'FIGS';
+      if (TT.mode === 'tape' || TT.mode === 'both') {
+        TT.tapeOut.push({ ch: 'FIGS', holes: cell.holes.slice() });
+        renderTapeVertical(TT.tapeOut, document.getElementById('tt-tape-out'));
+      }
+    } else if (cell.ch && cell.ch !== '?') {
+      if (TT.mode === 'print' || TT.mode === 'both') { flashTeletypeKey(cell.ch); playKeySound(); }
+      enqueuePrint(cell.ch, cell.holes);
+    }
+    renderStatus();
+    TR.readIndex++;
+    setTimeout(step, delay);
+  }
+  step();
+}
+
+/* ================================================================
+   EVENTOS TELETIPO
+   ================================================================ */
+document.querySelectorAll('.tt-key').forEach(key => {
+  if (key.disabled) return;
+  key.addEventListener('mousedown', () => key.classList.add('pressed'));
+  key.addEventListener('mouseup', () => key.classList.remove('pressed'));
+  key.addEventListener('mouseleave', () => key.classList.remove('pressed'));
+  key.addEventListener('click', () => ttSendChar(key.dataset.tt));
+});
+document.querySelectorAll('.tt-mode-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tt-mode-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    TT.mode = btn.dataset.mode;
+  });
+});
+document.getElementById('tt-sound-toggle').addEventListener('click', e => {
+  TT.soundOn = !TT.soundOn;
+  e.currentTarget.classList.toggle('on', TT.soundOn);
+  e.currentTarget.textContent = TT.soundOn ? '🔊' : '🔇';
+});
+document.getElementById('tt-reader-ready-btn').addEventListener('click', e => { TR.ready = !TR.ready; e.currentTarget.classList.toggle('ready', TR.ready); });
+document.getElementById('tt-reader-stop-btn').addEventListener('click', () => { TR.reading = false; TR.running = false; });
+document.getElementById('tt-teletype-ready-btn').addEventListener('click', e => { TT.teletypeReady = !TT.teletypeReady; e.currentTarget.classList.toggle('ready', TT.teletypeReady); });
+document.getElementById('tt-clear-out-btn').addEventListener('click', () => { TT.tapeOut = []; renderTapeVertical(TT.tapeOut, document.getElementById('tt-tape-out')); });
+document.getElementById('btn-tt').addEventListener('click', () => {
+  const btn = document.getElementById('btn-tt');
+  if (!TT.panelOpen) {
+    TT.panelOpen = true;
+    DOM.ttPanel.classList.remove('is-hidden');
+    void DOM.ttPanel.offsetWidth;
+    DOM.ttPanel.classList.add('open');
+    btn.classList.add('active');
+    updateMainLayout();
+  } else {
+    TT.panelOpen = false;
+    DOM.ttPanel.classList.remove('open');
+    btn.classList.remove('active');
+    setTimeout(() => { if (!TT.panelOpen) { DOM.ttPanel.classList.add('is-hidden'); updateMainLayout(); } }, 450);
+  }
+});
+document.getElementById('btn-mm').addEventListener('click', toggleMemMap);
+
+const RD = { panelOpen: false };
+function openReader() { if (RD.panelOpen) return; RD.panelOpen = true; DOM.rdPanel.classList.remove('is-hidden'); void DOM.rdPanel.offsetWidth; DOM.rdPanel.classList.add('open'); document.getElementById('btn-rd').classList.add('active'); updateMainLayout(); }
+function closeReader() { if (!RD.panelOpen) return; RD.panelOpen = false; DOM.rdPanel.classList.remove('open'); document.getElementById('btn-rd').classList.remove('active'); setTimeout(() => { if (!RD.panelOpen) { DOM.rdPanel.classList.add('is-hidden'); updateMainLayout(); } }, 450); }
+document.getElementById('btn-rd').addEventListener('click', () => { RD.panelOpen ? closeReader() : openReader(); });
+document.getElementById('mm-prev').addEventListener('click', mmPrevPage);
+document.getElementById('mm-next').addEventListener('click', mmNextPage);
+document.getElementById('mm-goto-cp').addEventListener('click', mmGotoCP);
+document.getElementById('mm-goto-instr').addEventListener('click', mmGotoInstr);
+
+document.addEventListener('keydown', e => {
+  if (!DOM.ttPanel.classList.contains('open')) return;
+  const k = e.key;
+  if (k.length === 1) {
+    const up = k.toUpperCase();
+    if (/[A-Z0-9 ,.\-+\/=():\?'%&]/.test(up)) { ttSendChar(up === ' ' ? ' ' : up); e.preventDefault(); }
+  } else if (k === 'Enter') { ttSendChar('CR'); e.preventDefault(); }
+});
+
+window.addEventListener('resize', updateMainLayout);
+
+/* ================================================================
+   GUARDAR / CARGAR CINTA
+   ================================================================ */
+document.getElementById('tt-save-btn').addEventListener('click', () => {
+  const lines = [];
+  lines.push('='.repeat(60));
+  lines.push('SIMULACION DE CINTA PERFORADA - CID 201');
+  lines.push('Canales: 5');
+  lines.push('Layout: 2/guia/3  (b0b1•b2b3b4)');
+  lines.push('Orden de bits: LSB arriba');
+  lines.push('Simbolos: ● = perforado, espacio = no perforado, • = guia');
+  lines.push('Codigos de cambio: LTRS=11111, FIGS=11011');
+  lines.push('='.repeat(60));
+  lines.push('');
+  for (const cell of TT.tapeOut) lines.push(tapeLineFromHoles(cell.holes));
+  const blob = new Blob([lines.join('\n')], { type: 'text/plain;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'salida-teletipo.cinta';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+});
+document.getElementById('tt-load-btn').addEventListener('click', () => { document.getElementById('tt-file-input').click(); });
+document.getElementById('tt-file-input').addEventListener('change', e => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => parseTapeText(ev.target.result);
+  reader.readAsText(file);
+  e.target.value = '';
+});
+function parseTapeText(text) {
+  const rawLines = text.split(/\r?\n/);
+  const cells = [];
+  let readMode = 'LTRS';
+  for (const raw of rawLines) {
+    if (/^\s*=/.test(raw)) continue;
+    if (/SIMULACION|Archivo|Canales|Layout|Orden|Simbolos|Codigos/.test(raw)) continue;
+    if (raw.trim() === '') continue;
+    const holes = parseTapeLine(raw);
+    if (!holes) continue;
+    if (TT.holesMatch(holes, TT.codeLTRS)) { readMode = 'LTRS'; cells.push({ ch: 'LTRS', holes }); continue; }
+    if (TT.holesMatch(holes, TT.codeFIGS)) { readMode = 'FIGS'; cells.push({ ch: 'FIGS', holes }); continue; }
+    const ch = (readMode === 'LTRS') ? TT.lookupLTRS(holes) : TT.lookupFIGS(holes);
+    cells.push({ ch: ch || '?', holes });
+  }
+  TR.tapeIn = cells;
+  TR.readIndex = 0;
+  renderTapeVertical(TR.tapeIn, document.getElementById('tt-tape-in'));
+}
+function parseTapeLine(ln) {
+  const gi = ln.indexOf('•');
+  if (gi < 0) return null;
+  const pad = (ln + '      ').slice(0, 6);
+  const left = pad.substring(0, gi);
+  const right = pad.substring(gi + 1);
+  const ih = c => c === '●' || c === '○';
+  return [ih(left[0])?1:0, ih(left[1])?1:0, ih(right[0])?1:0, ih(right[1])?1:0, ih(right[2])?1:0];
+}
+document.getElementById('tt-read-btn').addEventListener('click', () => {
+  if (TR.tapeIn.length === 0) { alert('No hay cinta cargada en el lector.'); return; }
+  if (!TR.ready) { alert('El lector no está LISTO. Pulse LISTO para activarlo.'); return; }
+  if (TR.reading) return;
+  TR.manualMode = true;
+  TR.running = true;
+  startReaderLoop();
+});
+
+
+
+/* ================================================================
+   INICIALIZACIÓN
+   ================================================================ */
+loadExamplePrograms();
+S.mode = 'CONT'; S.power = false; S.running = false; S.state = 'APAGADO';
+S.cycle = 5; S.CP = 0; S.lastInstr = 0; S.letters = 0;
+S.RegistroTitulos = 0; S.RegistroNumeros = 0; S.RegistroSigno = 0;
+MM.cpFocus = false;
+TR.manualMode = true;
+
+renderAll();
+updateMainLayout();
+ttRenderPaper();
+renderTapeVertical(TT.tapeOut, document.getElementById('tt-tape-out'));
+renderTapeVertical(TR.tapeIn, document.getElementById('tt-tape-in'));
+
+/* ==================================================================
+   CARGAR .LST — el botón YA existe en el HTML (#btn-load) dentro de
+   status-bar; aquí solo se conecta. No se crea ni se inserta DOM.
+   ================================================================== */
+(function () {
+  const btn = document.getElementById('btn-load');
+  const inp = document.getElementById('load-lst-input');
+  if (!btn || !inp) { console.warn('CARGAR .LST: #btn-load / #load-lst-input no encontrados.'); return; }
+
+  /* volcar un listado LEN-1 (DIR, CODIGO, ...) en S.memory */
+  window.cargarLstEnMemoria = function (texto) {
+    const mem = (typeof S !== 'undefined' && S.memory) || null;
+    if (!mem) throw new Error('S.memory no disponible');
+    let n = 0, pg0 = 0;
+    for (const raw of String(texto).split('\n')) {
+      const p = raw.split(',');
+      if (p.length < 2) continue;                       // cabeceras / '$' / blanco
+      const a = parseInt(p[0].trim(), 8), c = parseInt(p[1].trim(), 8);
+      if (!Number.isFinite(a) || !Number.isFinite(c)) continue;
+      if (a < 0 || a >= mem.length) continue;           // fuera de rango: no corrompe
+      if (a <= 0o177) pg0++;                            // pág.0 = Minibin/subrutinas
+      mem[a] = c & 0xFFF; n++;
+    }
+    if (typeof renderAll === 'function') renderAll();
+    if (typeof MM !== 'undefined' && MM.isOpen && typeof updateMMHighlight === 'function') updateMMHighlight();
+    if (pg0) console.warn('CARGAR .LST: ' + pg0 + ' palabras en página 0 (0o000-0o177): puede corromper Minibin/subrutinas.');
+    return n;
+  };
+
+  btn.addEventListener('click', () => inp.click());
+  inp.addEventListener('change', e => {
+    const f = e.target.files && e.target.files[0]; if (!f) return;
+    const r = new FileReader();
+    r.onload = () => {
+      try {
+        const n = cargarLstEnMemoria(r.result);
+        btn.classList.add('active');                                   // feedback momentáneo
+        setTimeout(() => btn.classList.remove('active'), 600);
+        alert(n + ' palabras cargadas en memoria.' +
+          (n ? '\nSi el programa empieza en 0o200, pulsa ENA; en otro origen, fija CP (CPR) y pulsa COM.' : ''));
+      } catch (err) { console.error('lst:', err); alert('Error al cargar .lst: ' + err.message); }
+      e.target.value = '';                                             // permite recargar el mismo
+    };
+    r.readAsText(f);
+  });
+})();
+
+
+</script>
+</body>
+</html>
