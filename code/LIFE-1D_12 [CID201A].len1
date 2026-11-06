@@ -5,10 +5,12 @@
 / o desde la configuracion de los 12 interruptores.
 / Compila en 122 palabras, dentro de una sola pagina
 / Uso: 
+/ 0-maquina detenida (ALT)
 / 1-cargar el programa en memoria
-/ 2-poner CP 0000
+/ 2-poner CP 0000 (interruptores en 0, CPR)
 / 3-poner en los interruptores el vector inicial
-/ 4-comenzar
+/ 4-comenzar (COM)
+/ 5-resultado en el teletipo
 / ═════════════════════════════════════════════════════════════
 
 *0000	/vamos a ponerlo en pagina cero
