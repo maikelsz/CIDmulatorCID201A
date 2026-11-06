@@ -1,3 +1,5 @@
+/ bootstrap, iniciar el progrma desde 0000
+/ o ir directamente a 0200
 *0000
                VEA I 0001
 *0001
@@ -93,6 +95,7 @@ P_GEN4,        GEN4_SLOT
 P_DISPLAY,     DISP_SLOT
 
 / ═════ PÁGINA 1: MAIN, INIT, LOOP, HALT, GEN_SLOT ═════
+/ inicio del programa
 *0200
 MAIN,          LAC
                SUM K_GEN

@@ -1,4 +1,4 @@
-*200
+/ Wack-A-Mole minimo
 / Aparece un indicador de letra encendido (el topo) en una de las 8 posiciones.
 / Es one-hot: se queda fijo hasta que salta el siguiente.
 / Dispone de ≈0,55 seg para pulsar el dígito de esa posición.
@@ -8,6 +8,8 @@
 / ALT detiene; ENA reinicia con marcador en 0.
 / El topo nunca repite posición consecutiva.
 
+/ inicio del programa
+*200
 inic,    LAC
          ORI          / AC = AC | RI. semilla defini por los interruptores
          DEL SD
