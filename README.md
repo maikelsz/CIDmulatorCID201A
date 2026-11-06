@@ -104,9 +104,35 @@ La consola de la CID 201-A reúne en un único cuerpo los indicadores, interrupt
 | **6 LEDs de ciclo** | `CD` `CM` `CI` / `AD` `CV` `CO` |
 | **4 interruptores auxiliares** | A / B / C / D (pendiente de comportamiento específico) |
 | **Mando LEC / LT / ESC** | Modo del lector de cinta |
-| **Teclado decimal** | 0–7 (dígitos octales) + `.` |
-| **Teclas de control** | DEP / COM / EXA / ALT / PUL / CPR / REC |
+| **Teclas de control** | DEP / COM / EXA / ALT / PUL / CPR |
+| **Teclado decimal** | 0–7 (dígitos octales) + `.`. Programadas |
+| **Teclas de control** | REC / ALM / BOR. Programadas |
 | **Teclas de ejemplo** | ENA / ENB / ENC (programas precargados) |
+
+CPR – El Contador de Programa recibe el valor de los interruptores como una dirección de memoria.
+DEP – Depositar el valor de los interruptores en la dirección de memoria del CP, y lo incrementa.
+COM – Comenzar ejecución a partir de dirección en el CP.
+ALT – Pasar a estado de Alto
+EXA – Examinar. Carga en RM el contenido de la dirección en CP.
+PUL – Pulso. Puede ser un pulso único de reloj, avanzando el contador Johnson, o ejecutar un ciclo completo, dependiendo del estado del interruptor de control.
+REC – Recepción. Tecla programada.
+ALM – Almacena. Tecla programada.
+BOR – Borra. Tecla programada.
+DIGITOS. Entrada numérica. Teclas programadas.
+ENA, ENB, ENC – Inician la ejecución a partir de la dirección indirecta contenida en 7770, 7774 y 7777 
+
+CONT/CICLO/PASO – Ejecución continua (normal), por ciclo (el botón PUL ejecuta un ciclo, 16 pulsos de reloj) o por paso (dos PUL ejecuta un solo pulso de reloj, un PUL para instrucciones dirección directas a memoria, dos PUL para las indirectas).
+LEC/L-T/TEL: operación con la grabadora, LECtura, NORmal (la máquina opera normal), ESCritura.
+Interruptores de control de la grabadora.
+
+El uso de interruptores y teclas solo se puede hacer durante un estado de Alto. 
+
+Para depositar una serie de valores en memoria, primero se especificaba por los interruptores la dirección de memoria y mediante la tecla CPR se pasaba este valor al Contador de Programa (CP). Luego se introducían los valores a almacenar y se oprimía sucesivamente la tecla DEP, que depositaba el valor de los interruptores en RM y de ahí a la memoria, e incrementaba el CP en uno (lo apuntaba a la próxima dirección de memoria). 
+Para examinar el contenido de la memoria se utiliza la tecla EXA.
+Para comenzar la ejecución de un programa en una dirección dada se oprime la tecla COM, estando previamente el CP señalando a esa dirección. 
+La tecla ALT pone a la computadora en el estado de Alto. La ejecución del programa se reanuda desde donde se había detenido mediante la tecla COM.
+Un interruptor de tres posiciones gobierna el modo de operación del reloj general, y así del programa. 
+La posición CONTINUO permite la operación sin parada alguna. La posición CICLO determinaba que cada depresión de la tecla PUL generara 16 pulsos de reloj correspondientes a la ejecución completa de un ciclo de trabajo. EN la computadora real, la posición PASO, al presionar la tecla PUL se produce un pulso de reloj, avanzando un 1/18 de ciclo al contador Johnson, y permitiendo ver el desplazamiento de los bits en los registros y seguir la operación paso a paso. En la emulada, en este caso, se ejecuta una instrucción.
 
 ### Barra de estado
 
