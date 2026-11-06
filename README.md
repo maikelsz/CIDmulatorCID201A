@@ -295,8 +295,8 @@ Los grupos `OR` y `AND` no se pueden combinar entre sí. `LAC` puede combinarse 
 
 | Octal | Mnemo | Operación |
 |---|---|---|
-| `6110` | LIP | `0 → Ind. Perf.` |
-| `6120` | TAP | `AC → Reg. Perf.`, `0 → AC` |
+| `6110` | LIP | `0 → Indicador de Perforación.` |
+| `6120` | TAP | `AC → Registro del Perforador`, `0 → AC` |
 | `6130` | TAP LIP | Combinación de las dos anteriores |
 | `6140` | SIP | Salta si `Ind. Perf. == 1` |
 
@@ -306,7 +306,7 @@ Los grupos `OR` y `AND` no se pueden combinar entre sí. `LAC` puede combinarse 
 |---|---|---|
 | `6202` | PAL | Detiene lector |
 | `6204` | COL | Inicia lector |
-| `6210` | LIL | `0 → Ind. Lector` |
+| `6210` | LIL | `0 → Indicador de Lectura` |
 | `6230` | TLA LIL | Transferencia + limpieza de indicador |
 | `6240` | SIL | Salta si `IL == 1` |
 
@@ -314,10 +314,10 @@ Los grupos `OR` y `AND` no se pueden combinar entre sí. `LAC` puede combinarse 
 
 | Octal | Mnemo | Operación |
 |---|---|---|
-| `6411` | LIF | `0 → Ind. Fracción` |
-| `6412` | LIA | `0 → Ind. ALM` |
-| `6414` | LID | `0 → Ind. Dígitos` |
-| `6420` | TRA | `AC + Reg. Dígitos → AC` |
+| `6411` | LIF | `0 → Indicador de Fracción` |
+| `6412` | LIA | `0 → Indicador de ALM` |
+| `6414` | LID | `0 → Indicador de Dígitos` |
+| `6420` | TRA | `AC + Registro de Dígitos → AC` |
 | `6441` | SIF | Salta si `IF == 1` |
 | `6442` | SIA | Salta si `IA == 1` |
 | `6444` | SID | Salta si `ID == 1` |
@@ -326,13 +326,13 @@ Los grupos `OR` y `AND` no se pueden combinar entre sí. `LAC` puede combinarse 
 
 | Octal | Mnemo | Operación |
 |---|---|---|
-| `6500` | TAS | `(−) → Reg. Signo` |
-| `6511` | LIB | `0 → Ind. BOR` |
-| `6512` | LIS | `0 → Ind. Signo` |
-| `6514` | LIR | `0 → Ind. REC` |
-| `6521` | TAF | `AC(.) → Reg. Fracción` |
-| `6522` | TAT | `AC(L) → Reg. Títulos` (display alfabético) |
-| `6524` | TAR | `AC → Reg. Números` |
+| `6500` | TAS | `(−) → Registro de Signo` |
+| `6511` | LIB | `0 → Indicador de BOR` |
+| `6512` | LIS | `0 → Indicador de Signo` |
+| `6514` | LIR | `0 → Indicador de REC` |
+| `6521` | TAF | `AC(.) → Registro de Fracción` |
+| `6522` | TAT | `AC(L) → Registro de Títulos` (display alfabético) |
+| `6524` | TAR | `AC → Registro de Números` |
 | `6541` | SIB | Salta si `IB == 1` |
 | `6542` | SIS | Salta si `IS == 1` |
 | `6544` | SIR | Salta si `IR == 1` |
@@ -342,14 +342,14 @@ Los grupos `OR` y `AND` no se pueden combinar entre sí. `LAC` puede combinarse 
 
 | Octal | Mnemo | Operación |
 |---|---|---|
-| `6611` | LIO | `0 → Ind. Salida` |
-| `6612` | LIM | `0 → Ind. Muestreo` |
+| `6611` | LIO | `0 → Indicador de Salida` |
+| `6612` | LIM | `0 → Indicador de Muestreo` |
 | `6621` | TAU | `AC → Registro Uno` |
 | `6622` | TAD | `AC → Registro Dos` |
 | `6631` | TUA | `Registro Uno → AC` |
 | `6632` | TDA | `Registro Dos → AC` |
-| `6641` | SIO | Salta si `Ind. Salida == 1` |
-| `6642` | SIM | Salta si `Ind. Muestreo == 1` |
+| `6641` | SIO | Salta si `Indicador de Salida == 1` |
+| `6642` | SIM | Salta si `Indicador de Muestreo == 1` |
 
 ---
 
