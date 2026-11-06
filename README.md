@@ -461,7 +461,7 @@ Los símbolos `●` (o `○`) son perforaciones; `•` es la guía central. Cabe
 
 ## Monitor "Última Página"
 
-Programa de control cargado en la **página 31** (`0o7600`–`0o7724`). Es el primer programa de sistema de la máquina y permite manipular la memoria con el **teclado decimal**, el **display numérico** y las teclas asociadas.
+Programa de control cargado en la **página 31** (`0o7600`–`0o7724`). Permite manipular la memoria con el **teclado decimal**, el **display numérico** y las teclas asociadas.
 
 ### Funcionamiento
 
@@ -479,18 +479,6 @@ Cualquier tecla nueva durante una operación de REC cancela la operación y el n
 
 1. Pulsar **ENC** (carga el monitor en `0o7600` y comienza).
 2. Estado `EJECUTA`. El display queda listo para recibir dígitos.
-
-### Variables internas (visibles en el mapa de memoria)
-
-| Dirección | Nombre | Función |
-|---|---|---|
-| `0o7605` | RegNum | Valor mostrado en el display |
-| `0o7606` | maskH | `0o7000` — máscara de los 3 bits altos |
-| `0o7607` | maskL | `0o7770` — máscara de los 3 bits bajos |
-| `0o7636` | RECdir | Dirección de recuperación |
-| `0o7637` | RECstate | Estado de recuperación |
-| `0o7663` | ALMdir | Dirección de almacenamiento |
-| `0o7664` | ALMstate | Estado de almacenamiento |
 
 ---
 
