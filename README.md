@@ -86,6 +86,8 @@ La numeración es **octal**, con el bit 0 (más a la izquierda) como el **más s
 
 La consola de la CID 201-A reúne en un único cuerpo los indicadores, interruptores, teclas y el display numérico. En el simulador se reproduce fielmente:
 
+<p align="center"><img width="700" src="https://github.com/maikelsz/CIDmulatorCID201A/blob/main/imgs/CID%20201-A%20emulator.jpg" alt="description" /></p>
+
 ### Panel superior
 
 - **Registros AC / RM / CP**: 12 bits cada uno, con indicadores rojo/blanco por grupo de 3 bits. El indicador **EN** (bit de enlace) está a la izquierda del AC.
