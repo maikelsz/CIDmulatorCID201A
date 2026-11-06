@@ -86,7 +86,7 @@ La numeración es **octal**, con el bit 0 (más a la izquierda) como el **más s
 
 La consola de la CID 201-A reúne en un único cuerpo los indicadores, interruptores, teclas y el display numérico. En el simulador se reproduce fielmente:
 
-<p align="center"><img width="1280" src="https://github.com/maikelsz/CIDmulatorCID201A/blob/main/imgs/CID%20201-A%20emulator.jpg" alt="description" /></p>
+<p align="center"><img width="1280" src="https://github.com/maikelsz/CIDmulatorCID201A/blob/main/imgs/CIDmulator-A_CID201-A_console.png" alt="description" /></p>
 
 ### Panel superior
 
