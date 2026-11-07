@@ -56,7 +56,7 @@ La **CID 201** fue la primera minicomputadora diseñada y fabricada en Cuba, des
 | Tipo | Minicomputadora de 3.ª generación |
 | Introducción | 1971 |
 | Fabricación | 1970 – 1972 |
-| Unidades | entre 18 y más de 24 |
+| Unidades | ~24 |
 | Longitud de palabra | 12 bits |
 | Instrucciones | 59 |
 | Reloj | 1 MHz |
