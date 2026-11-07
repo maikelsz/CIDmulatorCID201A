@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>CIDmulator CID 201-A</title>
+<title>CID 201-A — Simulador Funcional</title>
 
 <style>
 /* =================================================================
@@ -2529,7 +2529,7 @@ const ROTATION_TABLE = {
 			if (SLT) {
 			  // Grupo ** (SAP/SAD/SEC): AND, cada prueba negada
 			  let cond = true;
-			  if (SAN) cond = cond && ((S.AC & 0o4000) === 0);  // SAP: AC >= 0
+			  if (SAN) cond = cond && ((S.AC & 0o4000) === 0 && S.AC !== 0);  // SAP: AC >= 0
 			  if (SAC) cond = cond && (S.AC !== 0);             // SAD: AC != 0
 			  if (SED) cond = cond && (S.EN === 0);             // SEC: EN == 0
 			  skip = cond;   // SLT sola → cond=true → skip siempre ✓
