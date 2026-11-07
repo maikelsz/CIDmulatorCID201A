@@ -241,14 +241,14 @@ Los opcodes 6 y 7 se reservan para microinstrucciones y E/S.
 
 ### Grupo 0 — Limpieza (opcode 7, bit 400 = 0, bit 002 = 0)
 
-| Octal | Mnemo | Operación |
-|---|---|---|
-| `7000` | NOP | Sin operación |
-| `7010` | IAC | `AC + 1 → AC` |
-| `7020` | CEN | `~EN → EN` |
-| `7040` | CAC | `~AC → AC` |
-| `7100` | LEN | `0 → EN` |
-| `7200` | LAC | `0 → AC` |
+| Octal | Mnemo | Orden |Operación |
+|---|---|---|---|
+| `7000` | NOP |  |Sin operación |
+| `7010` | IAC | 3 |`AC + 1 → AC` |
+| `7020` | CEN | 2 |`~EN → EN` |
+| `7040` | CAC | 2 |`~AC → AC` |
+| `7100` | LEN | 1 |`0 → EN` |
+| `7200` | LAC | 1 |`0 → AC` |
 
 **Combinaciones (mismo orden de ejecución):**
 
@@ -292,7 +292,7 @@ Rotan el par `(EN, AC)` como un registro único de 13 bits.
 Salto por *skip*: si la condición se cumple, `CP = CP + 1` (se omite la instrucción siguiente).
 
 | Octal | Mnemo | Orden | Grupo |Condición |
-|---|---|---|
+|---|---|---|---|---|
 | `7500` | SAN | 1 | OR |`AC < 0` |
 | `7440` | SAC | 1 | OR |`AC == 0` |
 | `7420` | SED | 1 | OR |`EN == 1` |
