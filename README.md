@@ -291,20 +291,20 @@ Rotan el par `(EN, AC)` como un registro único de 13 bits.
 
 Salto por *skip*: si la condición se cumple, `CP = CP + 1` (se omite la instrucción siguiente).
 
-| Octal | Mnemo | Orden | Condición |
+| Octal | Mnemo | Orden | Grupo |Condición |
 |---|---|---|
-| `7500` | SAN | 1* |`AC < 0` |
-| `7440` | SAC | 1* |`AC == 0` |
-| `7420` | SED | 1* |`EN == 1` |
-| `7510` | SAP | 1** |`AC > 0` (SAN con SLT) |
-| `7450` | SAD | 1** |`AC ≠ 0` (SAC con SLT) |
-| `7430` | SEC | 1** | `EN == 0` (SED con SLT) |
-| `7410` | SLT | 1 |"Incondicional |
-| `7600` | LAC | 2 |`0 → AC` (limpia sin saltar) |
-| `7404` | ALT | 4 |Alto (detiene la máquina) |
-| `7402` | ORI | 3 |`AC = AC \| Register(interruptores)` |
+| `7500` | SAN | 1 | OR |`AC < 0` |
+| `7440` | SAC | 1 | OR |`AC == 0` |
+| `7420` | SED | 1 | OR |`EN == 1` |
+| `7510` | SAP | 1 | AND |`AC > 0` (SAN con SLT) |
+| `7450` | SAD | 1 | AND |`AC ≠ 0` (SAC con SLT) |
+| `7430` | SEC | 1 | AND | `EN == 0` (SED con SLT) |
+| `7410` | SLT | 1 | | Salto Incondicional |
+| `7600` | LAC | 2 | |`0 → AC` (limpia sin saltar) |
+| `7404` | ALT | 4 | |Alto (detiene la máquina) |
+| `7402` | ORI | 3 | |`AC = AC \| Register(interruptores)` |
 
-**Combinaciones OR** (grupo `*`):
+**Combinaciones OR**:
 
 | Octal | Combinación | Condición |
 |---|---|---|
@@ -313,7 +313,7 @@ Salto por *skip*: si la condición se cumple, `CP = CP + 1` (se omite la instruc
 | `7520` | SAN SED | `AC < 0` **o** `EN == 1` |
 | `7540` | SAN SAC | `AC < 0` **o** `AC == 0` |
 
-**Combinaciones AND** (grupo `**`, requieren `SLT`):
+**Combinaciones AND** (requieren `SLT`):
 
 | Octal | Combinación | Condición |
 |---|---|---|
