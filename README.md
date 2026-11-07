@@ -296,7 +296,7 @@ Salto por *skip*: si la condición se cumple, `CP = CP + 1` (se omite la instruc
 | `7500` | SAN | `AC < 0` |
 | `7440` | SAC | `AC == 0` |
 | `7420` | SED | `EN == 1` |
-| `7510` | SAP | `AC ≥ 0` (SAN con SLT) |
+| `7510` | SAP | `AC > 0` (SAN con SLT) |
 | `7450` | SAD | `AC ≠ 0` (SAC con SLT) |
 | `7430` | SEC | `EN == 0` (SED con SLT) |
 | `7410` | SLT | Incondicional |
