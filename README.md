@@ -331,18 +331,18 @@ Las microintrucciones de limpieza y salto también puede ser combinadas.
 
 | Octal | Combinación | Condición |
 |---|---|---|
-| 7640 | LAC SAC | 0 → AC y salta |
-| 7620 | LAC SED | 0 → AC, salta si EN <> 0 |
-| 7610 | LAC SLT | 0 → AC y salta siempre |
-| 7504 | SAN ALT | Alto si AC >= 0, si no, continua |
-| 7444 | SAC ALT | Alto si AC <> 0, si no, continua |
-| 7424 | SED ALT | Alto si EN == 0, si no, continua |
-| 7514 | SAP ALT | Alto si AC <= 0, si no, continua |
-| 7454 | SAD ALT | Alto si AC == 0, si no, continua |
-| 7434 | SEC ALT | Alto si EN <> 0, si no, continua |
-| 7502 | SAN ORI | OR con interruptores si AC >= 0 |
-| 7442 | SAC ORI | OR con interruptores si AC <> 0 |
-| 7422 | SED ORI | OR con interruptores si EN == 0 |
+| 7640 | LAC SAC | `0 → AC` y salta |
+| 7620 | LAC SED | `0 → AC`, salta si `EN <> 0` |
+| 7610 | LAC SLT | `0 → AC` y salta siempre |
+| 7504 | SAN ALT | Alto si `AC >= 0`, si no, continua |
+| 7444 | SAC ALT | Alto si `AC <> 0`, si no, continua |
+| 7424 | SED ALT | Alto si `EN == 0`, si no, continua |
+| 7514 | SAP ALT | Alto si `AC <= 0`, si no, continua |
+| 7454 | SAD ALT | Alto si `AC == 0`, si no, continua |
+| 7434 | SEC ALT | Alto si `EN <> 0`, si no, continua |
+| 7502 | SAN ORI | OR con interruptores si `AC >= 0` |
+| 7442 | SAC ORI | OR con interruptores si `AC <> 0` |
+| 7422 | SED ORI | OR con interruptores si `EN == 0` |
 
 ### Grupo 6 — Entrada/Salida
 
