@@ -325,7 +325,7 @@ Los grupos `OR` y `AND` no se pueden combinar entre sí. `LAC` puede combinarse 
 | `7550` | SAP SAD | `AC > 0` **y** `AC ≠ 0` (= `AC > 0`) |
 | `7570` | SAP SAD SEC | `AC > 0` **y** `EN == 0` |
 
-> 7550 y 7770 son redundantes respecto a 7510 y 7530 respectivamente (SAD no añade información cuando AC > 0). Se mantienen por fidelidad al conjunto de instrucciones original.
+> 7550 y 7570 son redundantes respecto a 7510 y 7530 respectivamente (SAD no añade información cuando AC > 0). Se mantienen por fidelidad al conjunto de instrucciones original.
 
 Las microintrucciones de limpieza y salto también puede ser combinadas.
 
