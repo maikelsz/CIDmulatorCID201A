@@ -506,9 +506,9 @@ Ver sección anterior.
 
 ---
 
-## El "Minibin"
+## El Mínimo Binario, "Minibin"
 
-Programa utilitario de arranque (`0o000`–`0o013`) que lee una cinta perforada de 5 canales y deposita las palabras de 12 bits en memoria. Es el primer programa que se carga en la máquina y permite arrancar cualquier otro desde cinta.
+Programa utilitario de arranque (`0o000`–`0o013`) que lee una cinta perforada de 5 canales y deposita las palabras de 12 bits en memoria (las perforaciones requieren un formato). Es el primer programa que se carga en la máquina y permite arrancar cualquier otro desde cinta perforada conteniendo información binaria.
 
 ```
 0o000  COL LIL    Inicia lector, limpia indicador
