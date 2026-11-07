@@ -313,13 +313,16 @@ Salto por *skip*: si la condición se cumple, `CP = CP + 1` (se omite la instruc
 | `7520` | SAN SED | `AC < 0` **o** `EN == 1` |
 | `7540` | SAN SAC | `AC < 0` **o** `AC == 0` |
 
+
 **Combinaciones AND** (grupo `**`, requieren `SLT`):
 
 | Octal | Combinación | Condición |
 |---|---|---|
-| `7530` | SAP SEC | `AC ≥ 0` **y** `EN == 0` |
-| `7550` | SAP SAD | `AC ≥ 0` **y** `AC ≠ 0` (= `AC > 0`) |
+| `7530` | SAP SEC | `AC > 0` **y** `EN == 0` |
+| `7550` | SAP SAD | `AC > 0` **y** `AC ≠ 0` (= `AC > 0`) |
 | `7770` | SAP SAD SEC | `AC > 0` **y** `EN == 0` |
+
+> 7550 y 7770 son redundantes respecto a 7510 y 7530 respectivamente (SAD no añade información cuando AC > 0). Se mantienen por fidelidad al conjunto de instrucciones original.
 
 Los grupos `OR` y `AND` no se pueden combinar entre sí. `LAC` puede combinarse con `SAC` (`7640`: `0 → AC` y salta si `AC == 0`).
 
