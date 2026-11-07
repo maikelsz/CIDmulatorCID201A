@@ -389,7 +389,7 @@ Los grupos `OR` y `AND` no se pueden combinar entre sí. `LAC` puede combinarse 
 
 ## Ciclos de máquina
 
-El contador Johnson de 8 biestables genera 16 turnos (`T-2` a `T13`). Cada instrucción pasa por los ciclos del super-control:
+En la máquina real un contador Johnson de 8 biestables generaba 16 turnos (`T-2` a `T+13`). Cada instrucción pasa por los ciclos del super-control:
 
 | Ciclo | Entrada | Comportamiento |
 |---|---|---|
