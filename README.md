@@ -252,6 +252,8 @@ Los opcodes 6 y 7 se reservan para microinstrucciones y E/S.
 
 **Combinaciones (mismo orden de ejecución):**
 
+Las combinaciones de microcódigo en una sola palabra permite ahorrar palabras de memoria, la velocidad de ejecucion es casi la misma.
+
 | Octal | Combinación | Resultado |
 |---|---|---|
 | `7050` | CAC IAC | `~AC+1 → AC` (= −AC) |
@@ -304,6 +306,8 @@ Salto por *skip*: si la condición se cumple, `CP = CP + 1` (se omite la instruc
 | `7404` | ALT | 4 | |Alto (detiene la máquina) |
 | `7402` | ORI | 3 | |`AC = AC \| Register(interruptores)` |
 
+Los grupos `OR` y `AND` no se pueden combinar entre sí. `LAC` puede combinarse con `SAC` (`7640`: `0 → AC` y salta si `AC == 0`).
+
 **Combinaciones OR**:
 
 | Octal | Combinación | Condición |
@@ -319,11 +323,26 @@ Salto por *skip*: si la condición se cumple, `CP = CP + 1` (se omite la instruc
 |---|---|---|
 | `7530` | SAP SEC | `AC > 0` **y** `EN == 0` |
 | `7550` | SAP SAD | `AC > 0` **y** `AC ≠ 0` (= `AC > 0`) |
-| `7770` | SAP SAD SEC | `AC > 0` **y** `EN == 0` |
+| `7570` | SAP SAD SEC | `AC > 0` **y** `EN == 0` |
 
 > 7550 y 7770 son redundantes respecto a 7510 y 7530 respectivamente (SAD no añade información cuando AC > 0). Se mantienen por fidelidad al conjunto de instrucciones original.
 
-Los grupos `OR` y `AND` no se pueden combinar entre sí. `LAC` puede combinarse con `SAC` (`7640`: `0 → AC` y salta si `AC == 0`).
+Las microintrucciones de limpieza y salto también puede ser combinadas.
+
+| Octal | Combinación | Condición |
+|---|---|---|
+| 7640 | LAC SAC | 0 → AC y salta |
+| 7620 | LAC SED | 0 → AC, salta si EN <> 0 |
+| 7610 | LAC SLT | 0 → AC y salta siempre |
+| 7504 | SAN ALT | Alto si AC >= 0, si no, continua |
+| 7444 | SAC ALT | Alto si AC <> 0, si no, continua |
+| 7424 | SED ALT | Alto si EN == 0, si no, continua |
+| 7514 | SAP ALT | Alto si AC <= 0, si no, continua |
+| 7454 | SAD ALT | Alto si AC == 0, si no, continua |
+| 7434 | SEC ALT | Alto si EN <> 0, si no, continua |
+| 7502 | SAN ORI | OR con interruptores si AC >= 0 |
+| 7442 | SAC ORI | OR con interruptores si AC <> 0 |
+| 7422 | SED ORI | OR con interruptores si EN == 0 |
 
 ### Grupo 6 — Entrada/Salida
 
