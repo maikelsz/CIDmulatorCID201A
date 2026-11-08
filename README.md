@@ -572,8 +572,6 @@ O su equivalente en octal, listo para introducir mediante los interruptores de l
 4. Pulsar **DEP** para escribir el valor de los interruptores en `[CP]` = `Hacia`. Luego `DEP` otra vez para `[CP+1] = 0o6214` (COL LIL), etc. — o cargar el binario del Minibin manualmente.
 5. Pulsar **COM**. El Minibin leerá la cinta y depositará el programa en memoria.
 
-En el emulador, el Minibin ya está precargado junto con el resto de programas compartidos (putStr, getChar, leerNum).
-
 ---
 
 ## Ventanas auxiliares
@@ -582,11 +580,11 @@ Accesibles desde la barra de estado:
 
 | Icono | Ventana | Función |
 |---|---|---|
-| 📖 | **Ayuda** | Manual de usuario completo |
-| 🗺️ | **Mapa de memoria** | 4096 palabras en columnas, con navegación por páginas. **Editable**: clic en una celda para editarla (octal); `Enter` guarda y salta a la siguiente; `Esc` cancela |
+| 📁 | **Cargar `.lst`** | Carga un listado LEN-1 (`DIR, CÓDIGO, …`) en memoria |
 | 📄 | **Lector de cinta** | Panel del RFT T-53 |
 | 🖨️ | **Teletipo** | Panel del RFT T-51 |
-| 📁 | **Cargar `.lst`** | Carga un listado LEN-1 (`DIR, CÓDIGO, …`) en memoria |
+| 🗺️ | **Mapa de memoria** | 4096 palabras en columnas, con navegación por páginas. **Editable**: clic en una celda para editarla (octal); `Enter` guarda y salta a la siguiente; `Esc` cancela |
+| 📖 | **Ayuda** | Manual de usuario completo |
 
 ---
 
