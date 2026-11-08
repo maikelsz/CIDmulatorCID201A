@@ -2730,6 +2730,56 @@ function playKeySound() {
   osc.connect(f); f.connect(g); g.connect(audioCtx.destination);
   osc.start(now); osc.stop(now + 0.06);
 }
+
+/* ================================================================
+   SONIDOS DE LA CONSOLA (portados del emulador de la CID 201-B)
+   Tres timbres: switch (palanca), press (pulsar), release (soltar)
+   ================================================================ */
+const CONSOLE_VOLUME = 1.5;
+
+function playConsoleSound(type) {
+  ensureAudio();
+  if (!audioCtx) return;
+
+  const n = audioCtx.currentTime;
+  const o = audioCtx.createOscillator();
+  const g = audioCtx.createGain();
+
+  if (type === 'switch') {
+    // Click seco y agudo de interruptor
+    o.type = 'square';
+    o.frequency.setValueAtTime(2500, n);
+    o.frequency.exponentialRampToValueAtTime(1000, n + 0.01);
+    g.gain.setValueAtTime(0.0001, n);
+    g.gain.exponentialRampToValueAtTime(0.6 * CONSOLE_VOLUME, n + 0.002);
+    g.gain.exponentialRampToValueAtTime(0.0001, n + 0.03);
+    o.start(n); o.stop(n + 0.04);
+  } else if (type === 'press') {
+    // "Chik" metálico al apretar
+    o.type = 'triangle';
+    o.frequency.setValueAtTime(800, n);
+    o.frequency.exponentialRampToValueAtTime(200, n + 0.02);
+    g.gain.setValueAtTime(0.0001, n);
+    g.gain.exponentialRampToValueAtTime(0.8 * CONSOLE_VOLUME, n + 0.005);
+    g.gain.exponentialRampToValueAtTime(0.0001, n + 0.04);
+    o.start(n); o.stop(n + 0.05);
+  } else if (type === 'release') {
+    // "Chik" más suave al soltar
+    o.type = 'triangle';
+    o.frequency.setValueAtTime(600, n);
+    o.frequency.exponentialRampToValueAtTime(300, n + 0.015);
+    g.gain.setValueAtTime(0.0001, n);
+    g.gain.exponentialRampToValueAtTime(0.4 * CONSOLE_VOLUME, n + 0.003);
+    g.gain.exponentialRampToValueAtTime(0.0001, n + 0.03);
+    o.start(n); o.stop(n + 0.04);
+  }
+
+  o.connect(g);
+  g.connect(audioCtx.destination);
+}
+
+
+
 function flashTeletypeKey(ch) {
   if (!ch) return;
   document.querySelectorAll('.tt-key').forEach(k => {
@@ -2994,6 +3044,31 @@ document.addEventListener('keydown', e => {
 });
 
 window.addEventListener('resize', updateMainLayout);
+
+/* ================================================================
+   Eventos globales: sonidos de la consola (delegación)
+   ================================================================ */
+
+// Botones (keypad, control, ON-OFF, iconos de periféricos)
+document.body.addEventListener('mousedown', e => {
+  if (e.target.closest('.pbtn, .onoff-btn, .sb-icon-btn')) {
+    playConsoleSound('press');
+  }
+});
+
+document.body.addEventListener('mouseup', e => {
+  if (e.target.closest('.pbtn, .onoff-btn, .sb-icon-btn')) {
+    playConsoleSound('release');
+  }
+});
+
+// Interruptores de palanca (12 principales + 4 aux + modo + LEC)
+// `.switch` incluye `.switch.switch-3pos` por composición de clases
+document.body.addEventListener('click', e => {
+  if (e.target.closest('.switch')) {
+    playConsoleSound('switch');
+  }
+});
 
 /* ================================================================
    GUARDAR / CARGAR CINTA
