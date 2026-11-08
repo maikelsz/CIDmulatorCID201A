@@ -322,6 +322,26 @@ body { margin: 0; min-height: 100vh; background: radial-gradient(circle at 50% 3
   .mm-body { height: 420px; }
   .hp-content { height: 540px; }
 }
+
+
+#visit-counter-container {
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+  color: #8899aa;
+  text-align: left;
+  padding: 8px 20px;
+  margin-top: -6px; /* Ajusta el espacio para que quede justo debajo */
+  letter-spacing: 0.5px;
+  opacity: 0.8;
+}
+#visit-counter-container a {
+  color: #aac8ff;
+  text-decoration: none;
+}
+#visit-counter-container a:hover {
+  text-decoration: underline;
+}
+
 </style>
 
 </head>
@@ -578,6 +598,9 @@ body { margin: 0; min-height: 100vh; background: radial-gradient(circle at 50% 3
         </span>
       </div>
     </div>
+
+    <!-- AÑADE AQUÍ EL CONTENEDOR DEL CONTADOR -->
+    <div id="visit-counter-container"></div>
 
    <div class="memmap-panel is-hidden" id="memmap-panel">
       <div class="mm-inner">
@@ -3206,4 +3229,8 @@ renderTapeVertical(TR.tapeIn, document.getElementById('tt-tape-in'));
 
 </script>
 </body>
+
+<!-- Busuanzi: Script de seguimiento -->
+<script defer src="//cdn.busuanzi.cc/busuanzi/3.6.9/busuanzi.min.js"></script>
+
 </html>
