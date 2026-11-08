@@ -529,10 +529,11 @@ Ver sección anterior.
 
 ## El Mínimo Binario, "Minibin"
 
-Programa utilitario de arranque (`0o000`–`0o013`) que lee una cinta perforada de 5 canales y deposita las palabras de 12 bits en memoria (las perforaciones requieren un formato). Es el primer programa que se carga en la máquina y permite arrancar cualquier otro desde cinta perforada conteniendo información binaria.
+Programa utilitario de arranque ("bootloader"), usualmente el primero cargado en la máquina,  que lee una cinta perforada de 5 canales y deposita las palabras de 12 bits en memoria (las perforaciones requieren un formato).
 
+Su codigo ensamblador LEN.
 ```
-* 0                                 / Lo pondremos al incio de la memoria
+* 0                                 / Lo pondremos al inicio de la memoria
                 COL LIL             / Inicia el lector. Limpia su indicador
 NuevaPalabra,   LAC LEN             / Limpia AC y EN
 Nuevos5bits,    RI5                 / Desplaza 5 veces(cinta de 5 canales) a la izquierda
@@ -544,10 +545,10 @@ EsperaLector,   SIL                 / Salta a la instrucc.siguiente si el Lector
                 DEL I Hacia         / Transfiere el AC a la dirección indicada por Hacia
                 ISC Hacia           / Incrementa puntero Hacia
                 VEA NuevaPalabra
-Hacia,          200                 / Direccion de memoria destino de los datos
+Hacia,          200                 / Dirección destino de los datos, página 1
 $
 ```
-O su equivalente en octal
+O su equivalente en octal, listo para introducir mediante los interruptores de la consola.
 ```
 6214
 7300
