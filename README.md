@@ -537,15 +537,15 @@ Su codigo ensamblador LEN.
                 COL LIL             / Inicia el lector. Limpia su indicador
 NuevaPalabra,   LAC LEN             / Limpia AC y EN
 Nuevos5bits,    RI5                 / Desplaza 5 veces(cinta de 5 canales) a la izquierda
-EsperaLector,   SIL                 / Salta a la instrucc.siguiente si el Lector está en 1
+EsperaLector,   SIL                 / Salta a la instrucción siguiente si el Lector está en 1
                 VEA EsperaLector    / Si no, sigue en espera
-                TLA LIL             / Transfiere del lector los 5 bits de la derecha del AC
+                TLA LIL             / Transfiere desde el lector los 5 bits de la derecha del AC
                 SED                 / Salta la instrucción siguiente si EN = 1(desbordamiento)
                 VEA Nuevos5bits     / No está completa la palabra
                 DEL I Hacia         / Transfiere el AC a la dirección indicada por Hacia
-                ISC Hacia           / Incrementa puntero Hacia
+                ISC Hacia           / Incrementa puntero Destino
                 VEA NuevaPalabra
-Hacia,          200                 / Dirección destino de los datos, página 1
+Destino,        200                 / Dirección destino de los datos, página 1
 $
 ```
 O su equivalente en octal, listo para introducir mediante los interruptores de la consola.
