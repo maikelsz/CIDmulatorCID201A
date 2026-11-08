@@ -532,18 +532,35 @@ Ver sección anterior.
 Programa utilitario de arranque (`0o000`–`0o013`) que lee una cinta perforada de 5 canales y deposita las palabras de 12 bits en memoria (las perforaciones requieren un formato). Es el primer programa que se carga en la máquina y permite arrancar cualquier otro desde cinta perforada conteniendo información binaria.
 
 ```
-0o000  COL LIL    Inicia lector, limpia indicador
-0o001  LAC LEN    Limpia AC y EN
-0o002  RI 5       Rota 5 bits a la izquierda
-0o003  SIL        ¿Lector listo?
-0o004  VEA 0o003  Espera
-0o005  TLA LIL    Transfiere 5 bits, limpia indicador
-0o006  SED        ¿Desbordamiento (= fin de palabra)?
-0o007  VEA 0o002  Sigue acumulando bits
-0o010  DEL I Hacia   Escribe la palabra
-0o011  ISC Hacia     Incrementa puntero
-0o012  VEA 0o001     Nueva palabra
-0o013  Hacia      ← dirección de destino (actualizada)
+* 0                                 / Lo pondremos al incio de la memoria
+                COL LIL             / Inicia el lector. Limpia su indicador
+NuevaPalabra,   LAC LEN             / Limpia AC y EN
+Nuevos5bits,    RI5                 / Desplaza 5 veces(cinta de 5 canales) a la izquierda
+EsperaLector,   SIL                 / Salta a la instrucc.siguiente si el Lector está en 1
+                VEA EsperaLector    / Si no, sigue en espera
+                TLA LIL             / Transfiere del lector los 5 bits de la derecha del AC
+                SED                 / Salta la instrucción siguiente si EN = 1(desbordamiento)
+                VEA Nuevos5bits     / No está completa la palabra
+                DEL I Hacia         / Transfiere el AC a la dirección indicada por Hacia
+                ISC Hacia           / Incrementa puntero Hacia
+                VEA NuevaPalabra
+Hacia,          200                 / Direccion de memoria destino de los datos
+$
+```
+O su equivalente en octal
+```
+6214
+7300
+7322
+6240
+5203
+6230
+7420
+5202
+3613
+2213
+5201
+0200
 ```
 
 **Uso:**
