@@ -39,6 +39,8 @@ Simulador Web. La minicomputadora CID 201-A a la derecha, con el lector de cinta
 
 No requiere instalación ni dependencias. Basta con abrir el archivo `CID201A.html` en un navegador moderno (Chrome, Firefox, Edge, Safari):
 
+O ir a este vinculo: <https://maikelsz.github.io/CIDmulatorCID201A/CIDmulatorCID201A.html>
+
 **Primeros pasos recomendados:**
 
 1. Pulsar **ON-OFF** (botón rojo circular). El estado pasa a `ALTO`.
