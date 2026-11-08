@@ -11,7 +11,7 @@
 * { box-sizing: border-box; user-select: none; -webkit-user-select: none; }
 :root { --console-w: 1030px; --hp-w: 440px; --mm-w: 320px; --tt-w: 546px; --side-w: 150px; --rd-w: 178px; --gap: 14px; }
 @media (max-width: 1900px) { :root { --tt-w: 624px; } }
-body { margin: 0; min-height: 100vh; background: radial-gradient(circle at 50% 30%, #2a3447, #060810 80%); font-family: Arial, Helvetica, sans-serif; display: flex; justify-content: center; align-items: flex-start; gap: 20px; padding: 16px; color: #fff; }
+body { margin: 0; min-height: 100vh; background: radial-gradient(circle at 50% 30%, #2a3447, #060810 80%); font-family: Arial, system-ui, sans-serif; display: flex; justify-content: center; align-items: flex-start; gap: 20px; padding: 16px; color: #fff; }
 .main-wrap { display: flex; flex-direction: column; gap: var(--gap); align-items: center; max-width: 100%; }
 .main-row { display: flex; gap: var(--gap); align-items: flex-start; justify-content: center; max-width: 100%; }
 .is-hidden { display: none !important; }
@@ -952,7 +952,10 @@ Dir.   Octal  Binario          Nemotécnico   Comentario
 
   </div>
 
-    <div id="visit-counter-container">Visitas: <span id="busuanzi_site_pv">...</span></div>
+    <div id="visit-counter-container">
+      Visitas: <span id="vercount_value_site_pv">Loading</span> · 
+      Visitantes: <span id="vercount_value_site_uv">Loading</span>
+    </div>
 
 </div>
 
@@ -3233,8 +3236,8 @@ renderTapeVertical(TR.tapeIn, document.getElementById('tt-tape-in'));
 
 </script>
 
-<!-- Busuanzi: Script de seguimiento -->
-<script src="//cdn.busuanzi.cc/busuanzi/3.6.9/busuanzi.min.js"></script>
+<!-- Vercount: Script de seguimiento -->
+<script defer src="https://events.vercount.one/js"></script>
 
 </body>
 
