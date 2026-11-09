@@ -3,11 +3,10 @@
 
 <p align="center"><img width="1280" src="https://github.com/maikelsz/CIDmulatorCID201A/blob/main/imgs/CID_201-A_0.jpg" /></p>
 
-Simulador funcional, en un único archivo HTML/CSS/JS, de la minicomputadora cubana **CID 201-A** (Centro de Investigación Digital, ICID, Cuba, 1971). Reproduce el segundo modelo, su conjunto de instrucciones LEN-1, su consola física, la memoria de ferrita y sus periféricos: teletipo RFT T-51 (teleimpresora + perforador de cinta), lector de cinta RFT T-53. Inicia con algunos programas precargados.
+Simulador funcional, en un único archivo HTML/CSS/JS, de la minicomputadora cubana **CID 201-A** (Centro de Investigación Digital, ICID, Cuba, 1971). Reproduce el segundo modelo, su conjunto de instrucciones LEN-1, su consola física, la memoria de ferrita y sus periféricos: teletipo RFT T-51 (teleimpresora + perforador de cinta) y lector de cinta RFT T-53. Inicia con algunos programas precargados.
 
 > Un homenaje ejecutable a una de las primeras computadoras diseñadas y fabricadas en América Latina.
 
-Simulador Web. La minicomputadora CID 201-A a la derecha, con el lector de cinta y el teletipo-perforador a la izquierda.
 <p align="center"><img width="1280" src="https://github.com/maikelsz/CIDmulatorCID201A/blob/main/imgs/CIDmulator-A_CID201_emulator.jpg" /></p>
 
 **Atención, este es un trabajo en progreso.**
@@ -37,15 +36,17 @@ Simulador Web. La minicomputadora CID 201-A a la derecha, con el lector de cinta
 
 ## Inicio rápido
 
-No requiere instalación ni dependencias. Basta con abrir el archivo `CID201A.html` en un navegador moderno (Chrome, Firefox, Edge, Safari):
+No requiere instalación ni dependencias. Basta con abrir el archivo `CID201A.html` en un navegador moderno (Chrome, Firefox, Edge, Safari).
 
-O ir a este vinculo: <https://maikelsz.github.io/CIDmulatorCID201A/CIDmulatorCID201A.html>
+O ir a este vínculo: <https://maikelsz.github.io/CIDmulatorCID201A/CIDmulatorCID201A.html>
 
 **Primeros pasos recomendados:**
 
 1. Pulsar **ON-OFF** (botón rojo circular). El estado pasa a `ALTO`.
-2. Pulsar **ENA** para cargar y ejecutar el primer programa de ejemplo. Se encenderán las letras A–O en secuencia.
+2. Pulsar **ENA** para cargar y ejecutar el primer programa de ejemplo (juego Simon). Se encenderán las letras A–G en secuencia.
 3. Pulsar **ALT** para detener la ejecución.
+
+<p align="center"><img width="1280" src="https://github.com/maikelsz/CIDmulatorCID201A/blob/main/imgs/CIDmulator-A_CID201-A_console.png" /></p>
 
 ---
 
@@ -79,9 +80,7 @@ La numeración es **octal**, con el bit 0 (más a la izquierda) como el **más s
 
 ## La consola
 
-La consola de la CID 201-A reúne en un único cuerpo los indicadores, interruptores, teclas y el display numérico. En el simulador se reproduce fielmente:
-
-<p align="center"><img width="1280" src="https://github.com/maikelsz/CIDmulatorCID201A/blob/main/imgs/CIDmulator-A_CID201-A_console.png" alt="description" /></p>
+La consola de la CID 201-A reúne en un único cuerpo los indicadores, interruptores, teclas y el display numérico.
 
 ### Panel superior
 
@@ -97,8 +96,8 @@ La consola de la CID 201-A reúne en un único cuerpo los indicadores, interrupt
 | **ON-OFF** | Enciende / apaga la máquina |
 | **Interruptor de modo** | `CONT` (continuo) / `CICLO` / `PASO` |
 | **6 LEDs de ciclo** | `CD` `CM` `CI` / `AD` `CV` `CO` |
-| **4 interruptores auxiliares** | A / B / C / D (pendiente de comportamiento específico) |
-| **Mando LEC / LT / ESC** | Modo del lector de cinta |
+| **4 interruptores auxiliares** | A / B / C / D (solo comportamiento visual) |
+| **Mando LEC / LT / ESC** | Solo comportamiento visual (pendiente de documentar) |
 | **Teclas de control** | DEP / COM / EXA / ALT / PUL / CPR |
 | **Teclado decimal** | 0–7 (dígitos octales) + `.`. Programadas |
 | **Teclas de control** | REC / ALM / BOR. Programadas |
@@ -106,43 +105,94 @@ La consola de la CID 201-A reúne en un único cuerpo los indicadores, interrupt
 
 **CPR** – El Contador de Programa recibe el valor de los interruptores como una dirección de memoria.
 
-**DEP** – Depositar el valor de los interruptores en la dirección de memoria del CP, y lo incrementa.
+**DEP** – Deposita el valor de los interruptores en la dirección de memoria del CP, y lo incrementa.
 
-**COM** – Comenzar ejecución a partir de dirección en el CP.
+**COM** – Comienza ejecución a partir de la dirección en el CP.
 
-**ALT** – Pasar a estado de Alto
+**ALT** – Pasa a estado de Alto.
 
-**EXA** – Examinar. Carga en RM el contenido de la dirección en CP.
+**EXA** – Examina. Carga en RM el contenido de la dirección en CP.
 
 **PUL** – Pulso. Puede ser un pulso único de reloj, avanzando el contador Johnson, o ejecutar un ciclo completo, dependiendo del estado del interruptor de control.
 
-**REC** – Recepción. Tecla programada.
+**REC / ALM / BOR** – Teclas programadas de Recepción, Almacenamiento y Borrado.
 
-**ALM** – Almacena. Tecla programada.
+**DÍGITOS** – Entrada numérica programada.
 
-**BOR** – Borra. Tecla programada.
+**ENA, ENB, ENC** – Inician la ejecución a partir de la dirección indirecta contenida en `0o7775`, `0o7776` y `0o7777` respectivamente.
 
-**DIGITOS**. Entrada numérica. Teclas programadas.
+**CONT / CICLO / PASO** – Ejecución continua (normal), por ciclo (el botón PUL ejecuta un ciclo = 16 pulsos de reloj) o por paso (una pulsación de PUL ejecuta un solo ciclo de reloj; en el simulador, una instrucción completa con todos sus ciclos).
 
-**ENA, ENB, ENC** – Inician la ejecución a partir de la dirección indirecta contenida en 7770, 7774 y 7777 
+**LEC / L-T / TEL** – Operación con la grabadora: LECtura, NORmal (la máquina opera normal), ESCritura.
 
-**CONT/CICLO/PASO** – Ejecución continua (normal), por ciclo (el botón PUL ejecuta un ciclo, 16 pulsos de reloj) o por paso (dos PUL ejecuta un solo pulso de reloj, un PUL para instrucciones dirección directas a memoria, dos PUL para las indirectas).
+El uso de interruptores y teclas solo se puede hacer durante un estado de Alto.
 
-**LEC/L-T/TEL**: operación con la grabadora, LECtura, NORmal (la máquina opera normal), ESCritura. Además de los interruptores de control de la grabadora.
+Para depositar una serie de valores en memoria, primero se especifica por los interruptores la dirección de memoria y mediante la tecla CPR se pasa este valor al Contador de Programa (CP). Luego se introducen los valores a almacenar y se oprime sucesivamente la tecla DEP, que deposita el valor de los interruptores en RM y de ahí a la memoria, e incrementa el CP en uno.
 
-El uso de interruptores y teclas solo se puede hacer durante un estado de Alto. 
+Para examinar el contenido de la dirección de memoria apuntada por el CP se utiliza la tecla EXA.
 
-Para depositar una serie de valores en memoria, primero se especifica por los interruptores la dirección de memoria y mediante la tecla CPR se pasa este valor al Contador de Programa (CP). Luego se introducen los valores a almacenar y se oprime sucesivamente la tecla DEP, que deposita el valor de los interruptores en RM y de ahí a la memoria, e incrementa el CP en uno (lo apunta a la próxima dirección de memoria). 
-
-Para examinar el contenido de la direccion de memoria apuntada por el CP se utiliza la tecla EXA.
-
-Para comenzar la ejecución de un programa en una dirección dada se oprime la tecla COM, estando previamente el CP señalando a esa dirección. 
+Para comenzar la ejecución de un programa en una dirección dada se oprime la tecla COM, estando previamente el CP señalando a esa dirección.
 
 La tecla ALT pone a la computadora en el estado de Alto. La ejecución del programa se reanuda desde donde se había detenido mediante la tecla COM.
 
-Un interruptor de tres posiciones gobierna el modo de operación del reloj general, y así del programa. 
+Un interruptor de tres posiciones gobierna el modo de operación del reloj general, y así del programa:
 
-La posición CONTINUO permite la operación sin parada alguna. La posición CICLO hace que cada depresión de la tecla PUL genere 16 pulsos de reloj correspondientes a la ejecución completa de un ciclo de trabajo. En la computadora real, en la posición PASO, al presionar la tecla PUL se produce un pulso de reloj, avanzando un 1/18 de ciclo al contador Johnson, y permitiendo ver el desplazamiento de los bits en los registros y seguir la operación paso a paso. En la computaodra emulada, en este caso, se ejecuta una instrucción completa, con todos sus ciclos.
+- **CONTINUO**: operación sin parada alguna.
+- **CICLO**: cada pulsación de PUL genera 16 pulsos de reloj = un ciclo de trabajo completo.
+- **PASO**: en la computadora real, cada pulsación de PUL produce un pulso de reloj (avanza 1/18 de ciclo en el contador Johnson). En el simulador, ejecuta una instrucción completa con todos sus ciclos.
+
+### Display numérico
+
+El display de la consola tiene **7 dígitos**, un **signo** (+/−) y **6 puntos decimales** entre dígitos. En la máquina real son tubos Nixie de cátodo frío; en el simulador se representan como dígitos naranjas con brillo.
+
+El display es **totalmente programable**: no está cableado a ningún registro de la CPU. Su contenido se controla desde software mediante cuatro registros internos:
+
+| Registro | Contenido | Instrucción |
+|---|---|---|
+| **Registro de Números** | Valor mostrado (12 bits → 4 dígitos octales, con ceros a la izquierda) | `TAR` (0o6524): AC → Registro de Números |
+| **Registro de Signo** | `+` o `−` | `TAS` (0o6500): (−) → Registro de Signo |
+| **Registro de Fracción** | Puntos decimales encendidos (uno por bit) | `TAF` (0o6521): AC[0] → Registro de Fracción |
+| **Registro de Títulos** | Código del display alfabético (0–15) | `TAT` (0o6522): AC[0-3] → Registro de Títulos |
+
+
+### Teclado decimal
+
+Junto al display hay un teclado con **10 teclas numéricas** (`0`–`9`), una tecla de **punto decimal** (`.`), una de **signo** (`−`) y tres teclas programables: **ALM**, **BOR**, **REC**.
+
+**Solo los dígitos 0 a 7 son válidos**: la máquina es octal. Las teclas 8 y 9 existen físicamente pero el hardware las ignora (son teclas mudas).
+
+Cada tecla activa un **indicador de estado** que el programa consulta mediante instrucciones de E/S:
+
+| Tecla | Indicador | Saltar si activo | Limpiar |
+|---|---|---|---|
+| `0`–`7` | ID (dígito) | `SID` (0o6444) | `LID` (0o6414) |
+| `ALM` | IA (almacenar) | `SIA` (0o6442) | `LIA` (0o6412) |
+| `.` | IF (fracción) | `SIF` (0o6441) | `LIF` (0o6411) |
+| `−` | IS (signo) | `SIS` (0o6542) | `LIS` (0o6512) |
+| `BOR` | IB (borrar) | `SIB` (0o6541) | `LIB` (0o6511) |
+| `REC` | IR (recuperar) | `SIR` (0o6544) | `LIR` (0o6514) |
+
+El **valor de la tecla numérica** presionada se guarda en el **Registro de Dígitos** (3 bits, valores 0–7). Para sumarlo al acumulador:
+
+### Indicadores alfabéticos A–O
+
+El display alfabético de la consola tiene 15 lámparas: el símbolo **◙** (separador) y las letras **A** a **O**. Solo una puede estar encendida a la vez en la máquina real; el simulador permite encender cualquiera de ellas individualmente mediante software.
+
+Los controla la microinstrucción `TAT` (`0o6522`), que toma el código en el acumulador:
+
+- **0** → todas las letras apagadas
+- **1** … **15** → enciende la letra correspondiente (`◙`, A, B, …, O)
+
+El programa de ejemplo **ENA** (Simon) los usa para mostrar la secuencia de notas. Cualquier programa puede utilizarlos como display de estado o como indicadores de aplicación.
+
+### Controles sin comportamiento funcional
+
+Algunos controles de la consola están presentes visualmente pero no tienen efecto sobre la CPU en esta versión del simulador:
+
+- **Interruptores auxiliares A/B/C/D** (a la izquierda del mando de modo): solo cambian su posición visual. Su función específica en la máquina real está pendiente de documentar.
+- **Mando LEC/LT/ESC**: cambia de posición visualmente pero no está conectado a ningún comportamiento. Pendiente de documentar su función original.
+
+El resto de la consola (indicadores de registros, ciclos, interruptores de 12 bits, teclado decimal, teclas de control, indicadores alfabéticos, display numérico) está completamente funcional.
 
 ### Barra de estado
 
@@ -232,45 +282,46 @@ Formato general: `código · indirecto · página · dirección relativa`.
 
 | Octal | Mnemo | Operación |
 |---|---|---|
-| `0000` | **YLO** | `AC ← AC & [M]` (AND lógico) |
-| `1001` | **SUM** | `AC ← AC + [M]` |
-| `2010` | **ISC** | `[M]++`; `CP++` si `[M] == 0` |
-| `3011` | **DEL** | `AC → [M]`, `0 → AC` |
-| `4100` | **VAS** | `CP → [M]`, `M+1 → CP` (llamada a subrutina) |
-| `5101` | **VEA** | `CP ← M` (salto) |
+| `0_` | **YLO** | `AC ← AC & [M]` (AND lógico) |
+| `1_` | **SUM** | `AC ← AC + [M]` (propaga acarreo al EN) |
+| `2_` | **ISC** | `[M]++`; `CP++` si `[M] == 0` |
+| `3_` | **DEL** | `AC → [M]`, `0 → AC` |
+| `4_` | **VAS** | `CP → [M]`, `M+1 → CP` (llamada a subrutina) |
+| `5_` | **VEA** | `CP ← M` (salto) |
 
 Los opcodes 6 y 7 se reservan para microinstrucciones y E/S.
 
 ### Grupo 0 — Limpieza (opcode 7, bit 400 = 0, bit 002 = 0)
 
-| Octal | Mnemo | Orden |Operación |
+| Octal | Mnemo | Orden | Operación |
 |---|---|---|---|
-| `7000` | NOP |  |Sin operación |
-| `7010` | IAC | 3 |`AC + 1 → AC` |
-| `7020` | CEN | 2 |`~EN → EN` |
-| `7040` | CAC | 2 |`~AC → AC` |
-| `7100` | LEN | 1 |`0 → EN` |
-| `7200` | LAC | 1 |`0 → AC` |
+| `7000` | NOP | — | Sin operación |
+| `7010` | IAC | 3 | `AC + 1 → AC`; si desborda (7777 → 0000), complementa el EN |
+| `7020` | CEN | 2 | `~EN → EN` |
+| `7040` | CAC | 2 | `~AC → AC` |
+| `7100` | LEN | 1 | `0 → EN` |
+| `7200` | LAC | 1 | `0 → AC` |
 
-**Combinaciones (mismo orden de ejecución):**
-
-Las combinaciones de microcódigo en una sola palabra permite ahorrar palabras de memoria, la velocidad de ejecucion es casi la misma.
+**Combinaciones (mismo orden de ejecución: LAC → LEN → CAC → CEN → IAC):**
 
 | Octal | Combinación | Resultado |
 |---|---|---|
-| `7050` | CAC IAC | `~AC+1 → AC` (= −AC) |
+| `7050` | CAC IAC | `~AC+1 → AC` (= −AC); si hay desbordamiento, complementa EN |
 | `7060` | CAC CEN | `~AC → AC`, `~EN → EN` |
 | `7120` | LEN CEN | `1 → EN` |
-| `7210` | LAC IAC | `1 → AC` |
+| `7210` | LAC IAC | `1 → AC`; EN intacto (no hay desbordamiento) |
 | `7220` | LAC CEN | `0 → AC`, `~EN → EN` |
-| `7240` | LAC CAC | `1 → AC` |
+| `7240` | LAC CAC | `0o7777 → AC` (LAC deja 0, CAC complementa) |
 | `7300` | LAC LEN | `0 → AC`, `0 → EN` |
-| `7320` | LAC LEN IAC | `1 → AC`, `0 → EN` |
-| `7330` | LAC LEN CEN | `0 → AC`, `1 → EN` |
-| `7340` | LAC LEN CAC | `1 → AC`, `0 → EN` |
-| `7350` | LAC LEN CAC CEN | `1 → AC`, `1 → EN` |
-| `7360` | LAC LEN CAC IAC | `0 → AC`, `0 → EN` |
-| `7370` | LAC LEN CAC CEN IAC | `0 → AC`, `1 → EN` |
+| `7310` | LAC LEN IAC | `1 → AC`, `0 → EN` (sin desbordamiento) |
+| `7320` | LAC LEN CEN | `0 → AC`, `1 → EN` |
+| `7330` | LAC LEN CEN IAC | `1 → AC`, `1 → EN` (CEN pone EN=1; IAC no desborda) |
+| `7340` | LAC LEN CAC | `0o7777 → AC`, `0 → EN` |
+| `7350` | LAC LEN CAC IAC | `0 → AC`, `1 → EN` (0o7777 + 1 = 0, con acarreo → complementa EN 0→1) |
+| `7360` | LAC LEN CAC CEN | `0o7777 → AC`, `1 → EN` |
+| `7370` | LAC LEN CAC CEN IAC | `0 → AC`, `0 → EN` (CEN pone EN=1; IAC desborda → 1 XOR 1 = 0) |
+
+> **Nota sobre `IAC` y el `EN`:** el `IAC` opera sobre el par de 13 bits `EN/AC` (igual que el `LINK/AC` de la PDP-8). Cuando el AC pasa de `7777` a `0000`, el acarreo **complementa** el `EN` (no lo pone a 1). Esto explica los valores de las filas `7350` y `7370`: en ambas hay desbordamiento del AC, y el `EN` inicial (puesto por `LEN` y opcionalmente por `CEN`) se complementa como resultado del `IAC`.
 
 ### Grupo 1 — Rotaciones (bit 002 = 1)
 
@@ -295,64 +346,88 @@ Rotan el par `(EN, AC)` como un registro único de 13 bits.
 
 Salto por *skip*: si la condición se cumple, `CP = CP + 1` (se omite la instrucción siguiente).
 
-| Octal | Mnemo | Orden | Grupo |Condición |
+| Octal | Mnemo | Orden | Grupo | Condición |
 |---|---|---|---|---|
-| `7500` | SAN | 1 | OR |`AC < 0` |
-| `7440` | SAC | 1 | OR |`AC == 0` |
-| `7420` | SED | 1 | OR |`EN == 1` |
-| `7510` | SAP | 1 | AND |`AC > 0` (SAN con SLT) |
-| `7450` | SAD | 1 | AND |`AC ≠ 0` (SAC con SLT) |
+| `7500` | SAN | 1 | OR | `AC < 0` |
+| `7440` | SAC | 1 | OR | `AC == 0` |
+| `7420` | SED | 1 | OR | `EN == 1` (EN ≠ 0) |
+| `7510` | SAP | 1 | AND | `AC > 0` (SAN con SLT) |
+| `7450` | SAD | 1 | AND | `AC ≠ 0` (SAC con SLT) |
 | `7430` | SEC | 1 | AND | `EN == 0` (SED con SLT) |
-| `7410` | SLT | 1 | | Salto Incondicional |
-| `7600` | LAC | 2 | |`0 → AC` (limpia sin saltar) |
-| `7404` | ALT | 4 | |Alto (detiene la máquina) |
-| `7402` | ORI | 3 | |`AC = AC \| Register(interruptores)` |
+| `7410` | SLT | 1 | — | Salto incondicional |
+| `7600` | LAC | 2 | — | `0 → AC` (limpia sin saltar) |
+| `7404` | ALT | 4 | — | Alto (detiene la máquina) |
+| `7402` | ORI | 3 | — | `AC = AC \| Register(interruptores)` |
 
-Los grupos `OR` y `AND` no se pueden combinar entre sí. `LAC` puede combinarse con `SAC` (`7640`: `0 → AC` y salta si `AC == 0`).
+Los grupos `OR` y `AND` no se pueden combinar entre sí.
 
-**Combinaciones OR**:
+**Combinaciones OR (sin SLT):**
 
 | Octal | Combinación | Condición |
 |---|---|---|
 | `7460` | SAC SED | `AC == 0` **o** `EN == 1` |
-| `7470` | SAD SEC | `AC ≠ 0` **o** `EN == 0` |
 | `7520` | SAN SED | `AC < 0` **o** `EN == 1` |
-| `7540` | SAN SAC | `AC < 0` **o** `AC == 0` |
+| `7540` | SAN SAC | `AC < 0` **o** `AC == 0` (es decir, AC ≤ 0) |
+| `7560` | SAN SAC SED | `AC < 0` **o** `AC == 0` **o** `EN == 1` |
 
-**Combinaciones AND** (requieren `SLT`):
+**Combinaciones AND (con SLT):**
 
 | Octal | Combinación | Condición |
 |---|---|---|
+| `7470` | SAD SEC | `AC ≠ 0` **y** `EN == 0` |
 | `7530` | SAP SEC | `AC > 0` **y** `EN == 0` |
 | `7550` | SAP SAD | `AC > 0` **y** `AC ≠ 0` (= `AC > 0`) |
 | `7570` | SAP SAD SEC | `AC > 0` **y** `EN == 0` |
 
-> 7550 y 7570 son redundantes respecto a 7510 y 7530 respectivamente (SAD no añade información cuando AC > 0). Se mantienen por fidelidad al conjunto de instrucciones original.
+> `7550` y `7570` son redundantes respecto a `7510` y `7530` respectivamente (`SAD` no añade información cuando `AC > 0`). Se mantienen por fidelidad al conjunto de instrucciones original.
 
-Las microintrucciones de limpieza y salto también puede ser combinadas.
+**Combinaciones LAC + salto:**
 
-| Octal | Combinación | Condición |
+| Octal | Combinación | Efecto |
 |---|---|---|
-| 7640 | LAC SAC | `0 → AC` y salta |
-| 7620 | LAC SED | `0 → AC`, salta si `EN <> 0` |
-| 7610 | LAC SLT | `0 → AC` y salta siempre |
-| 7504 | SAN ALT | Alto si `AC >= 0`, si no, continua |
-| 7444 | SAC ALT | Alto si `AC <> 0`, si no, continua |
-| 7424 | SED ALT | Alto si `EN == 0`, si no, continua |
-| 7514 | SAP ALT | Alto si `AC <= 0`, si no, continua |
-| 7454 | SAD ALT | Alto si `AC == 0`, si no, continua |
-| 7434 | SEC ALT | Alto si `EN <> 0`, si no, continua |
-| 7502 | SAN ORI | OR con interruptores si `AC >= 0` |
-| 7442 | SAC ORI | OR con interruptores si `AC <> 0` |
-| 7422 | SED ORI | OR con interruptores si `EN == 0` |
+| `7710` | LAC SAP | Si `AC > 0`, `0 → AC` y salta |
+| `7700` | LAC SAN | Si `AC < 0`, `0 → AC` y salta |
+| `7650` | LAC SAD | Si `AC ≠ 0`, `0 → AC` y salta |
+| `7640` | LAC SAC | Si `AC == 0`, `0 → AC` y salta |
+| `7630` | LAC SEC | Si `EN == 0`, `0 → AC` y salta |
+| `7620` | LAC SED | Si `EN == 1`, `0 → AC` y salta |
+| `7610` | LAC SLT | `0 → AC` y salta siempre |
+| `7770` | LAC SAD SEC | Si `AC > 0` y `EN == 0`, `0 → AC` y salta |
+
+**Combinaciones con ALT** (la operación de Alto se ejecuta solo si no hubo skip):
+
+| Octal | Combinación | Efecto |
+|---|---|---|
+| `7504` | SAN ALT | Si `AC < 0`, salta; si no, Alto |
+| `7444` | SAC ALT | Si `AC == 0`, salta; si no, Alto |
+| `7424` | SED ALT | Si `EN ≠ 0`, salta; si no, Alto |
+| `7514` | SAP ALT | Si `AC > 0`, salta; si no, Alto |
+| `7454` | SAD ALT | Si `AC ≠ 0`, salta; si no, Alto |
+| `7434` | SEC ALT | Si `EN == 0`, salta; si no, Alto |
+
+**Combinaciones con ORI** (el OR con interruptores se ejecuta solo si no hubo skip):
+
+| Octal | Combinación | Efecto |
+|---|---|---|
+| `7502` | SAN ORI | OR con interruptores si `AC ≥ 0` |
+| `7442` | SAC ORI | OR con interruptores si `AC ≠ 0` |
+| `7422` | SED ORI | OR con interruptores si `EN == 0` |
+
+> **Cómo leer las tablas de ALT y ORI:** el primer mnemónico (SAN, SAC, SAP, …) evalúa la condición y decide si salta; el segundo (ALT, ORI) **solo se ejecuta si no hubo skip**. Por eso "Alto si AC ≥ 0" equivale a "Salta si AC < 0, si no, Alto"; y "OR si AC ≥ 0" equivale a "Salta si AC < 0, si no, ORI".
 
 ### Grupo 6 — Entrada/Salida
+
+El código de operación `110` (6) agrupa las microinstrucciones de E/S.
+
+**Sistema de sondeo** (polling): el programa verifica periódicamente el estado del periférico. Si no está listo, se ejecutan otras operaciones.
+
+Toda instrucción que transfiere AC a un Registro de Salida **limpia AC**. Toda instrucción que transfiere un Registro de Entrada al AC **suma** al AC (pudiendo modificar el EN con el acarreo).
 
 #### Perforador de cinta (RFT T-51)
 
 | Octal | Mnemo | Operación |
 |---|---|---|
-| `6110` | LIP | `0 → Indicador de Perforación.` |
+| `6110` | LIP | `0 → Indicador de Perforación` |
 | `6120` | TAP | `AC → Registro del Perforador`, `0 → AC` |
 | `6130` | TAP LIP | Combinación de las dos anteriores |
 | `6140` | SIP | Salta si `Ind. Perf. == 1` |
@@ -364,6 +439,7 @@ Las microintrucciones de limpieza y salto también puede ser combinadas.
 | `6202` | PAL | Detiene lector |
 | `6204` | COL | Inicia lector |
 | `6210` | LIL | `0 → Indicador de Lectura` |
+| `6220` | TLA | Registro Lector → AC |
 | `6230` | TLA LIL | Transferencia + limpieza de indicador |
 | `6240` | SIL | Salta si `IL == 1` |
 
@@ -374,7 +450,7 @@ Las microintrucciones de limpieza y salto también puede ser combinadas.
 | `6411` | LIF | `0 → Indicador de Fracción` |
 | `6412` | LIA | `0 → Indicador de ALM` |
 | `6414` | LID | `0 → Indicador de Dígitos` |
-| `6420` | TRA | `AC + Registro de Dígitos → AC` |
+| `6420` | TRA | `AC + Registro de Dígitos → AC` (propaga acarreo al EN) |
 | `6441` | SIF | Salta si `IF == 1` |
 | `6442` | SIA | Salta si `IA == 1` |
 | `6444` | SID | Salta si `ID == 1` |
@@ -395,18 +471,18 @@ Las microintrucciones de limpieza y salto también puede ser combinadas.
 | `6544` | SIR | Salta si `IR == 1` |
 | `6310` | LIG | Limpia **todos** los indicadores |
 
-#### Otros
+#### Otros dispositivos
 
-| Octal | Mnemo | Operación |
-|---|---|---|
-| `6611` | LIO | `0 → Indicador de Salida` |
-| `6612` | LIM | `0 → Indicador de Muestreo` |
-| `6621` | TAU | `AC → Registro Uno` |
-| `6622` | TAD | `AC → Registro Dos` |
-| `6631` | TUA | `Registro Uno → AC` |
-| `6632` | TDA | `Registro Dos → AC` |
-| `6641` | SIO | Salta si `Indicador de Salida == 1` |
-| `6642` | SIM | Salta si `Indicador de Muestreo == 1` |
+| Octal | Mnemo | Operación | Estado en el emulador |
+|---|---|---|---|
+| `6611` | LIO | `0 → Indicador de Salida` | Implementado |
+| `6612` | LIM | `0 → Indicador de Muestreo` | Implementado |
+| `6621` | TAU | `AC → Registro Uno` | Stub (`AC + 0`) |
+| `6622` | TAD | `AC → Registro Dos` | Stub (`AC + 0`) |
+| `6631` | TUA | `Registro Uno → AC` | **No implementado** |
+| `6632` | TDA | `Registro Dos → AC` | **No implementado** |
+| `6641` | SIO | Salta si `Indicador de Salida == 1` | Implementado |
+| `6642` | SIM | Salta si `Indicador de Muestreo == 1` | Implementado |
 
 ---
 
@@ -439,7 +515,6 @@ El deslizador de velocidad escala todo por `1/7500`, `1/750` o `1` (velocidad re
 
 <p align="center"><img width="1280" src="https://github.com/maikelsz/CIDmulatorCID201A/blob/main/imgs/CIDmulator-A_CID201-A_RFT-T-51_teletype_2.png" alt="description" /></p>
 
-
 ### Teletipo RFT T-51
 
 Panel integrado con tres funciones:
@@ -460,8 +535,6 @@ Panel independiente (`btn-rd` de la barra de estado).
 - **LISTO**: habilita el lector.
 - **Leer → Teletipo**: lectura manual, carácter a carácter, imprimiendo en el teletipo.
 - **DETENER**: detiene el motor.
-
-Si la CPU ejecuta `COL` (inicia lector) y luego `TLA` (transferir 5 bits), la cinta alimenta directamente a la CPU sin pasar por el teletipo.
 
 ### Cintas
 
@@ -491,6 +564,8 @@ Programa de control cargado en la **página 31** (`0o7600`–`0o7724`). Permite 
 
 Cualquier tecla nueva durante una operación de REC cancela la operación y el número tecleado pasa a ser la nueva dirección.
 
+Para regresar al Monitor tras ejecutar una dirección, debe hacerse ALT, CPR a 7600 y COM.
+
 ### Arranque
 
 1. Pulsar **ENC** (carga el monitor en `0o7600` y comienza).
@@ -504,7 +579,7 @@ Tres programas precargados, accesibles con las teclas de la consola:
 
 ### ENA — Simon (juego de secuencias)
 
-Juego de memoria musical. La máquina enciende secuencias de letras (`A`–`G`); el jugador las repite con el teclado decimal (0–7). La secuencia crece con cada acierto. Si falla: el display muestra la longitud alcanzada y la máquina se detiene (`ALT`).
+Juego de memoria musical. La máquina enciende secuencias de letras (`A`–`G`) usando los indicadores alfabéticos y sus tonos correspondientes; el jugador las repite con el teclado decimal (0–7). La secuencia crece con cada acierto. Si falla: el display muestra la longitud alcanzada y la máquina se detiene (`ALT`).
 
 **Botón:** `ENA` (carga en `0o200`).
 
@@ -531,18 +606,19 @@ Ver sección anterior.
 
 ## El Mínimo Binario, "Minibin"
 
-Programa utilitario de arranque ("bootloader"), usualmente el primero cargado en la máquina,  que lee una cinta perforada de 5 canales y deposita las palabras de 12 bits en memoria (las perforaciones requieren un formato).
+Programa utilitario de arranque ("bootloader"), usualmente el primero cargado en la máquina, que lee una cinta perforada de 5 canales y deposita las palabras de 12 bits en memoria (las perforaciones requieren un formato).
 
-Su codigo ensamblador LEN.
+Su código ensamblador LEN:
+
 ```
 * 0                                 / Lo pondremos al inicio de la memoria
                 COL LIL             / Inicia el lector. Limpia su indicador
 NuevaPalabra,   LAC LEN             / Limpia AC y EN
-Nuevos5bits,    RI5                 / Desplaza 5 veces(cinta de 5 canales) a la izquierda
+Nuevos5bits,    RI5                 / Desplaza 5 veces (cinta de 5 canales) a la izquierda
 EsperaLector,   SIL                 / Salta a la instrucción siguiente si el Lector está en 1
                 VEA EsperaLector    / Si no, sigue en espera
                 TLA LIL             / Transfiere desde el lector los 5 bits de la derecha del AC
-                SED                 / Salta la instrucción siguiente si EN = 1(desbordamiento)
+                SED                 / Salta la instrucción siguiente si EN = 1 (desbordamiento)
                 VEA Nuevos5bits     / No está completa la palabra
                 DEL I Hacia         / Transfiere el AC a la dirección indicada por Hacia
                 ISC Hacia           / Incrementa puntero Destino
@@ -550,7 +626,9 @@ EsperaLector,   SIL                 / Salta a la instrucción siguiente si el Le
 Destino,        200                 / Dirección destino de los datos, página 1
 $
 ```
-O su equivalente en octal, listo para introducir mediante los interruptores de la consola.
+
+O su equivalente en octal, listo para introducir mediante los interruptores de la consola:
+
 ```
 6214
 7300
@@ -571,7 +649,7 @@ O su equivalente en octal, listo para introducir mediante los interruptores de l
 1. Cargar una cinta `.cinta` en el lector.
 2. Fijar la dirección de destino en los 12 interruptores.
 3. Pulsar **CPR** (carga la dirección en CP).
-4. Pulsar **DEP** para escribir el valor de los interruptores en `[CP]` = `Hacia`. Luego `DEP` otra vez para `[CP+1] = 0o6214` (COL LIL), etc. — o cargar el binario del Minibin manualmente.
+4. Pulsar **DEP** para escribir el valor de los interruptores en `[CP] = Hacia`. Luego `DEP` otra vez para `[CP+1] = 0o6214` (COL LIL), etc.
 5. Pulsar **COM**. El Minibin leerá la cinta y depositará el programa en memoria.
 
 ---
@@ -590,21 +668,6 @@ Accesibles desde la barra de estado:
 
 ---
 
-## Estructura del proyecto
-
-```
-cid201a-sim/
-├── CID201A.html          # Simulador completo (HTML + CSS + JS en un archivo)
-├── README.md             # Este documento
-├── LICENSE
-├── examples/
-│   ├── hola-mundo.cinta  # Cinta ITA2: "HOLA MUNDO"
-│   ├── suma.lst          # Listado del programa SUMA
-│   └── simon.lst         # Listado del programa SIMON
-└── docs/
-    └── cid201a.pdf       # Documentación histórica original
-```
-
 El simulador es un **único archivo HTML autocontenido**: abrirlo en el navegador es suficiente para ejecutarlo.
 
 ---
@@ -621,12 +684,24 @@ El simulador es un **único archivo HTML autocontenido**: abrirlo en el navegado
 - **Entrada/salida**: sondeo por *polling*. Todas las transferencias AC↔periférico pasan por el AC; las salidas limpian AC; las entradas suman al AC.
 - **Memoria**: modelo plano de 4096 palabras con lectura/escritura no destructiva desde el punto de vista del simulador (aunque el efecto observable es equivalente).
 
+### Acarreo y EN
+
+El **EN** actúa como bandera de acarreo del registro conjunto `EN/AC` de 13 bits:
+
+- **`SUM`**: `EN = 1` si `AC + M > 7777`.
+- **`IAC`**: si `AC = 7777`, el incremento a `0000` **complementa** el `EN` (no lo pone a 1). Coherente con el `LINK/AC` de la PDP-8.
+- **`TRA`**: propaga el acarreo de `AC + Reg. Dígitos` al `EN`.
+- **Operaciones lógicas** (`YLO`) y de **transferencia** (`DEL`, `VAS`, `VEA`, `ISC`): no modifican el `EN`.
+- **Limpiezas** (`LAC`, `LEN`, `CAC`, `CEN`): ponen a 0 o complementan el `EN` de forma explícita.
+
+Si se necesita detectar desbordamiento con signo, el software debe comparar los signos de los operandos y del resultado; el hardware no lo hace por sí solo.
+
 ### Diferencias conocidas respecto a la máquina real
 
 - El modelo de tiempos es aproximado: en hardware real los turnos del contador Johnson determinan cuándo ocurren exactamente las operaciones; aquí se respeta el **coste** por instrucción, no el desfase entre turnos.
-- Algunas combinaciones de microinstrucciones (grupo `**`) siguen la interpretación OR/AND del documento; hay ambigüedad menor en `7470 SAD SEC` (ver sección de saltos).
 - El display alfabético enciende como mucho una letra a la vez (como el hardware real).
 - El reloj no se simula ciclo a ciclo; el modelo de coste es equivalente.
+- Las instrucciones `TUA` y `TDA` no están implementadas en el emulador.
 
 ### Atajos de teclado
 
@@ -645,48 +720,44 @@ Cuando el teletipo está **cerrado**:
 
 Cuando el teletipo está **abierto**, las teclas escriben en él (modo ITA2).
 
+### Visitantes
+
+El proyecto integra **Vercount** (`events.vercount.one`) como contador de visitas discreto bajo la consola.
+
 ---
 
 ## Referencias
 
-- L. Orlando Suárez, “Utilización de computadoras digitales CID en el transporte ferroviario cañero”. 39 conferencia ATAC, Tomo II, octubre 1970, MINAZ
-- R. Rosendi Gonzáles, “Promptuario CID 201-A”, MINAZ, Cuba, 1971
-- O. Ramos, “La computadora CID 201-A”, Comunicaciones. Revista Técnica, Núm. 13, Cuba, 1972
-- O. Carnota. “Aplicación de las computadoras en un pais en vias de desarrollo. Cuba”, Economía y Desarrollo No 9, 1972
-- L. O. Suárez, “Trabajo en el central "Camilo Cienfuegos": itinerarios del ferrocarril cañero y análisis del proceso industrial", Primera Reunión de Especialistas de Computación de Cuba, 22-24 de marzo, 1972
+- L. Orlando Suárez, "Utilización de computadoras digitales CID en el transporte ferroviario cañero". 39 conferencia ATAC, Tomo II, octubre 1970, MINAZ
+- R. Rosendi Gonzáles, "Promptuario CID 201-A", MINAZ, Cuba, 1971
+- O. Ramos, "La computadora CID 201-A", Comunicaciones. Revista Técnica, Núm. 13, Cuba, 1972
+- O. Carnota. "Aplicación de las computadoras en un país en vías de desarrollo. Cuba", Economía y Desarrollo No 9, 1972
+- L. O. Suárez, "Trabajo en el central 'Camilo Cienfuegos': itinerarios del ferrocarril cañero y análisis del proceso industrial", Primera Reunión de Especialistas de Computación de Cuba, 22-24 de marzo, 1972
 - J. Pedre, "Sistema de Control de Zafra del Puesto de Mando del Yarey, Oriente, diseñado para la computadora cubana CID-201", Primera Reunión de Especialistas de Computación de Cuba, 22-24 de marzo, 1972, Cuba.
-- J. Pedre, “Experiencias en la realización de trabajos prácticos en una pequeña computadora. Sistema control diario de Zafra Yarey-Oriente”, Control Cibernética y Automatización, Vol. 7 Núm 1, 1973, Cuba
-- H. Lista Roiz, “El uso de grabadoras portátiles tipo casete como equipo de entrada y salida en las computadoras CID-201A", Comunicaciones. Revista Técnica, Núm. 13, 1972
-- P. Albuerne, “La Computadora en el Análisis de los Costes Azucareros”, ATAC Núm. 5/6, 1973, MINAZ, Cuba
-- V. Trejo et al, “Lenguaje para la simulación digital de sistemas dinámicos continuos”, Control Cibernética y Automatización, Vol. 7 Núm. 1, 1973
-- A. Ball-Llovera, “Sincronismo en las computadoras serie”, Control Cibernética y Automatización, Vol. 8 Núm.3, 1974
-- L. García Fernández, “Simulación de la operación de un puerto en la CID-201-A”, Control Cibernética y Automatización, Vol. 8 Núm. 1, 1974
-- J. J. Hernández Ruiz, “Tablas de decisión y su implementación en el equipo CID-201A”, Control Cibernética y Automatización, Vol. 8 Núm. 3, 1975
-- O. Ramos, N. Blanco, “Diseño de Computadoras Digitales”, Editorial Científico Técnica, 1988, La Habana
-- A. Ball-Llovera, “Arquitectura de la CID 201”, Bioingeniería y Física Médica Cubana. Vol. 11, Núm.  1, enero-abril, pp. 13-18, 2010
-- The Software Writing Group Programming Department, “Introduction to programming PDP-8 family computers”, Small Computer Handbook Series, Programming Department, Digital Equipment Corporation, 1969
-- “PDP-8/S Maintenance Manual”, Digital Equipment Corporation, 1967
-- “¡Diez millones de operaciones por segundo!”, Granma, 27 de septiembre, 1970
-- “En cuanto a computadoras”. Bohemia, 11 de febrero, 1972
-- - “¿Puede una computadora dirigir un equipo de béisbol?”. Granma, 25 de agosto, 1972
-- “La informática aplicada al transporte”. Bohemia, 2 de marzo, 1973
-- “La máquina electrónica en función del deporte”. Granma, 12 de septiembre, 1974
-- “A siete años de la primera computadora digital cubana”. Bohemia, 3 de junio, 1977
-- J. M. Barruecos, “Fidel, la Universidad, la Ciencia y la Tecnología: origen y desarrollo de la Computación en Cuba”. Revista Cuba Socialista, 4ta. Época, No. 2, mayo-agosto 2016, p. 21-25
-- “Entrevista realizada al ingeniero Orlando Ramos, diseñador de la primera minicomputadora cubana con motivo del décimo aniversario de este importante logro”, CID: Electrónica y proceso de datos en Cuba, Núm. 1, 1981, INSAC, Cuba
+- J. Pedre, "Experiencias en la realización de trabajos prácticos en una pequeña computadora. Sistema control diario de Zafra Yarey-Oriente", Control Cibernética y Automatización, Vol. 7 Núm 1, 1973, Cuba
+- H. Lista Roiz, "El uso de grabadoras portátiles tipo casete como equipo de entrada y salida en las computadoras CID-201A", Comunicaciones. Revista Técnica, Núm. 13, 1972
+- P. Albuerne, "La Computadora en el Análisis de los Costes Azucareros", ATAC Núm. 5/6, 1973, MINAZ, Cuba
+- V. Trejo et al, "Lenguaje para la simulación digital de sistemas dinámicos continuos", Control Cibernética y Automatización, Vol. 7 Núm. 1, 1973
+- A. Ball-Llovera, "Sincronismo en las computadoras serie", Control Cibernética y Automatización, Vol. 8 Núm.3, 1974
+- L. García Fernández, "Simulación de la operación de un puerto en la CID-201-A", Control Cibernética y Automatización, Vol. 8 Núm. 1, 1974
+- J. J. Hernández Ruiz, "Tablas de decisión y su implementación en el equipo CID-201A", Control Cibernética y Automatización, Vol. 8 Núm. 3, 1975
+- O. Ramos, N. Blanco, "Diseño de Computadoras Digitales", Editorial Científico Técnica, 1988, La Habana
+- A. Ball-Llovera, "Arquitectura de la CID 201", Bioingeniería y Física Médica Cubana. Vol. 11, Núm. 1, enero-abril, pp. 13-18, 2010
+- The Software Writing Group Programming Department, "Introduction to programming PDP-8 family computers", Small Computer Handbook Series, Programming Department, Digital Equipment Corporation, 1969
+- "PDP-8/S Maintenance Manual", Digital Equipment Corporation, 1967
+- "¡Diez millones de operaciones por segundo!", Granma, 27 de septiembre, 1970
+- "En cuanto a computadoras". Bohemia, 11 de febrero, 1972
+- "¿Puede una computadora dirigir un equipo de béisbol?". Granma, 25 de agosto, 1972
+- "La informática aplicada al transporte". Bohemia, 2 de marzo, 1973
+- "La máquina electrónica en función del deporte". Granma, 12 de septiembre, 1974
+- "A siete años de la primera computadora digital cubana". Bohemia, 3 de junio, 1977
+- J. M. Barruecos, "Fidel, la Universidad, la Ciencia y la Tecnología: origen y desarrollo de la Computación en Cuba". Revista Cuba Socialista, 4ta. Época, No. 2, mayo-agosto 2016, p. 21-25
+- "Entrevista realizada al ingeniero Orlando Ramos, diseñador de la primera minicomputadora cubana con motivo del décimo aniversario de este importante logro", CID: Electrónica y proceso de datos en Cuba, Núm. 1, 1981, INSAC, Cuba
 - Intervención del Dr. Antonio Ball-Llovera Díaz en el Acto efectuado en el Anfiteatro de la CUJAE en ocasión del 40 Aniversario de la Primera Computadora Digital Cubana. Abril de 2010
-- J. Andrés Chacón, “Proyecto C”, Arte y Literatura, 1978, La Habana
+- J. Andrés Chacón, "Proyecto C", Arte y Literatura, 1978, La Habana
 - Información extraída de un documento elaborado por el Ing. Ricardo Piñero, uno de los creadores de la primera computadora, marzo 2019.
-
 
 ### Agradecimientos
 
 A los ingenieros del **Centro de Investigación Digital (CID)** de Cuba, que diseñaron y construyeron la CID 201 / 201-A entre 1970 y 1972, y a las personas que han preservado su documentación y memoria.
 
----
-
-## Licencia
-
-Este proyecto se distribuye bajo la **Licencia MIT**. Ver [`LICENSE`](LICENSE) para más detalles.
-
-El **simulador** (código HTML/CSS/JS) es obra original de sus autores. La **documentación histórica** de la CID 201-A es material de archivo y se reproduce con fines educativos y de preservación.
