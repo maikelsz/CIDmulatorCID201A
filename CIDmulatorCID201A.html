@@ -719,9 +719,51 @@ body { margin: 0; min-height: 100vh; background: radial-gradient(circle at 50% 3
                 </li>
             </ul>
 
+            <h3>Teclado decimal</h3>
+            <p>Junto al display hay un teclado con <b>10 teclas numéricas</b>
+            (<code>0</code>–<code>9</code>), una tecla de <b>punto decimal</b>
+            (<code>.</code>), una de <b>signo</b> (<code>−</code>) y tres teclas
+            programables: <b>ALM</b>, <b>BOR</b>, <b>REC</b>.</p>
+
+            <p><b>Solo los dígitos 0 a 7 son válidos</b>: la máquina es octal.
+            Las teclas 8 y 9 existen físicamente pero el hardware las ignora
+            (son teclas mudas).</p>
+
+            <p>Cada tecla activa un <b>indicador de estado</b> que el programa
+            consulta mediante instrucciones de E/S:</p>
+
+            <h3>Display numérico</h3>
+            <p>El display de la consola tiene <b>7 dígitos</b>, un <b>signo</b> (+/−)
+            y <b>6 puntos decimales</b> entre dígitos. En la máquina real son tubos
+            Nixie de cátodo frío; en el simulador se representan como dígitos
+            naranjas con brillo.</p>
+
+            <p>El display es <b>totalmente programable</b>: no está cableado a
+            ningún registro de la CPU. Su contenido se controla desde software
+            mediante cuatro registros internos:</p>
+
+            <h3>Indicadores alfabéticos A–O</h3>
+            <p>El display alfabético de la consola tiene 15 lámparas: el símbolo
+            <b>◙</b> (separador) y las letras <b>A</b> a <b>O</b>. Solo una puede
+            estar encendida a la vez en la máquina real; el simulador permite
+            encender cualquiera de ellas individualmente mediante software.</p>
+            <p>Los controla la microinstrucción <code>TAT</code> (<code>0o6522</code>),
+            que toma el código en el acumulador:</p>
+            <ul>
+              <li><b>0</b> → todas las letras apagadas</li>
+              <li><b>1</b> … <b>15</b> → enciende la letra correspondiente
+              (<code>◙</code>, A, B, …, O)</li>
+            </ul>
+            <p>El programa de ejemplo <b>ENA</b> (Simon) los usa para mostrar
+            la secuencia de notas. Cualquier programa puede utilizarlos como
+            display de estado o como indicadores de aplicación.</p>
+
             <h3>Programas de ejemplo</h3>
             <ul>
-                <li><b>ENA</b> — imprime "HOLA MUNDO" en bucle.</li>
+                <li><b>ENA</b> — juego Simon: la máquina enciende secuencias de letras
+                (A–G) con sus tonos; el jugador las repite con el teclado decimal
+                (0–7). La secuencia crece con cada acierto; al fallar, el display
+                muestra la longitud alcanzada y la máquina se detiene.</li>
                 <li>
                     <b>ENB</b> — pide dos números por el teletipo y muestra
                     su suma en octal (<code>A = ?</code>, <code>B = ?</code>).
@@ -801,6 +843,11 @@ Dir.   Octal  Binario          Nemotécnico   Comentario
                 Mientras se escribe un número nuevo, la operación de
                 recuperación se cancela y el número escrito pasa a ser la
                 nueva dirección inicial.
+            </p>
+            <p>
+                <b>Signo -</b> (ejecutar): realiza un salto a la dirección
+                indicada y sigue ejecución desde allí. Para regresar al Monitor
+                debe hacerse ALT, CPR a 7600 y COM.
             </p>
 
             <h3>Control de velocidad</h3>
@@ -933,28 +980,25 @@ Dir.   Octal  Binario          Nemotécnico   Comentario
                 alimenta directamente a la CPU.
             </p>
 
-            <h3>Pendiente de documentar</h3>
-            <p>
-                Los <b>interruptores auxiliares</b> (bloque A/B/C/D, a la
-                izquierda del mando de modo) son funcionalidades que aún 
-                no se han implementado en el simulador.
-                Se documentarán cuando se complete su comportamiento.
-            </p>
+            <h3>Estado de implementación</h3>
+            <p>Algunos controles de la consola están presentes visualmente pero
+            no tienen comportamiento funcional en esta versión del simulador:</p>
+            <ul>
+              <li><b>Interruptores auxiliares A/B/C/D</b> (a la izquierda del
+              mando de modo): solo cambian su posición visual; no afectan a la CPU.</li>
+              <li><b>Mando LEC/LT/ESC</b> (LEC = lectura, LT = ¿?, ESC = escape):
+              solo cambia la posición visual; pendiente de documentar su
+              comportamiento específico en la máquina real.</li>
+            </ul>
         </div>
       </div>
     </div>
-
-    
-
-   
-
-
   </div>
 
-    <div id="visit-counter-container">
-      Visitas: <span id="vercount_value_site_pv">Loading</span> · 
-      Visitantes: <span id="vercount_value_site_uv">Loading</span>
-    </div>
+  <div id="visit-counter-container">
+    Visitas: <span id="vercount_value_site_pv">Loading</span> · 
+    Visitantes: <span id="vercount_value_site_uv">Loading</span>
+  </div>
 
 </div>
 
@@ -2492,7 +2536,13 @@ function handleIO(instr) {
     if (sub === 0o11) { S.indFraccion = 0; return; }
     if (sub === 0o12) { S.indAlmacena = 0; return; }
     if (sub === 0o14) { S.indDigitos = 0; return; }
-    if (sub === 0o20) { S.AC = mask12(S.AC + S.RegistroDigito); return; }
+    //if (sub === 0o20) { S.AC = mask12(S.AC + S.RegistroDigito); return; }
+    if (sub === 0o20) {
+      const s = S.AC + S.RegistroDigito;
+      S.AC = mask12(s);
+      if (s > 0o7777) S.EN = 1;
+      return;
+    }
     if (sub === 0o41 && S.indFraccion) { S.CP = mask12(S.CP + 1); return; }
     if (sub === 0o42 && S.indAlmacena) { S.CP = mask12(S.CP + 1); return; }
     if (sub === 0o44 && S.indDigitos) { S.CP = mask12(S.CP + 1); return; }
@@ -2590,14 +2640,18 @@ const ROTATION_TABLE = {
 			}
 			return;
 		  }
-		  const LAC = (op & 0o200) !== 0, LEN = (op & 0o100) !== 0;
-		  const CAC = (op & 0o040) !== 0, CEN = (op & 0o020) !== 0;
-		  const IAC = (op & 0o010) !== 0;
-		  if (LAC) S.AC = 0;
-		  if (LEN) S.EN = 0;
-		  if (CAC) S.AC = (~S.AC) & 0xFFF;
-		  if (CEN) S.EN = S.EN ? 0 : 1;
-		  if (IAC) S.AC = (S.AC + 1) & 0xFFF;   // ← CAMBIO: no toca EN
+          const LAC = (op & 0o200) !== 0, LEN = (op & 0o100) !== 0;
+          const CAC = (op & 0o040) !== 0, CEN = (op & 0o020) !== 0;
+          const IAC = (op & 0o010) !== 0;
+          if (LAC) S.AC = 0;
+          if (LEN) S.EN = 0;
+          if (CAC) S.AC = (~S.AC) & 0o7777;
+          if (CEN) S.EN = S.EN ? 0 : 1
+          if (IAC) {
+            const s = S.AC + 1;
+            S.AC = s & 0o7777;
+            if (s > 0o7777) S.EN = S.EN ? 0 : 1;   // complementa EN (no lo pone a 1)
+          }    
     }
 
 /* ================================================================
