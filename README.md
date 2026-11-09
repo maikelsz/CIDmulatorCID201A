@@ -731,11 +731,11 @@ El proyecto integra **Vercount** (`events.vercount.one`) como contador de visita
 - L. Orlando Suárez, "Utilización de computadoras digitales CID en el transporte ferroviario cañero". 39 conferencia ATAC, Tomo II, octubre 1970, MINAZ
 - R. Rosendi Gonzáles, "Promptuario CID 201-A", MINAZ, Cuba, 1971
 - O. Ramos, "La computadora CID 201-A", Comunicaciones. Revista Técnica, Núm. 13, Cuba, 1972
+- H. Lista Roiz, "El uso de grabadoras portátiles tipo casete como equipo de entrada y salida en las computadoras CID-201A", Comunicaciones. Revista Técnica, Núm. 13, 1972
 - O. Carnota. "Aplicación de las computadoras en un país en vías de desarrollo. Cuba", Economía y Desarrollo No 9, 1972
 - L. O. Suárez, "Trabajo en el central 'Camilo Cienfuegos': itinerarios del ferrocarril cañero y análisis del proceso industrial", Primera Reunión de Especialistas de Computación de Cuba, 22-24 de marzo, 1972
 - J. Pedre, "Sistema de Control de Zafra del Puesto de Mando del Yarey, Oriente, diseñado para la computadora cubana CID-201", Primera Reunión de Especialistas de Computación de Cuba, 22-24 de marzo, 1972, Cuba.
 - J. Pedre, "Experiencias en la realización de trabajos prácticos en una pequeña computadora. Sistema control diario de Zafra Yarey-Oriente", Control Cibernética y Automatización, Vol. 7 Núm 1, 1973, Cuba
-- H. Lista Roiz, "El uso de grabadoras portátiles tipo casete como equipo de entrada y salida en las computadoras CID-201A", Comunicaciones. Revista Técnica, Núm. 13, 1972
 - P. Albuerne, "La Computadora en el Análisis de los Costes Azucareros", ATAC Núm. 5/6, 1973, MINAZ, Cuba
 - V. Trejo et al, "Lenguaje para la simulación digital de sistemas dinámicos continuos", Control Cibernética y Automatización, Vol. 7 Núm. 1, 1973
 - A. Ball-Llovera, "Sincronismo en las computadoras serie", Control Cibernética y Automatización, Vol. 8 Núm.3, 1974
