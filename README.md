@@ -3,6 +3,10 @@
 
 <p align="center"><img width="1280" src="https://github.com/maikelsz/CIDmulatorCID201A/blob/main/imgs/CID_201-A_0.jpg" /></p>
 
+[![Single File](https://img.shields.io/badge/single--file-HTML%2FCSS%2FJS-brightgreen.svg)](index.html)
+[![No Dependencies](https://img.shields.io/badge/dependencies-none-brightgreen.svg)]()
+[![Language](https://img.shields.io/badge/lang-ES%20%7C%20EN-blue.svg)](#)
+
 Simulador funcional, en un único archivo HTML/CSS/JS, de la minicomputadora cubana **CID 201-A** (Centro de Investigación Digital, ICID, Cuba, 1971). Reproduce el segundo modelo, su conjunto de instrucciones LEN-1, su consola física, la memoria de ferrita y sus periféricos: teletipo RFT T-51 (teleimpresora + perforador de cinta) y lector de cinta RFT T-53. Inicia con algunos programas precargados.
 
 > Un homenaje ejecutable a una de las primeras computadoras diseñadas y fabricadas en América Latina, y a sus creadores.
