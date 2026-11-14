@@ -5,7 +5,7 @@
 
 Simulador funcional, en un único archivo HTML/CSS/JS, de la minicomputadora cubana **CID 201-A** (Centro de Investigación Digital, ICID, Cuba, 1971). Reproduce el segundo modelo, su conjunto de instrucciones LEN-1, su consola física, la memoria de ferrita y sus periféricos: teletipo RFT T-51 (teleimpresora + perforador de cinta) y lector de cinta RFT T-53. Inicia con algunos programas precargados.
 
-> Un homenaje ejecutable a una de las primeras computadoras diseñadas y fabricadas en América Latina.
+> Un homenaje ejecutable a una de las primeras computadoras diseñadas y fabricadas en América Latina, y a sus creadores.
 
 <p align="center"><img width="1280" src="https://github.com/maikelsz/CIDmulatorCID201A/blob/main/imgs/CIDmulator-A_CID201_emulator.jpg" /></p>
 
