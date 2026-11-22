@@ -670,6 +670,10 @@ Accesibles desde la barra de estado:
 | 🗺️ | **Mapa de memoria** | 4096 palabras en columnas, con navegación por páginas. **Editable**: clic en una celda para editarla (octal); `Enter` guarda y salta a la siguiente; `Esc` cancela |
 | 📖 | **Ayuda** | Manual de usuario completo |
 
+Para programar fácilmente en LEN1 y LEAL, puede usar al editor/compialdor/ensamblador/ejecutor CIDcoder-A, disponible en este repositorio:
+
+<https://github.com/maikelsz/CIDcoder-A/tree/main>
+
 ---
 
 El simulador es un **único archivo HTML autocontenido**: abrirlo en el navegador es suficiente para ejecutarlo.
