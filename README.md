@@ -672,7 +672,7 @@ Accesibles desde la barra de estado:
 
 Para programar fácilmente en LEN1 y LEAL, puede usar al editor/compialdor/ensamblador/ejecutor CIDcoder-A, disponible en este repositorio:
 
-<https://github.com/maikelsz/CIDcoder-A/tree/main>
+<https://github.com/maikelsz/CIDcoder-A/>
 
 ---
 
